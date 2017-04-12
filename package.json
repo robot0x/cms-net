@@ -1,0 +1,43 @@
+{
+  "name": "cms-be",
+  "version": "1.0.0",
+  "author": "liyanfeng",
+  "description": "有调CMS系统后端",
+  "main": "cms.js",
+  "config": {
+    "root": "",
+    "root2": "cms/api/v1/",
+    "port": 3000
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node cms.js",
+    "dev": "nodemon cms.js"
+  },
+  "keywords": [
+    "有调",
+    "cms",
+    "BackEnd"
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.4.7",
+    "compression": "^1.6.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "lodash": "^4.17.2",
+    "log4js": "^1.1.0",
+    "moment": "^2.17.1",
+    "nodemon": "^1.11.0",
+    "promise-mysql": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.1",
+    "eslint": "^3.12.2",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-plugin-promise": "^3.4.0",
+    "eslint-plugin-standard": "^2.0.1",
+    "karma": "^1.3.0"
+  }
+}
