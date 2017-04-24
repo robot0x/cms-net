@@ -9,11 +9,11 @@
 //  }
 
  module.exports = {
-     "host": '172.16.1.121',
-     "user":"root",
-     "password":"sqltest",
-     "database":"cms",
-     "charset":"utf8mb4",
-     "multipleStatement":true,
-     "connectionLimit": 15
-  }
+   'host': '172.16.1.121',
+   'user': 'root',
+   'password': 'sqltest',
+   'database': 'cms',
+   'charset': 'utf8mb4',
+   'multipleStatement': true,
+   'connectionLimit': 15
+}

@@ -1,0 +1,490 @@
+[2017-04-19 22:06:49.969] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=7802, url='//content.image.alimmdn.com/cms/sites/default/files/20150120/experience/0_0.jpg', used=1, type=4, extension_name='jpg', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:06:49.976] [ERROR] cms_run - id为7802的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+[2017-04-19 22:38:58.291] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=5057, url='//content.image.alimmdn.com/cms/sites/default/files/20150120/experience/0_0.jpg', used=1, type=4, extension_name='jpg', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:38:58.297] [ERROR] cms_run - id为5057的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+[2017-04-19 22:39:01.977] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=5053, url='//content.image.alimmdn.com/cms/sites/default/files/20141204/experience/1205brush.jpg', used=1, type=4, extension_name='jpg', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:39:01.978] [ERROR] cms_run - id为5053的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+[2017-04-19 22:40:37.515] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=4925, url='//content.image.alimmdn.com/cms/sites/default/files/20160107/zk/qqq2.jpg', used=1, type=4, extension_name='jpg', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:40:37.516] [ERROR] cms_run - id为4925的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+[2017-04-19 22:44:01.808] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=4627, url='#', used=1, type=4, extension_name='', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:44:01.814] [ERROR] cms_run - id为4627的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+[2017-04-19 22:44:15.790] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=4610, url='//content.image.alimmdn.com/cms/sites/default/files/20160122/experience/kk.jpg', used=1, type=4, extension_name='jpg', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:44:15.790] [ERROR] cms_run - id为4610的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+[2017-04-19 22:50:08.141] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=4165, url='//content.image.alimmdn.com/cms/sites/default/files/20150103/experience/sp596.jpg', used=1, type=4, extension_name='jpg', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:50:08.147] [ERROR] cms_run - id为4165的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+[2017-04-19 22:57:07.640] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=3551, url='//content.image.alimmdn.com/cms/sites/default/files/20141207/experience/1208amazon.jpg', used=1, type=4, extension_name='jpg', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:57:07.645] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=3551, url='//content.image.alimmdn.com/cms/sites/default/files/20150529/experience/s4.jpg', used=1, type=4, extension_name='jpg', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:57:07.645] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=3551, url='//content.image.alimmdn.com/cms/sites/default/files/20150305/experience/shop.jpg', used=1, type=4, extension_name='jpg', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:57:07.646] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=3551, url='//content.image.alimmdn.com/cms/sites/default/files/20141211/experience/1212kickstarter.jpg', used=1, type=4, extension_name='jpg', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:57:07.647] [ERROR] cms_run - id为3551的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+[2017-04-19 22:57:07.647] [ERROR] cms_run - id为3551的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+[2017-04-19 22:57:07.648] [ERROR] cms_run - id为3551的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+[2017-04-19 22:57:07.648] [ERROR] cms_run - id为3551的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+[2017-04-19 22:57:07.650] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=3551, url='//content.image.alimmdn.com/cms/sites/default/files/20141108/experience/1110TransportCompany.jpg', used=1, type=4, extension_name='jpg', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:57:07.650] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=3551, url='//content.image.alimmdn.com/cms/sites/default/files/20141108/experience/1109Transport.jpg', used=1, type=4, extension_name='jpg', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:57:07.651] [ERROR] cms_run - id为3551的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+[2017-04-19 22:57:07.652] [ERROR] cms_run - id为3551的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+[2017-04-19 22:57:14.560] [ERROR] cms_run - SQL错误： INSERT INTO image set aid=3543, url='//content.image.alimmdn.com/cms/sites/default/files/20160122/experience/kk.jpg', used=1, type=4, extension_name='jpg', width=-1, height=-1 { Error: ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1
+    at Query.Sequence._packetToError (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:52:14)
+    at Query.ErrorPacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Query.js:77:18)
+    at Protocol._parsePacket (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:280:23)
+    at Parser.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Parser.js:75:12)
+    at Protocol.write (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:39:16)
+    at Socket.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:103:28)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:191:7)
+    at readableAddChunk (_stream_readable.js:178:18)
+    at Socket.Readable.push (_stream_readable.js:136:10)
+    at TCP.onread (net.js:559:20)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at PoolConnection.query (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:208:25)
+    at /Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:16:24
+    at Promise._execute (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/debuggability.js:300:9)
+    at Promise._resolveFromExecutor (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:483:18)
+    at new Promise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:79:10)
+    at PoolConnection.promiseCallback (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/helper.js:6:10)
+    at connection.query (/Users/liyanfeng/work/cms-net/node_modules/promise-mysql/lib/connection.js:64:28)
+    at connection.beginTransaction.then (/Users/liyanfeng/work/cms-net/src/db/Table.js:47:22)
+    at tryCatcher (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:512:31)
+    at Promise._settlePromise (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:569:18)
+    at Promise._settlePromise0 (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:614:10)
+    at Promise._settlePromises (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/promise.js:693:18)
+    at Async._drainQueue (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:133:16)
+    at Async._drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:143:10)
+    at Immediate.Async.drainQueues (/Users/liyanfeng/work/cms-net/node_modules/bluebird/js/release/async.js:17:14)
+  code: 'ER_WARN_DATA_OUT_OF_RANGE',
+  errno: 1264,
+  sqlState: '22003',
+  index: 0 }
+[2017-04-19 22:57:14.561] [ERROR] cms_run - id为3543的文章写入image数据库出错，出错信息： ER_WARN_DATA_OUT_OF_RANGE: Out of range value for column 'width' at row 1

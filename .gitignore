@@ -4,3 +4,4 @@ test/*
 logs/*
 npm-debug.log
 selenium-debug.log
+.vscode/
