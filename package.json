@@ -31,7 +31,8 @@
     "lodash": "^4.17.2",
     "log4js": "^1.1.0",
     "marked": "^0.3.6",
-    "promise-mysql": "^3.0.0"
+    "moment": "^2.18.1",
+    "mysql": "^2.13.0"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",

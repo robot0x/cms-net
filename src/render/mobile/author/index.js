@@ -1,0 +1,56 @@
+const Render = require('../../')
+const Utils = require('../../../utils/Utils')
+const Parser = require('./parser')
+const AuthorService = require('../../../service/AuthorService')
+/**
+ * 渲染：
+ *  1. 作者页 http://c.diaox2.com/view/app/?m=author&src=ZRJ
+ */
+class AuthorRender extends Render {
+
+  constructor (src) {
+    super()
+    this.setSource(src)
+    this.template = this.readTemplate(__dirname + '/author.ejs')
+    this.parser = new Parser
+  }
+  /**
+   * 在 cms-net.js 中调用，解析url参数之后，调用setId
+   */
+  setSource (src) {
+    this.source = src
+    return this
+  }
+
+  async rende () {
+   const { parser,source } = this
+   if(!source) return
+   try {
+     let { metas, author } = await new AuthorService(this.source).getRenderData()
+     let allarticles = metas.map(meta => meta.nid * 4294967297)
+     let len = allarticles.length
+     let infos = ''
+     allarticles.forEach((id, index) => {
+       infos += `${id}:'${metas[index].title.join('')}'${index === len - 1? '' : ','}`
+     })
+     return this.getDoc(this.template, {
+        allarticles,
+        infos: infos,
+        author,
+        body: parser.setMetas(metas).getHTML(20),
+        version: this.version
+      })
+   } catch (e) {
+     console.log(e)
+   } finally {
+
+   }
+  }
+}
+//
+// var author = new AuthorRender(1)
+// show.rende()
+
+// console.log(parser.getHTML())
+
+module.exports = AuthorRender

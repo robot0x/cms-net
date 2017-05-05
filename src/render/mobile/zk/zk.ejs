@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<meta http-equiv="description" content="「有调」每天讲述精致的生活方式，推荐那些真正高品质的好东西，帮你低价买到优质海淘商品。下载有调，享受生活。">
+<title><%-title %></title>
+<link rel="icon" href="//a.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" media="only screen and (min-device-width: 1280px)" type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/zkpc230.css" />
+<link rel="stylesheet" media="only screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-device-width: 1280px), only screen and (-webkit-min-device-pixel-ratio: 3) and (max-width:1028px)" type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/zkphone230.css" />
+<script src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cookie.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.json-2.4.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/api201.js"></script>
+</head>
+<body id="<%-4294967297 * id%>" class="<%-id%>_<%-id%>" data-type="zhuankan" data-share="<%-pageType === 'share'? 1 : 0%>" data-render="<%-version%>">
+	<div class="total" data-thumb="<%-'//' + thumb.url%>" data-cover="<%-'//' + cover.url%>" data-self="//c.diaox2.com/view/app/?m=show&id=<%-id%>">
+
+		<% if( pageType === 'share') {%>
+			<div class="banner tpl" data-href="<%-downloadAddr%>"><img class="bannerleft" src="//c.diaox2.com/cms/diaodiao/assets/icontodown.png"><p class="bannerhigh">品质生活导购平台</p><p class="bannerlow">尽在<span> 有调</span></p><div class="bannerright">点此下载</div></div>
+		<% } %>
+
+		<%-body %>
+	</div>
+	<div class="botmenu" style="display:none">
+		<table>
+			<tbody>
+				<tr>
+					<td style="width:20%" id="bot_zan"><img src="//c.diaox2.com/cms/diaodiao/assets/120noup.png" />
+						<p data-org="赞">赞</p>
+					</td>
+					<td style="width:20%" id="bot_fav"><img src="//c.diaox2.com/cms/diaodiao/assets/120nofav.png" />
+						<p data-org="收藏">收藏</p>
+					</td>
+					<td style="width:20%" id="bot_com" data-href="/view/app/?m=cmt&id=<%-id%>"><img src="//c.diaox2.com/cms/diaodiao/assets/seecomment.png">
+						<p data-org="评论">评论</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<% if( pageType === 'share') {%>
+		<div class="botmenu" style="width: 414px;">
+			<table>
+				<tbody>
+					<tr>
+						<td style="width:100%" id="bot_intro">
+							<img src="//c.diaox2.com/cms/diaodiao/assets/icontodown.png">
+							<span>有调</span>
+							<span>品质生活导购平台</span>
+							<div class="downlink" data-href="<%-downloadAddr%>">立即下载</div>
+						</td>
+					</tr>
+			 </tbody>
+			</table>
+		</div>
+	<% } %>
+	<div class="bottomspace"></div>
+	<div class="bottomspace"></div>
+</body>
+<script src="//c.diaox2.com/cms/diaodiao/assets/ddios201.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/wx.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/zk330.js"></script>
+</html>

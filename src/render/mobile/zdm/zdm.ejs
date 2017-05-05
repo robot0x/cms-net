@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="renderer" content="webkit">
+<meta name="description" content="有调DIAOX2.COM,讲述精致生活,推荐品质好物。找到最值得买的品牌好物,海淘折扣,介绍使用经验和体验测评,推荐新奇有趣礼物,送男女朋友父母长辈,介绍全球美食和旅游攻略,分类页提供家具品牌,生活用品,电器,办公文具,时尚单品,化妆品,护理保湿,数码产品,母婴用品和户外装备的品牌,价格,评测信息">
+<meta name="MobileOptimized" content="320">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="keywords" content="有调,调调,有调值得买,值得买,什么值得买,每日值得买">
+<link rel="icon" href="//a.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="//c.diaox2.com/cms/diaodiao/assets/zdmpc350.css">
+<title>有调值得买 - 活动页面</title>
+</head>
+<body data-render="<%=version%>">
+<section class="wrapper">
+   <% if ( pageType === 'share') {%>
+     <section class="top-banner" data-href="<%-downloadAddr%>">
+       <img class="bannerleft" src="//c.diaox2.com/cms/diaodiao/assets/icontodown.png">
+         <p class="bannerhigh">全球品质好物推荐</p>
+         <p class="bannerlow">尽在<span> 有调</span></p>
+         <div class="bannerright">点此下载</div>
+     </section>
+   <% } %>
+  <section class="main <%- type=== 'share'? 'share-page': ''%>" id="main">
+    <section class="banner-area"></section>
+    <section class="banner-info"></section>
+    <section class="card-and-drawer-area"></section>
+    <section class="items-area">
+      <ul id="items" class="items clearfix"></ul>
+    </section>
+    <footer>已经没有更多折扣啦</footer>
+  </section>
+</section>
+<script type="text/javascript">
+  // var data = [];
+  // var selection = -1;
+  // var cid = 3435973836800000;
+  var data = {<%-data %>}
+  var selection = -1
+  var cid = <%-cid %>
+  // <% if( type === 'share') {%>
+  // <% } else {%>
+  // <% } %>
+</script>
+<script type="text/javascript" src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="//c.diaox2.com/cms/diaodiao/assets/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="//c.diaox2.com/cms/diaodiao/assets/api204.js"></script>
+<script type="text/javascript" src="//c.diaox2.com/cms/diaodiao/assets/zdm350.js"></script>
+<script type="text/javascript" src="//c.diaox2.com/cms/diaodiao/assets/zdmapp350.js"></script>
+</body>
+
+</html>

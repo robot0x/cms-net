@@ -1,6 +1,6 @@
 const ejs = require('ejs')
 const fs = require('fs')
-const ejsString = String(fs.readFileSync('show.ejs'))
+const ejsString = String(fs.readFileSync('show.1.ejs'))
 
 const data = {
   name: '李彦峰'

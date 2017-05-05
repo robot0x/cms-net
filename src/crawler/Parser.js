@@ -52,23 +52,29 @@ class Parser {
     let header = $('#head')
     let title = header.find('#headtitle p').text()
     let eds = header.find('.headdesc').text()
+    let img = header.find('.direct').get(0)
     const zkImages = this.zkImages = []
     this.zkMeta = {id: this.id, title, ctype: 4}
-    markdown += `# ${title}\n\n`
-    markdown += `\`\`\`eds
-        ${eds}
-      \`\`\``
+    zkImages.push(this.setImage(img, 1))
+    // markdown += `# ${title}\n\n`
+    markdown += `\`\`\`zk
+        title: ${title}
+        desc: ${eds}
+        image: ![](${img.attribs.src})
+      \`\`\`\n`
     let zkcards = Array.from($('.card'))
     for(let card of zkcards) {
       const $card = $(card)
       const title = $card.find('.title').text()
       const img = $card.find('img')[0]
+
       if(!title) continue
       markdown += `\`\`\`card
+        id: ${Utils.normalize(card.attribs['data-href'])}
         title: ${title}
         desc: ${$card.find('.desc').text()}
         image: ![](${img.attribs.src})
-       \`\`\``
+       \`\`\`\n`
       zkImages.push(this.setImage(img))
     }
     // console.log(markdown)
@@ -83,23 +89,28 @@ class Parser {
     let title2 = header.find('p').text()
     const ztImages = this.ztImages = []
     this.ztMeta = {id: this.id, title, ctype: 5}
-    markdown += `# ${title} \n\n`
-    if(title2){
-      markdown += `## ${title2} \n\n`
-    }
+    // markdown += `# ${title} \n\n`
+    // if(title2){
+    //   markdown += `## ${title2} \n\n`
+    // }
+  markdown += `\`\`\`zt
+      title: ${title}
+      desc: ${title2}
+    \`\`\`\n`
     let ztcards = Array.from($('.ztcard'))
     for(let card of ztcards) {
       const $card = $(card)
       const title = $card.find('.p1').text()
       const img = $card.find('.ztleft img')[0]
+      const longId = $card.find('.ztright .p3')[0].attribs['data-id']
       if(!title) continue
-      markdown += `
-       \`\`\`card
+      // `\`\`\` 必须在一行，否则会出错
+      markdown += `\`\`\`card
+        id: ${longId & 0xffffff}
         title: ${title}
         desc: ${$card.find('.p2').text()}
         image: ![](${img.attribs.src})
-       \`\`\`
-      `
+       \`\`\`\n`
       ztImages.push(this.setImage(img))
     }
     return markdown
@@ -253,9 +264,9 @@ class Parser {
       // console.log('59:', name)
       if (name === 'p') {
         if (text !== null) {
-          md += `${blockquotePrefix}${innerText}${inBlockquoto ? '\n' : '\n\n'}`
+          md += `${blockquotePrefix}${innerText}\n\n`
         } else {
-          md += `${blockquotePrefix}${this.getShowMarkdown($child, false)}${inBlockquoto ? '\n' : '\n\n'}`
+          md += `${blockquotePrefix}${this.getShowMarkdown($child, false)}\n\n`
         }
       } else if (name === 'text') {
         // console.log(innerText)
@@ -322,6 +333,7 @@ class Parser {
           md += `<u>${this.getShowMarkdown($child, false)}</u>`
         }
       } else if (name === 'a') {
+        console.log('a标签内的文本是：', innerText)
         md += `[${innerText}](${Utils.normalize(attribs.href)})`
       } else if (name === 'img') {
         md += `![${attribs.alt}](${attribs['data-big'] || attribs.src})`
@@ -464,9 +476,9 @@ class Parser {
 }
 
 // const parser = new Parser({
-//   id: 9625,
+//   id: 1035,
 //   m: 'show',
-//   type: 'experience',
+//   type: 'goodthing',
 //   html
 // })
 // console.log(parser.parse())

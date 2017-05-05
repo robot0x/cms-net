@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="description" content="调调DIAOX2.COM,讲述精致生活,推荐品质好物。找到最值得买的品牌好物,海淘折扣,介绍使用经验和体验测评,推荐新奇有趣礼物,送男女朋友父母长辈,介绍全球美食和旅游攻略,分类页提供家具品牌,生活用品,电器,办公文具,时尚单品,化妆品,护理保湿,数码产品,母婴用品和户外装备的品牌,价格,评测信息">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta name="keywords" content="调调,调调积分商城,积分,商城,积分商城,签到,邀请好友,签到赢积分,邀请好友赢积分">
+    <link rel="icon" href="//a.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="//c.diaox2.com/view/app/tool/record330.css">
+    <script type="text/javascript" src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//c.diaox2.com/cms/diaodiao/assets/jfcommon.js"></script>
+    <script type="text/javascript" src="//c.diaox2.com/view/app/tool/record330.js"></script>
+    <title>调调积分商城 - 兑换记录</title>
+  </head>
+  <body>
+    <section class="wrapper">
+      <!-- 头部部分-->
+      <header>
+        <!-- 我的积分-->
+        <div class="pull-left my-points-container">我的积分：<span class="my-points">--分</span></div>
+        <!-- 兑换记录-->
+        <!--<div class="pull-right conversion-record-container"><i class="conversion-record-icon"></i><a media="handheld" href="#">兑换记录</a></div>-->
+      </header>
+      <section class="main">
+        <h2 class="conversion-record-title">积分兑换记录：</h2>
+        <!-- 兑换记录列表-->
+        <ul class="records">
+        </ul>
+      </section>
+    </section>
+  </body>
+  <script>
+    var ddIsBridgeReady = false;
+    var data = {"data":{"history":[{"gid":2,"uid":42,"stamp":"2016-05-15 10:34:44","value":"1号券","lid":22},{"gid":1,"uid":42,"stamp":"2016-05-14 11:22:33","value":null,"lid":129},{"gid":1,"uid":42,"stamp":"2016-03-03 23:04:57","value":null,"lid":132},{"gid":10,"uid":42,"stamp":"2016-05-17 20:11:38","value":null,"lid":133}],"goods":[{"gid":1,"status":3,"type":0,"title":"测试品1","cover":"http://www.diaox2.com/icon.png","thumb":"http://www.diaox2.com/icon.png","pics":null,"intro":"简介简介","ec":"网易考拉海购","price":20,"quantity":995,"stocknum":1000,"sid":null,"limited":0,"desc":"描述描述","usage":"淘宝店拍下","return":"返回的文字","target":"http://www.taobao.com/","last_valid_time":"0000-00-00 00:00:00"},{"gid":2,"status":3,"type":1,"title":"优惠券虚拟","cover":"http://www.diaox2.com/icon.png","thumb":"http://www.diaox2.com/icon.png","pics":null,"intro":"简介文字","ec":"网易考拉海购","price":50,"quantity":99,"stocknum":100,"sid":null,"limited":2,"desc":"描述文字","usage":"使用方法","return":"返回的文字","target":"http://www.taobao.com/","last_valid_time":"2016-12-31 23:59:59"},{"gid":10,"status":2,"type":0,"title":"限量品2占位，别买","cover":"http://www.diaox2.com/icon.png","thumb":"http://www.diaox2.com/icon.png","pics":null,"intro":"简介文字","ec":"网易考拉海购","price":10,"quantity":100,"stocknum":0,"sid":null,"limited":1,"desc":"描述文字","usage":"使用方法","return":"返回的文字","target":"http://www.taobao.com/","last_valid_time":"0000-00-00 00:00:00"}],"user":{"uid":42,"last_checkin":0,"continuous_check":0,"last_share":0,"share_num_inday":0,"invite_str":"00A0A00A000AA42Q","invite_num":0,"blacked":0,"be_invited":0,"ever_set_gift":0,"ever_share":0,"ever_consume":0,"ever_set_notify":0,"set_notify":0,"score":305,"target_gift":1}}};
+    function connectWebViewJavascriptBridge(callback) {
+        if (window.WebViewJavascriptBridge) {
+            callback(WebViewJavascriptBridge);
+        } else {
+            document.addEventListener('WebViewJavascriptBridgeReady', function(ev) {
+                callback(ev.bridge);
+                if(! window.WebViewJavascriptBridge && ev.bridge)
+                    window.WebViewJavascriptBridge = ev.bridge; //rare case happen?
+            }, false);
+        }
+    }
+    function ddHistory(callback) {
+        if (! ddIsBridgeReady) {
+            return false;
+        }
+        WebViewJavascriptBridge.callHandler('RPAction', {'action' : 'history'}, function(response) {
+            callback(response);
+        });
+        return true;
+    }
+    function bridgeInitCallback(bridge) {
+        //事件：WebViewJavascriptBridgeReady
+        try {
+            bridge.init(function(data, responseCallback) {
+                //这个函数是默认的handler，callHandler和registerHandler以外的事件发生了
+                console.log('Default handler called?');
+                console.log(data);
+                if(responseCallback)    //typeof responseCallback === "function"
+                    responseCallback(data);
+            });
+            //bridge.init(function(message, def_handler) {return def_handler(message);});
+        } catch(e){
+            console.log('WebViewJavascriptBridge init fail');
+            console.log(e);
+        }
+        ddIsBridgeReady = true;
+        console.log("Ready to fetch history");
+        ddHistory(hisCallback);
+        return true;
+    }
+    //Raw invoke
+    connectWebViewJavascriptBridge(bridgeInitCallback);
+
+    function hisCallback(env_data) {
+        if(env_data == null || env_data == undefined) {
+            //TODO: 错误提示
+            console.log('居然his调用返回值挂了');
+        } else {
+            console.log(env_data);
+            if(env_data.state && env_data.state != "SUCCESS") {
+                console.log('调用his，Server端逻辑错');
+                return; //TODO: 错误提示
+            }
+            if(env_data.data){
+                console.log('his ready');
+                if(env_data.data.user && env_data.data.user.score != undefined)
+                    $("span.my-points").text(env_data.data.user.score + "分");
+                else
+                    $("span.my-points").text("分数查询失败");
+                //准备data
+                data = env_data;
+                if(data.data.history.length == 0)
+                    $.showNoResultTips();
+                else
+                    $.renderView();
+            } else {
+                return; //TODO: 错误提示
+            }
+        }
+    }
+    jQuery(document).ready(function (){
+        //无需log
+        return true;
+    });
+  </script>
+</html>

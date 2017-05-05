@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<title><%-name%></title>
+<link rel="icon" href="//c.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" media="only screen and (min-device-width: 1280px)" type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/authorpc200.css" />
+<link rel="stylesheet" media="only screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-device-width: 1280px), only screen and (-webkit-min-device-pixel-ratio: 3) and (max-width:1028px)"
+				type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/authorphone200.css" />
+<script src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.json-2.4.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cookie.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/waypoints.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/api200.js"></script>
+</head>
+<body data-type="rss" data-render="<%-version%>">
+	<div class="total">
+		<div class="content">
+			<%# <div class="articlecard" data-href="/view/app/?m=zk&id=9790">
+				<img class="articleimg" src="http://a.diaox2.com/cms/sites/default/files/20170502/zk/188.jpg" />
+				<span class="articletitle">价格不高，  格调却很高的好东西</span>
+				<span class="articleread" data-id="42047729837630">阅读 ...</span>
+			</div>
+			<hr class="articlesep">%>
+			<%-body %>
+			<div id="relcardlast"></div>
+			<div class="clearfix last"></div>
+		</div>
+		<div class="bottomspace"></div>
+	</div>
+</body>
+
+<script>
+	//set a global var
+	allarticles = [<%=allarticles %>]
+	nowpos = 20;
+
+	function htmlwork(selector, data) {
+		if (data == undefined) {
+			return false;
+		}
+		if (selector == undefined) {
+			selector = "#relcardlast";
+		}
+		var html_str = "";
+		html_str += '<div class="articlecard" data-href="' + data.url + '">\n';
+		if (data.thumb_image_url.match(/^https?:\/\//i)) {
+			html_str += '<img class="articleimg" src="' + data.thumb_image_url + '" />';
+		} else {
+			html_str += '<img class="articleimg" src="//a.diaox2.com/cms/sites/default/files/' + data.thumb_image_url + '" />';
+		}
+		//html_str += '<img class="articleimg" src="' + data.thumb_image_url + '" />\n';
+		//by xmap: 20160111，title数组，[1]是=> "7个好物"一类的，不要
+		//html_str += '<span class="articletitle">' + data.title.join('') + '</span>\n';
+		if (data.title.length >= 2)
+			html_str += '<span class="articletitle">' + data.title[0] + ' ' + data.title[1] + '</span>\n';
+		else
+			html_str += '<span class="articletitle">' + data.title[0] + '</span>\n';
+		html_str += '<span class="articleread unknown" data-id="' + data.cid + '">阅读&nbsp;...</span>';
+		//html_str += '\n</div><div class="clearfix"></div><hr class="sep">\n';
+		html_str += '\n</div><hr class="articlesep">\n';
+		$(html_str).insertBefore(selector);
+		//新加入的文章条，不会自动拥有可点击事件，重新绑定, jquery selector，不是css的
+		bind_log_click(".articlecard:last", "data-href", "authorrel");
+		return true;
+	}
+
+	function getmore() {
+		console.log('reached bottom by num:' + nowpos);
+		if (allarticles.length > nowpos) {
+			if ($('.loading_bar').length == 0 || $('.loading_bar') == undefined) {
+				$('<div class="loading_bar" align="center"><img src="/cms/diaodiao/assets/progress.gif" /></div>').insertBefore("div.bottomspace");
+			}
+		}
+		var i = 0;
+		var length = allarticles.length;
+		var toget = [];
+		for (; i < 20 && length > nowpos; i++, nowpos++) {
+			//TODO: ajax to get new 20 articles meta
+			toget.push(allarticles[nowpos]);
+			//htmlwork("#relcardlast", allarticles[nowpos]);
+		}
+		if (i != 0) {
+			//Ajax, use callback to build html
+			jQuery.support.cors = true;
+			var jsondict = {
+				"request_methods": ["specified_meta_data"],
+				"request_data": {
+					"specified_meta_data": {
+						"cids": toget
+					}
+				}
+			}
+			$.ajax({
+				type: "POST",
+				contentType: "application/json",
+				data: JSON.stringify(jsondict),
+				dataType: "json", //"html"
+				url: "//api.diaox2.com/v2/meta", //TODO
+				//额外的变量，让success函数可以访问
+				success: function(data) {
+					if (data.state != "SUCCESS") {
+						nowpos -= i;
+						return false;
+					}
+					var abbr = data.res.specified_meta_data.meta_infos;
+					//这里有问题，接口返回的顺序是cid序，不是toget里面从Php获得的timetopublish序。。。
+					for (var j = 0; j < toget.length; j++) {
+						var ok = false;
+						for (var i = 0; i < abbr.length; i++) {
+							if (abbr[i].cid == toget[j]) {
+								ok = true;
+								break;
+							}
+						}
+						if (ok)
+							htmlwork("#relcardlast", abbr[i]);
+					}
+					//如果捆绑返回，则不需要这个了
+					update_read('.articleread.unknown', update_callback);
+				},
+				timeout: 80000,
+				error: function(x, t, e) {
+					console.log('get more meta error! rewind');
+					nowpos -= i;
+				}
+			});
+		}
+	}
+
+	function update_callback(selector) {
+		if (selector == undefined) {
+			selector = '.articleread';
+		}
+		console.log("update_callback, called on selector:" + selector);
+		if ($('.loading_bar').length != 0) {
+			$('.loading_bar').remove();
+		}
+		//tinysort.defaults.order = 'desc'; //asc, rand
+		//tinysort('.related > div', {selector:'span.cardread'});
+		//tinysort('.related > div', {selector:'span.cardread', data:'reads'}); //use data-reads
+		$(selector).addClass('known');
+		$(selector).removeClass('unknown');
+		$('#relcardlast').waypoint(getmore, {
+			offset: 'bottom-in-view' /*'95%'*/ ,
+			triggerOnce: true
+		});
+	}
+	$(document).ready(function() {
+		var uid = $.cookie('DDuid');
+		if (uid == undefined)
+			uid = -1;
+		add_access({
+			"action": "navigate",
+			"value": "Rss",
+			"user": uid
+		}, "log"); //log this
+		bind_log_click(".articlecard", "data-href", "rssrelcard");
+		update_read(".articleread", update_callback); //default selector span.cardread
+	});
+</script>
+
+</html>

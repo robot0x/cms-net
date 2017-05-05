@@ -4,16 +4,14 @@ const fs = require('fs')
 const Log = require('../utils/Log')
 const runLogger = Log.getLogger('cms_run')
 const Promise = require('bluebird')
-
 const DB = require('../db/DB')
-const db = new DB()
 
 class Writer {
     write (content) {
         const {markdown, meta, images} = content
         const {id} = meta
         const batch = []
-        batch.push(table.exec(`INSERT INTO article_content set aid=${id}, content=${db.escape(markdown)}`).catch(err => {
+        batch.push(DB.exec(`INSERT INTO article_content set aid=${id}, content=${DB.escape(markdown)}`).catch(err => {
           console.log(err)
           runLogger.error(`id为${id}的文章写入article_content数据库出错，出错信息：`, err.message)
         }))

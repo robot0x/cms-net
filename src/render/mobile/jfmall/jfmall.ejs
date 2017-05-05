@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="renderer" content="webkit">
+<meta name="description" content="有调DIAOX2.COM,讲述精致生活,推荐品质好物。找到最值得买的品牌好物,海淘折扣,介绍使用经验和体验测评,推荐新奇有趣礼物,送男女朋友父母长辈,介绍全球美食和旅游攻略,分类页提供家具品牌,生活用品,电器,办公文具,时尚单品,化妆品,护理保湿,数码产品,母婴用品和户外装备的品牌,价格,评测信息">
+<meta name="MobileOptimized" content="320">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="keywords" content="调调,有调，有调积分商城,积分,商城,积分商城,签到,邀请好友,签到赢积分,邀请好友赢积分">
+<link rel="icon" href="//a.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="//c.diaox2.com/cms/diaodiao/assets/mall330.css">
+<script type="text/javascript" src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="//c.diaox2.com/cms/diaodiao/assets/jfcommon.js"></script>
+<script type="text/javascript" src="//c.diaox2.com/cms/diaodiao/assets/mall330.js"></script>
+<title>有调积分商城</title>
+</head>
+<body data-render="<%=version%>">
+  <section class="wrapper">
+    <!-- 页面主体部分-->
+    <section id="main" class="main">
+      <!-- 头部部分-->
+      <header>
+        <!-- 我的积分-->
+        <div class="pull-left my-points-container">我的积分：<span class="my-points">0分</span></div>
+        <!-- 兑换记录-->
+        <div class="pull-right conversion-record-container"><i class="conversion-record-icon"></i><a media="handheld" id="check" href="#">兑换记录</a></div>
+        <!-- 最新礼品展示区-->
+      </header>
+      <section class="data-area">
+        <section class="coupon-area"></section>
+        <section class="all-area"></section>
+      </section>
+    </section>
+  </section>
+</body>
+<script>
+  var data = [<%-data %>]
+  var gid = -1;
+  var share = <%-type === 'share'? 1 : 0%>
+  var uid = -1;
+  <% if( pageType === 'share') {%>
+    jQuery(document).ready(function (){
+       function logAccess() {
+           var postdata = {"user": uid, "action": "JFMall", "value": navigator.userAgent, "method": "log", "url": location.href,
+               "self": location.href, "referer": document.referrer, "type":"JF", "isIOS": isIOS};
+           console.log(postdata);
+           jQuery.support.cors = true;
+           $.ajax({
+               type: "POST",
+               contentType: "application/json",
+               data: JSON.stringify(postdata),
+               dataType: "json", //"html"
+               url: '//api.diaox2.com/v1/contvote',
+               success: function (data) {console.log('log成功'); console.log(data);},
+               timeout: 8000,
+               error: function (x,t,e) {console.log("log失败, error: " + e);}
+           });
+           return true;
+       }
+       logAccess();
+   });
+  <% } else {%>
+    var ddIsBridgeReady = false;
+    var score = -1;
+    var isIOS = Boolean(navigator.userAgent.match(/iphone|ipod|ios|ipad/i));
+
+    function connectWebViewJavascriptBridge(callback) {
+      if (window.WebViewJavascriptBridge) {
+        callback(WebViewJavascriptBridge);
+      } else {
+        document.addEventListener('WebViewJavascriptBridgeReady', function(ev) {
+          callback(ev.bridge);
+          if (!window.WebViewJavascriptBridge && ev.bridge)
+            window.WebViewJavascriptBridge = ev.bridge; //rare case happen?
+        }, false);
+      }
+    }
+
+    function ddGetAppEnv() {
+      if (!ddIsBridgeReady) {
+        return false;
+      }
+      WebViewJavascriptBridge.callHandler('getAppEnv', {
+        'caller': 'ddiosjsbridge1.0'
+      }, envCallback);
+      return true;
+    }
+
+    function bridgeInitCallback(bridge) {
+      //事件：WebViewJavascriptBridgeReady
+      try {
+        bridge.init(function(data, responseCallback) {
+          //这个函数是默认的handler，callHandler和registerHandler以外的事件发生了
+          console.log('Default handler called?');
+          console.log(data);
+          if (responseCallback) //typeof responseCallback === "function"
+            responseCallback(data);
+        });
+        //bridge.init(function(message, def_handler) {return def_handler(message);});
+      } catch (e) {
+        console.log('WebViewJavascriptBridge init fail');
+        console.log(e);
+      }
+      ddIsBridgeReady = true;
+      ddGetAppEnv();
+      register(); //get_share_meta的注册
+      return true;
+    }
+    //Raw invoke
+    connectWebViewJavascriptBridge(bridgeInitCallback);
+
+    function reqLog() {
+      WebViewJavascriptBridge.callHandler('checkLogin', true, logCallback);
+    }
+
+    function logCallback(ret) {
+      if (ret == null || ret == undefined || ret.result == undefined) {
+        console.log("没有登录或返回值是空");
+        return;
+      }
+      if (ret.result == "YES")
+        ddGetAppEnv();
+      else
+        console.log("没有登录");
+    }
+
+    function envCallback(env_data, context_data) {
+      if (env_data == null || env_data == undefined) {
+        console.log('居然env调用返回值挂了');
+      } else {
+        uid = env_data.uid; //0 or undefined == > wrong
+        logAccess(); //日志
+        if (uid)
+          $("#check").attr("href", '/view/app/tool/record.html');
+        else
+          //$("#check").attr("href", "javascript:alert('请在用户中心登录后使用')");
+          $("#check").attr("href", "javascript:reqLog();");
+        score = env_data.score;
+        if (score)
+          $.addMyPoints(score);
+        gid = env_data.target_gift;
+        if (gid) {
+          $.addTag(gid);
+        }
+      }
+    }
+
+    function ddActiveShare() {
+      if (!ddIsBridgeReady) {
+        return false;
+      }
+      WebViewJavascriptBridge.callHandler('activeshare', get_share_meta('dict'));
+      //callHandler(handlerName, data [,responseCallback])
+      //日志
+      var postdata = {
+        "user": uid,
+        "action": "ShareMall",
+        "value": "none",
+        "method": "log",
+        "url": location.href,
+        "self": location.href,
+        "referer": "APP",
+        "type": "JF",
+        "isIOS": isIOS
+      };
+      //{"user":-1,"action":"ActiveShare","value":"cid:26495653255193","method":"log","url":"http://z.diaox2.com/view/app/","self":"http://z.diaox2.com/view/app/?m=show&id=6169","referer":"http://z.diaox2.com/view/app/?m=pub3","type":"goodthing","isIOS":"false"}
+      console.log(postdata);
+      jQuery.support.cors = true;
+      $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(postdata),
+        dataType: "json", //"html"
+        url: '//api.diaox2.com/v1/contvote',
+        //额外的变量，让success函数可以访问
+        success: function(data) {
+          console.log('log成功');
+          console.log(data);
+        },
+        timeout: 8000,
+        error: function(x, t, e) {
+          console.log("log失败, error: " + e);
+        }
+      });
+      return true;
+    }
+
+    function get_share_meta(context) {
+      var jsondict = {
+        "version": "2.0"
+      };
+      var title = "邀请你加入有调，赢积分换百款精选好礼";
+      var desc = title;
+      //var url = "http://c.diaox2.com/view/app/invite/" + a[1] + ".html";
+      var url = location.href;
+
+      jsondict["title"] = title;
+      jsondict["weibo"] = "快和我一起加入有调，赢积分换百款精选好礼" + url + "分享自@有调App，全球品质好物推荐";
+      jsondict['wechat'] = "听说懂生活、有品位的人都聚在这里。";
+      jsondict['other'] = "快和我一起加入有调，赢积分换百款精选好礼" + url + "分享自@有调App，全球品质好物推荐";
+      //No https issue
+      jsondict["pic"] = "http://c.diaox2.com/cms/diaodiao/assets/icontodown.png"; //icon
+      jsondict["pic"] = "http://www.diaox2.com/icon.png"; //icon
+      jsondict["desc"] = desc;
+      jsondict["url"] = url;
+
+      console.log(JSON.stringify(jsondict));
+      if (context == 'dict')
+        return jsondict;
+      return JSON.stringify(jsondict);
+    }
+
+    function register() {
+      if (typeof WebViewJavascriptBridge != 'undefined') {
+        console.log("Start register");
+        WebViewJavascriptBridge.registerHandler("get_share_meta", function(data, responseCallback) {
+          var result = get_share_meta(data);
+          if (responseCallback) //typeof responseCallback === "function"
+            responseCallback(result);
+        });
+      } else {
+        console.log("Still no duixiang!");
+        //setTimeout(register, 3000);
+        return false;
+      }
+      return true;
+    }
+
+    function logAccess() {
+      var postdata = {
+        "user": uid,
+        "action": "JFMall",
+        "value": navigator.userAgent,
+        "method": "log",
+        "url": location.href,
+        "self": location.href,
+        "referer": document.referrer,
+        "type": "JF",
+        "isIOS": isIOS
+      };
+      console.log(postdata);
+      jQuery.support.cors = true;
+      $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(postdata),
+        dataType: "json", //"html"
+        url: '//api.diaox2.com/v1/contvote',
+        success: function(data) {
+          console.log('log成功');
+          console.log(data);
+        },
+        timeout: 8000,
+        error: function(x, t, e) {
+          console.log("log失败, error: " + e);
+        }
+      });
+      return true;
+    }
+    jQuery(document).ready(function() {
+      //logAccess();  放到envready
+      //if(location.protocol != "https:")
+      //    location.href = location.href.replace(/^http:/i, 'https:');
+    });
+  <% } %>
+
+</script>
+
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title><%=title %></title>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="renderer" content="webkit|ie-stand">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="icon" href="http://a.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon">
+<meta name=description content="「调调」每天讲述精致的生活方式，推荐那些真正高品质的好东西，帮你低价买到优质海淘商品。拥有调调，拥有生活。">
+<link rel="stylesheet" type="text/css" href="//www.diaox2.com/css/zk.css">
+<script>
+  function adjust(img) {
+    var imgContainer = img.parentNode,
+      width = imgContainer.offsetWidth,
+      height = imgContainer.offsetHeight,
+      scale = (width / height).toFixed(2),
+      ratio = (img.width / img.height).toFixed(2);
+    if (Math.abs(scale - ratio) < 0.02) {
+      img.width = width;
+      img.height = height;
+    } else if (scale > ratio) {
+      img.width = width;
+      img.height = img.width / ratio;
+      // 图片上移
+      img.style.marginTop = -(img.height - height) / 2 + "px";
+    } else {
+      img.height = height;
+      img.width = img.height * ratio;
+      // 图片右移
+      img.style.marginLeft = -(img.width - width) / 2 + "px";
+    }
+  }
+</script>
+</head>
+<body id="<%=4294967297 * id%>" class="<%=id%>_<%=id%>" data-type="zhuankan" data-share="0" data-render="<%=version%>">
+  <div class="wrapper">
+    <div class="header">
+      <div class="header-box">
+        <ul class="f-l">
+          <li class="logo f-l">
+            <a href="//www.diaox2.com/index.html">
+              <img src="//www.diaox2.com/images/logo-top.png" alt="" width="70" height="40"></a>
+          </li>
+          <li class="index f-l" style="margin-left:30px;"><a href="//www.diaox2.com/index.html">首页</a></li>
+          <li class="category f-l"><a href="//www.diaox2.com/zdm.html">值得买</a></li>
+          <li class="category f-l"><a href="//www.diaox2.com/category/100003.html">分类</a></li>
+          <li class="category f-l"><a href="//www.diaox2.com/s-result.html?q=礼物">礼物</a></li>
+          <li class="down-app f-l">
+            <i class="header-app-icon"></i>
+            <a href="//www.diaox2.com/download.html" target="_blank">下载APP</a></li>
+        </ul>
+        <ul class="login f-r" style="visibility: hidden;">
+          <li class="login-title f-l"><a href="#">登录</a></li>
+          <li class="face f-l">
+            <a href="#"></a>
+          </li>
+          <div class="person-state-list-container">
+            <!-- <span class="triangle"></span> -->
+            <ul class="person-state-list">
+              <li><a href="//www.diaox2.com/collect.html">我的收藏</a></li>
+              <li><a href="javascript:;">退出</a></li>
+              <!-- <li><a href="#">主页</a></li> -->
+            </ul>
+          </div>
+        </ul>
+        <form action="//www.diaox2.com/s-result.html" class="search-form f-r" name="search">
+          <input type="text" id="search-input" class="search-input" name="q" maxlength="100" autocomplete="off">
+          <input type="submit" id="sub" class="btn" value="">
+        </form>
+      </div>
+    </div>
+    <!-- 顶部导航 -->
+    <div class="content-area">
+      <div class="content-box clearfix">
+        <div class="article-area f-l">
+          <h1 class="article-title">
+              <p><%=title%></p>
+              <% if( titleex ) { %>
+                <a href="#goodthing" class="goodthing-count"><%=titleex %></a>
+							<% } %>
+            </h1>
+          <%-body %>
+          <%#
+          <h1 class="article-title">
+            <p>title</p>
+                <a href="#goodthing" class="goodthing-count">titleex</a>
+            </h1>
+          <div class="article-banner">
+            <div class="article-banner-container">
+              <ul class="banner-list loading">
+                <li><img src="http://a.diaox2.com/cms/sites/default/files/20151215/zk/4234cover.jpg" data-w="640" data-h="416" alt="" width="640" height="416"></li>
+              </ul>
+            </div>
+          </div>
+          <p class="zk-title">
+            如果你喜欢的男生是个宅男/GEEK，总之就是闷得不行，让你一筹莫展？别着急，调调来帮你！趁着圣诞/新年之际，挑选一个戳中他的礼物表达你的心意，一定会有所进展！
+          </p>
+          <a name="goodthing"></a>
+           <ul class="zs-box">
+            <li>
+              <a href="javascript:;">
+                <i class="icon icon-s"></i>
+                <span class="a-fav">...</span>
+              </a>
+            </li>
+            <li>
+              <a href="javascript:;">
+                <i class="icon icon-z"></i>
+                <span class="a-up">..</span>
+              </a>
+            </li>
+          </ul>
+
+
+          <ul class="goodthing-list clearfix">
+            <li class="goodthing f-l">
+              <a target="_blank" href="//www.diaox2.com/article/2419.html" data-type="goodthing">
+                <div class="img-container">
+                  <img onload="adjust(this);" src="http://a.diaox2.com/cms/sites/default/files/20150701/goodthing/c_old.jpg" data-w="596" data-h="486" alt="">
+                </div>
+                <div class="goodthing-highlight">
+                  <h2><div>游戏、电影的好伴侣：Sony MDR-HW700DS无线耳机</div></h2>
+                  <p>投其所好最重要！可是游戏动漫都不懂，咋办？此时请默念，索尼大法好。它是和PS3/PS4等配合最好的多声道耳机，当然xbox系支持也不在话下，游戏迷神器，看电影也是效果拔群，是这个价位上效果最好的无线耳机。</p>
+                </div>
+              </a>
+            </li>
+            </li>
+          </ul>
+
+          %>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mask disnone"></div>
+  <!-- 登录弹出框 start-->
+  <div class="login-box disnone">
+    <p class="login-title-p">登录<i class="login-close"></i></p>
+    <div class="login-method-container">
+      <ul class="login-method-list">
+        <li class="login-method left">
+          <a href="#"><img src="//www.diaox2.com/images/wb.png"></a>
+          <p>微博账号登录</p>
+        </li>
+        <li class="login-method right">
+          <a href="#"><img src="//www.diaox2.com/images/wx.png"></a>
+          <p>微信登录</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <!-- 登录弹出框 end-->
+  <!-- 分享布局 start -->
+  <div class="share-mask disnone"></div>
+  <div class="share-area disnone">
+    <div class="share-method-container">
+      <div class="share-wb active">分享到新浪微博</div>
+      <div class="share-wx">分享到微信</div>
+      <i class="share-close"></i>
+    </div>
+    <ul class="share-list clearfix">
+      <li class="share-list-wb f-l">
+        <textarea placeholder="这里是默认文案"></textarea>
+        <ul class="share-wb-img-list clearfix">
+          <li class="f-l"><img src="//www.diaox2.com/images/b1.jpg" alt="" width="100" height="100"></li>
+          <li class="f-l"><img src="//www.diaox2.com/images/b2.jpg" alt="" width="100" height="100"></li>
+        </ul>
+        <ul class="share-wb-btn-list f-r">
+          <li class="f-l cancle"><a href="javascript:;">取消</a></li>
+          <li class="f-l"><a href="javascript:;">发布</a></li>
+        </ul>
+      </li>
+      <li class="share-list-wx f-l">
+        <img src="//www.diaox2.com/images/b3.jpg" alt="" height="250" width="250">
+        <p>请在微信中扫描二维码，然后轻触屏幕右上角...分享给朋友们</p>
+      </li>
+    </ul>
+  </div>
+  <div class="bottombar">
+    <div class="bottom-share"></div>
+    <div class="line"></div>
+  </div>
+  <script src="//www.diaox2.com/js/jquery.js"></script>
+  <script src="//c.diaox2.com/cms/diaodiao/assets/jquery.lazy.min.js"></script>
+  <script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cookie.min.js"></script>
+  <script src="//www.diaox2.com/js/login.js" defer="defer"></script>
+  <script src="//www.diaox2.com/js/article.js"></script>
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a3e886fbe5e5db18814a35ef70f81457";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+</body>
+
+<script>
+  g_relsearch = "";
+</script>
+
+</html>

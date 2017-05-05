@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<title><%-title %></title>
+<link rel="icon" href="//c.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" media="only screen and (min-device-width: 1280px)" type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/authorpc200.css" />
+<link rel="stylesheet" media="only screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-device-width: 1280px), only screen and (-webkit-min-device-pixel-ratio: 3) and (max-width:1028px)"
+    type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/authorphone200.css" />
+<script src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cookie.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/api204.js"></script>
+</head>
+
+<body data-type="zhuanti" id="<%-4294967297 * id%>" data-render="<%-version%>">
+  <div class="total" data-id="<%-4294967297 * id%>" data-thumb="http://a.diaox2.com/cms/sites/default/files/20160803/zt/woxihuandewenju.JPG" data-self="http://c.diaox2.com/view/app/?m=zt&id=%-id%>">
+
+    <% if( pageType === 'share') {%>
+      <div class="banner tpl" data-href="<%-downloadAddr%>"><img class="bannerleft" src="//c.diaox2.com/cms/diaodiao/assets/icontodown.png"><p class="bannerhigh">品质生活导购平台</p><p class="bannerlow">尽在<span> 有调</span></p><div class="bannerright">点此下载</div></div>
+    <% } %>
+
+    <div class="content">
+      <%-body %>
+      <% if( pageType === 'share') {%>
+    		<div class="botmenu" style="width: 414px;">
+    			<table>
+    				<tbody>
+    					<tr>
+    						<td style="width:100%" id="bot_intro">
+    							<img src="//c.diaox2.com/cms/diaodiao/assets/icontodown.png">
+    							<span>有调</span>
+    							<span>品质生活导购平台</span>
+    							<div class="downlink" data-href="<%-downloadAddr%>">立即下载</div>
+    						</td>
+    					</tr>
+    			 </tbody>
+    			</table>
+    		</div>
+        <div class="bottomspace"></div>
+    	<% } %>
+      <div class="bottomspace"></div>
+    </div>
+  </div>
+  <script>
+    var uid = $.cookie('DDuid');
+    if (uid == undefined)
+      uid = -1;
+    var isIOS = Boolean(navigator.userAgent.match(/iphone|ipod|ios|ipad/i));
+    var idlist = []
+    var p3s = $('.p3').each(function(i, p){ idlist.push(Number(p.dataset.id))})
+    function updateread(idlist) {
+      $.ajax({
+          url: "//api.diaox2.com/v1/stat/all",
+          data: {
+            data: JSON.stringify({
+              aids: idlist
+            })
+          },
+          dataType: "jsonp",
+          type: "GET",
+          jsonp: "cb",
+          jsonpCallback: "cb99",
+          cache: !0,
+          timeout: 2e4
+        })
+        .done(function(data) {
+          var c, d, e = data.res;
+          for (var c in e) {
+            d = document.querySelector('.p3[data-id="' + c + '"]');
+            if (d) {
+              d.innerHTML = "阅读 " + e[c].click;
+              d.className = d.className.replace(/unknown|known/gi, "") + " known";
+            }
+          }
+          return console.log("get stat success !!");
+        })
+        .fail(function(a, b, c) {
+          console.log("update failed, with error " + c);
+        })
+    }
+
+    function connectWebViewJavascriptBridge(callback) {
+      if (window.WebViewJavascriptBridge) {
+        callback(WebViewJavascriptBridge);
+      } else {
+        document.addEventListener('WebViewJavascriptBridgeReady', function(ev) {
+          callback(ev.bridge);
+          if (!window.WebViewJavascriptBridge && ev.bridge)
+            window.WebViewJavascriptBridge = ev.bridge; //rare case happen?
+        }, false);
+      }
+    }
+
+    function bridgeInitCallback(bridge) {
+      //事件：WebViewJavascriptBridgeReady
+      try {
+        bridge.init(function(data, responseCallback) {
+          //这个函数是默认的handler，callHandler和registerHandler以外的事件发生了
+          console.log('Default handler called?');
+          console.log(data);
+          if (responseCallback) //typeof responseCallback === "function"
+            responseCallback(data);
+        });
+        //bridge.init(function(message, def_handler) {return def_handler(message);});
+      } catch (e) {
+        console.log('WebViewJavascriptBridge init fail');
+        console.log(e);
+      }
+      ddIsBridgeReady = true;
+      register(); //get_share_meta的注册
+      return true;
+    }
+    //Raw invoke
+    connectWebViewJavascriptBridge(bridgeInitCallback);
+
+    function get_share_meta(context) {
+      var jsondict = {
+        "version": "2.0"
+      };
+      var title = $('title').text();
+      if (title == undefined || title.length == 0)
+        title = "来自有调app的美文";
+      var desc = title;
+      //var url = "http://c.diaox2.com/view/app/invite/" + a[1] + ".html";
+      var thumb = $("div.total").attr('data-thumb');
+      var cid = $("body").attr('id');
+      var base = "/share/"; //TODO: share
+      var url = "http://" + window.location.host + base + cid + ".html";
+
+      jsondict["title"] = title;
+
+      jsondict["weibo"] = "「" + title + "」" + url + "分享自@有调App，全球品质好物推荐";
+      jsondict['wechat'] = "分享自 「有调」，全球品质好物推荐";
+      jsondict['other'] = "分享自 「有调」，全球品质好物推荐";
+      //No https issue
+      jsondict["pic"] = thumb;
+      jsondict["desc"] = desc;
+      jsondict["url"] = url;
+
+      console.log(JSON.stringify(jsondict));
+      if (context == 'dict')
+        return jsondict;
+      return JSON.stringify(jsondict);
+    }
+
+    function register() {
+      if (typeof WebViewJavascriptBridge != 'undefined') {
+        console.log("Start register");
+        WebViewJavascriptBridge.registerHandler("get_share_meta", function(data, responseCallback) {
+          var result = get_share_meta(data);
+          if (responseCallback) //typeof responseCallback === "function"
+            responseCallback(result);
+        });
+      } else {
+        console.log("Still no duixiang!");
+        //setTimeout(register, 3000);
+        return false;
+      }
+      return true;
+    }
+    $(document).ready(function() {
+      add_access({
+        "action": "navigate",
+        "value": "Zhuanti",
+        "user": uid,
+        "isIOS": isIOS
+      }, "log"); //log this
+      bind_log_click(".articlecard", "data-href", "zhuantiarticlecard");
+      updateread(idlist);
+    });
+  </script>
+</body>
+</html>

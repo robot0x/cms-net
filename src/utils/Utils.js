@@ -1,7 +1,142 @@
 const url = require('url')
 
 class Utils {
-  
+
+  static toShortId (ids) {
+    const factor = 4294967297 // Math.pow(2, 32) + 1
+    const factor2 = 0XFFFFFF
+    const numReg = /^\d+$/
+    let ret = null
+    if(Utils.isValidArray(ids)) {
+      ret = []
+      for (let id of ids) {
+        if (numReg.test(id)) {
+          if(id >= factor) {
+            ret.push(id & factor2)
+          } else {
+            ret.push(id)
+          }
+        }
+      }
+    } else if (numReg.test(ids)) {
+      if(ids >= factor){
+        ret = ids & factor2
+      } else {
+        ret = ids
+      }
+    }
+    return ret
+  }
+
+  static toLongId (ids) {
+    const factor = 4294967297 // Math.pow(2, 32) + 1
+    const factor2 = 0XFFFFFF
+    const numReg = /^\d+$/
+    let ret = null
+    if(Utils.isValidArray(ids)) {
+      ret = []
+      for (let id of ids) {
+        if (numReg.test(id)) {
+          if(id < factor) {
+            ret.push(id * factor)
+          } else {
+            ret.push(id)
+          }
+        }
+      }
+    } else if (numReg.test(ids) ) {
+      if(ids < factor){
+        ret = ids * factor
+      } else {
+        ret = ids
+      }
+    }
+    return ret
+  }
+
+
+  // 获取数组中第一个元素
+  static getFirst (data) {
+    if (Utils.isValidArray(data)) {
+      [data] = data
+    } else {
+      data = null
+    }
+    return data
+  }
+
+  static ctypeToM (ctype) {
+    ctype = Number(ctype)
+    // console.log(ctype)
+    // 1-首页/2-好物/3-专刊/4-活动/5-经验/7-值得买/8-评测/9-专题
+    let m = ''
+    switch (ctype) {
+      case 1:
+        m = 'show'
+        break;
+      case 2:
+        m = 'show'
+        break;
+      case 3:
+        m = 'zk'
+        break;
+      case 4:
+        m = 'show'
+        break;
+      case 5:
+        m = 'show'
+        break;
+      case 7:
+        m = 'zdm'
+        break;
+      case 8:
+        m = 'ceping'
+        break;
+      case 9:
+        m = 'zt'
+        break;
+      default:
+        m = null
+    }
+    return m
+  }
+  static ctypeToType (ctype) {
+    ctype = Number(ctype)
+    // 1-首页/2-好物/3-专刊/4-活动/5-经验/7-值得买/8-评测/9-专题
+    let type = ''
+    switch (ctype) {
+      case 1:
+        type = 'firstpage'
+        break;
+      case 2:
+        type = 'goodthing'
+        break;
+      case 3:
+        type = 'zhuankan'
+        break;
+      case 4:
+        type = 'activity'
+        break;
+      case 5:
+        type = 'experience'
+        break;
+      case 7:
+        type = 'zdm'
+        break;
+      case 8:
+        type = 'ceping'
+        break;
+      case 9:
+        type = 'zhuanti'
+        break;
+      default:
+        type = 'nothing'
+    }
+    return type
+  }
+  static isValidArray (array) {
+    return array && Array.isArray(array) && array.length > 0
+  }
   /**
    * 如果输入的是我们自己的链接
    *   形如：/view/app/?m=show&id=9625    返回 9625
@@ -131,5 +266,18 @@ class Utils {
 // console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=show&id=9625#a'))
 // console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=show&id=9625#111'))
 // console.log(Utils.normalize('/view/app/sku/8060.html'))
+
+// const lcids = [4294967297, 41201621280121, 39423504819163, 39423504819163, '', NaN, 41205916247418, 3563]
+// const lcid = 4647154615354
+// const scids = [9686, 9685, 9684, 2112, 1, Number, 41201621280121]
+// const scid = 1214
+// console.log(Utils.toShortId(lcids))
+// console.log(Utils.toShortId(lcid))
+// console.log(Utils.toShortId(scids))
+// console.log(Utils.toShortId(scid))
+// console.log(Utils.toLongId(lcids))
+// console.log(Utils.toLongId(lcid))
+// console.log(Utils.toLongId(scids))
+// console.log(Utils.toLongId(scid))
 
 module.exports = Utils

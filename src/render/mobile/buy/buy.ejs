@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<title><%-title %>购买详情页</title>
+<link rel="icon" href="//c.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" media="only screen and (min-device-width: 1280px)" type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/buypc200.css" />
+<link rel="stylesheet" media="only screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-device-width: 1280px), only screen and (-webkit-min-device-pixel-ratio: 3) and (max-width:1028px)"
+    type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/buyphone200.css" />
+<script src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.json-2.4.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cookie.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/api200.js"></script>
+</head>
+
+<body data-type="buy" data-render="<%-version%>">
+  <div class="total">
+    <div class="articlecard bottomshadow" data-id="<%-4294967297 * id%>">
+      <img class="articleimg" src="<%-thumb_image_url%>">
+      <span class="articletitle"><%-title %></span>
+    </div>
+    <div class="grayband"></div>
+    <div class="grayband"></div>
+    <p>您可以通过以下方式购买</p>
+    <div class="grayband"></div>
+    <div class="buyinfo">
+      <%-body %>
+    </div>
+    <p id="duty">价格仅供参考，实际价格以卖家为准</span>
+    <div class="spacing last"></div>
+  </div>
+</body>
+<script>
+  //自动运行的初始化代码
+  jQuery(document).ready(function() {
+    var uid = $.cookie('DDuid');
+    if (uid == undefined)
+      uid = -1;
+    add_access({
+      "action": "navigate",
+      "value": "Buy",
+      "user": uid
+    }, "log"); //log this
+    bind_log_click("td.allri", "data-href", "innerbuy");
+    //var to_mod = window.screen.availHeight - $(".total").height();
+    var to_mod = document.documentElement.clientHeight - $('.total').height();
+    console.log("space to set = " + to_mod);
+    //所以可能在不需要space的时候，比如已经一个屏幕放不下了，还是增加20的space
+    if (to_mod < 0)
+      to_mod = 20;
+    $("div.spacing.last").height(to_mod + 20);
+  });
+</script>
+
+</html>

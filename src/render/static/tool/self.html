@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="renderer" content="webkit">
+<meta name="description" content="有调DIAOX2.COM,讲述精致生活,推荐品质好物。找到最值得买的品牌好物,海淘折扣,介绍使用经验和体验测评,推荐新奇有趣礼物,送男女朋友父母长辈,介绍全球美食和旅游攻略,分类页提供家具品牌,生活用品,电器,办公文具,时尚单品,化妆品,护理保湿,数码产品,母婴用品和户外装备的品牌,价格,评测信息">
+<meta name="MobileOptimized" content="320">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="keywords" content="调调,有调,有调积分商城,积分,商城,积分商城,签到,邀请好友,签到赢积分,邀请好友赢积分">
+<link rel="icon" href="//a.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="//c.diaox2.com/view/app/tool/self.css">
+<script src="//c.diaox2.com/cms/diaodiao/assets/jquery-2.1.0.min.js"></script>
+<title>下载有调 积分换好礼</title>
+</head>
+  <body>
+    <section class="wrapper">
+      <section class="main">
+        <ul class="users">
+          <li> <img src="//c.diaox2.com/view/app/tool/user-w.png" alt="用户"></li>
+          <li> <img src="//c.diaox2.com/view/app/tool/user-w.png" alt="用户"></li>
+          <li> <img src="//c.diaox2.com/view/app/tool/user-w.png" alt="用户"></li>
+          <li> <img src="//c.diaox2.com/view/app/tool/user-w.png" alt="用户"></li>
+          <li> <img src="//c.diaox2.com/view/app/tool/user-w.png" alt="用户"></li>
+          <li> <img src="//c.diaox2.com/view/app/tool/user-w.png" alt="用户"></li>
+          <li> <img src="//c.diaox2.com/view/app/tool/user-w.png" alt="用户"></li>
+          <li> <img src="//c.diaox2.com/view/app/tool/user-w.png" alt="用户"></li>
+          <li> <img src="//c.diaox2.com/view/app/tool/user-w.png" alt="用户"></li>
+          <li> <img src="//c.diaox2.com/view/app/tool/user-w.png" alt="用户"></li>
+        </ul>
+        <p class="succ-info">已经成功邀请好友_人</p>
+        <p class="invite-tips">
+          成功邀请5名好友，可额外获得50积分<br>
+          成功邀请10名好友，可额外获得100积分
+        </p>
+        <section class="card-all">
+          <p class="your-code-info">你的专属有调邀请码</p>
+          <p class="your-code">----------------</p>
+          <p class="card-tips">
+            好友接受你的邀请下载有调并成功登录后<br>
+            输入你的邀请码可获得25积分<br>
+            同时你也将获得25积分奖励
+          </p>
+        </section>
+        <button class="accept-invite-btn">邀请好友</button>
+      </section>
+    </section>
+  </body>
+  <script>
+    var ddIsBridgeReady = false;
+    var uid = -1;
+    var isIOS = Boolean(navigator.userAgent.match(/iphone|ipod|ios|ipad/i));
+    function connectWebViewJavascriptBridge(callback) {
+        if (window.WebViewJavascriptBridge) {
+            callback(WebViewJavascriptBridge);
+        } else {
+            document.addEventListener('WebViewJavascriptBridgeReady', function(ev) {
+                callback(ev.bridge);
+                if(! window.WebViewJavascriptBridge && ev.bridge)
+                    window.WebViewJavascriptBridge = ev.bridge; //rare case happen?
+            }, false);
+        }
+    }
+    function ddGetAppEnv(callback, context_data) {
+        if (! ddIsBridgeReady) {
+            return false;
+        }
+        WebViewJavascriptBridge.callHandler('getAppEnv', {'caller' : 'ddiosjsbridge1.0'}, function(response) {
+            callback(response, context_data);
+        });
+        return true;
+    }
+    function bridgeInitCallback(bridge) {
+        //事件：WebViewJavascriptBridgeReady
+        try {
+            bridge.init(function(data, responseCallback) {
+                //这个函数是默认的handler，callHandler和registerHandler以外的事件发生了
+                console.log('Default handler called?');
+                console.log(data);
+                if(responseCallback)    //typeof responseCallback === "function"
+                    responseCallback(data);
+            });
+            //bridge.init(function(message, def_handler) {return def_handler(message);});
+        } catch(e){
+            console.log('WebViewJavascriptBridge init fail');
+            console.log(e);
+        }
+        ddIsBridgeReady = true;
+        ddGetAppEnv(envCallback, "heiheihei");
+        return true;
+    }
+    //Raw invoke
+    connectWebViewJavascriptBridge(bridgeInitCallback);
+
+    function envCallback(env_data, context_data) {
+        /*
+        @"app_name" : @"diaodiao",
+        @"os"       : @"ios",
+        @"version"  : @"1.0.1"
+        "uid"
+        */
+        $(".accept-invite-btn").on("click", ddActiveShare);
+        $(".accept-invite-btn").text("邀请好友");
+        if(env_data == null || env_data == undefined) {
+            console.log('居然env调用返回值挂了');
+        } else {
+            uid = env_data.uid;
+            if(env_data.invite_num != undefined)
+                $(".succ-info").text('已经成功邀请好友' + env_data.invite_num + '人');
+            if(env_data.invite_str != undefined)
+                $(".your-code").text(env_data.invite_str);
+            var domlist = $(".users li img");
+            var count = env_data.invite_num > 10?env_data.invite_num%10:env_data.invite_num;
+            for(var i = 0; i < count; i++) {
+                $(domlist[i]).attr('src', 'user-r.png');
+            }
+        }
+        register(); //get_share_meta的注册
+        //日志
+        var postdata = {"user": uid, "action": "ViewMyInvite", "value": "none", "method": "log", "url": location.href,
+            "self": location.href, "referer": "APP", "type":"JF", "isIOS": isIOS};
+        console.log(postdata);
+        jQuery.support.cors = true;
+        $.ajax
+        ({
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(postdata),
+            dataType: "json", //"html"
+            url: '//api.diaox2.com/v1/contvote',
+            success: function (data) {console.log('log成功'); console.log(data);},
+            timeout: 8000,
+            error: function (x,t,e) {console.log("log失败, error: " + e);}
+        });
+    }
+
+    function ddActiveShare() {
+        if (! ddIsBridgeReady) {
+            return false;
+        }
+        WebViewJavascriptBridge.callHandler('activeshare', get_share_meta('dict'));
+        //callHandler(handlerName, data [,responseCallback])
+        //日志
+        var postdata = {"user": uid, "action": "ShareInvite", "value": "none", "method": "log", "url": location.href,
+            "self": location.href, "referer": "APP", "type":"JF", "isIOS": isIOS};
+        console.log(postdata);
+        jQuery.support.cors = true;
+        $.ajax
+        ({
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(postdata),
+            dataType: "json", //"html"
+            url: '//api.diaox2.com/v1/contvote',
+            success: function (data) {console.log('log成功'); console.log(data);},
+            timeout: 8000,
+            error: function (x,t,e) {console.log("log失败, error: " + e);}
+        });
+        return true;
+    }
+    function get_share_meta(context) {
+        var jsondict = {"version": "2.0"};
+        var title = "邀请你加入有调，赢积分换百款精选好礼";
+        var desc = title;
+        //2016-12-16分享出去的，无必要一定是https
+        if(context && !isNaN(parseInt(context)))
+            var url = "http://" + location.host + "/view/app/invite/" + context + ".html";
+        else
+            var url = "http://" + location.host + "/view/app/invite/" + uid + ".html";
+
+        jsondict["title"] = title;
+        jsondict["weibo"] = "快和我一起加入有调，赢积分换百款精选好礼" + url + "分享自@有调App，全球品质好物推荐";
+        jsondict["wechat"] = "听说懂生活、有品位的人都聚在这里。";
+        jsondict["other"] = "快和我一起加入有调，赢积分换百款精选好礼" + url + "分享自@有调App，全球品质好物推荐";
+        jsondict["pic"] = "http://c.diaox2.com/cms/diaodiao/assets/icontodown.png"; //icon
+        jsondict["pic"] = "http://www.diaox2.com/icon.png"; //icon
+        jsondict["desc"] = desc;
+        jsondict["url"] = url;
+
+        console.log(JSON.stringify(jsondict));
+        if(context == 'dict')
+            return jsondict;
+        return JSON.stringify(jsondict);
+    }
+    function register() {
+        if(typeof WebViewJavascriptBridge != 'undefined') {
+            console.log("Start register");
+            WebViewJavascriptBridge.registerHandler("get_share_meta", function(data, responseCallback) {
+                var result = get_share_meta(data);
+                if(responseCallback)    //typeof responseCallback === "function"
+                    responseCallback(result);
+            });
+        } else {
+            console.log("Still no duixiang!");
+            //setTimeout(register, 3000);
+            return false;
+        }
+        return true;
+    }
+    jQuery(document).ready(function (){
+        //$(".accept-invite-btn").on("click", function (){alert('请稍等，检测环境中');});
+        $(".accept-invite-btn").text("获取信息中...");
+        return true;
+    });
+  </script>
+</html>

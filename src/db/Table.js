@@ -1,7 +1,7 @@
 const DB = require('./DB')
-const db = new DB()
 const Promise = require('bluebird')
 const _ = require('lodash')
+const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
 const runLogger = Log.getLogger('cms_run')
 const varLogger = Log.getLogger('cms_var')
@@ -12,74 +12,106 @@ const varLogger = Log.getLogger('cms_var')
  */
 class Table {
 
+  /**
+   * table: 操作的表名
+   * columns: 要操作的表的列
+   * format: 是否格式化日期字段
+   * orderByCol：排序字段
+   */
   constructor (table, columns, format, orderByCol) {
+    // console.log('[Table initial ....]');
+    this.init(table, columns, format, orderByCol)
+  }
+
+  init (table, columns, format, orderByCol) {
+    this.setTable(table)
+    this.setColumns(columns)
+    this.setFormat(format)
+    this.setOrderByCol(orderByCol)
+    return this
+  }
+
+  setTable (table) {
     this.table = table
+    return this
+  }
+
+  setColumns (columns) {
     this.columns = columns
+    this.columnsStr = this.columns.map(col => `\`${col}\``).join(',')
+    return this
+  }
+
+  setFormat (format) {
     if (format) {
       const {columns, pattern} = format
       this.columns = this.columns.concat(columns.map(col => `DATE_FORMAT(${col},'${pattern}') AS ${col}`))
     }
-    this.columnsStr = this.columns.join(',')
+    return this
+  }
+
+  setOrderByCol (orderByCol) {
     this.orderByCol = orderByCol
-    this.db = db
+    return this
   }
 
-  create (param) {
-    const title = '新建文章'
-    if (!param || _.isEmpty(param)) {
-      param = { title }
-    }
-    if (!param.title) {
-      param.title = title
-    }
-    console.log('table 30:', param)
-    return this.exec(`INSERT INTO article_meta SET ?`, param)
+  /**
+   * 往表中插入一条数据
+   */
+  create (data) {
+    return DB.exec(`INSERT INTO ${this.table} SET ?`,  data)
   }
 
-  exec (sql, data) {
-    // console.log(sql)
-    // varLogger.info(sql)
-    // console.log('Table.js 22:', data)
-    const self = this
+  /**
+   * 获取符合条件的记录数
+   * @type {String} 条件
+   */
+  total (cond) {
     return new Promise((resolve, reject) => {
-      self.db.getConnection().then(connection => {
-        connection.beginTransaction().then(() => {
-          connection.query(sql, data).then(rows => {
-            resolve(rows)
-            connection.commit()
-          }).catch(err => {
-            reject(err)
-            connection.rollback()
-            runLogger.error('SQL错误：', sql, err)
-          })
+      DB.exec(`SELECT count(1) AS count FROM ${this.table} ${DB.addWhere(cond)}`)
+        .then(data => {
+          if(data.length > 0){
+            resolve(data[0].count)
+          } else {
+            resolve(0)
+          }
         })
-        .catch(err => {
-          reject(err)
-          connection.rollback()
-          runLogger.error('SQL错误：', sql, err)
-        }).finally(() => {
-          // 一定要释放连接，否则可能导致连接池中无可用连接而hang住数据库
-          db.releaseConnection(connection)
+        .catch(e => {
+          reject(e)
+          runLogger.error(e)
         })
-      })
     })
   }
 
-  total (where = '') {
-    return this.exec(`SELECT count(id) AS count FROM ${this.table} ${where}`)
+/**
+ * 根据主键id获取一条数据
+ */
+  async getById (id) {
+    let data =  await this.getByCond(`id = ${id}`)
+    if(Utils.isValidArray(data) && data.length === 1){
+      [data] = data
+    }
+    return data
   }
 
-  getById (id) {
-    return this.exec(`SELECT ${this.columnsStr} FROM ${this.table} WHERE id = ${id}`)
+  /**
+   * 根据文章id获取一条数据
+   */
+  getByAid (id) {
+    return this.getByCond(`aid = ${id}`)
   }
 
-  // getByCond ({key, value}) {
-  //   return this.exec(`SELECT ${this.columnsStr} FROM ${this.table} where ${key} = '${value}'`)
-  // }
+  /**
+   * 根据传入的条件获取数据
+   */
+  getByCond (cond) {
+    return DB.exec(`SELECT ${this.columnsStr} FROM ${this.table} ${DB.addWhere(cond)}`)
+  }
 
-
-  getAll (orderBy, pagination) {
-    orderBy = orderBy || ''
+  /**
+   * 根据传入的条件获取数据
+   */
+  getAll (pagination, orderBy = '', cond = '') {
     if (orderBy) {
       orderBy = ` ORDER BY ${this.orderByCol} DESC `
     }
@@ -87,20 +119,46 @@ class Table {
     if (pagination && !_.isEmpty(pagination)) {
       limitStr = ` LIMIT ${pagination.offset || 0}, ${pagination.limit} `
     }
-    const sql = `SELECT ${this.columnsStr} FROM ${this.table} ${orderBy} ${limitStr}`
+    const sql = `SELECT ${this.columnsStr} FROM ${this.table} ${DB.addWhere(cond)} ${orderBy} ${limitStr}`
     console.log('table 87', sql)
-    return this.exec(sql)
+    return DB.exec(sql)
   }
 
-  deleteByCond (cond = '') {
-    const escapeValue = db.escapeValue(cond)
-    const sql = `DELETE from ${this.table} WHERE ${escapeValue.key} = ${escapeValue.value}`
-    return this.exec(sql)
+  deleteByCond (cond) {
+    return DB.exec(`DELETE from ${this.table} ${addWhere(cond)}`)
   }
 
   deleteById (id) {
     return this.deleteByCond(`id = ${id}`)
   }
+
+  update (data, cond) {
+    return DB.exec(`UPDATE ${this.table} set ? ${addWhere(cond)}`, data)
+  }
+
+  exec (sql, data) {
+    // console.log(`[Table exec] sql is ${sql}`);
+    return DB.exec(sql, data)
+  }
+
+  escapeValue (cond) {
+    return DB.escape(cond)
+  }
+  /**
+   * 转码，防止sql注入
+   */
+ escape (str) {
+    return DB.escape(str)
+  }
 }
 
+// const table = new Table('article_meta', ['id', 'title'], null, 'last_update_by')
+// table.getById(1).then(data => console.log(data))
+// table.getByCond({id: 2}).then(data => console.log(data))
+// table.getByCond('id=3').then(data => console.log(data))
+// table.getByCond(`title like ${DB.escape('%咖啡%')}`).then(data => console.log(data))
+// table.total().then(count => console.log(count))
+// table.getAll().then(data => console.log(data.length))
+// table.init('article_content', ['aid', 'content'], null, null)
+// table.getByAId(1).then(data => console.log(data))
 module.exports = Table

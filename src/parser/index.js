@@ -52,7 +52,9 @@ class Parser {
     const contents = []
     let children = null
     const contain = container.get(0)
-    // 如果是第一次调用 或者 ul ol等，则取所有的dom节点
+    // 如果是第一次调用 或者 ul/ol等，则取所有的dom节点
+    // 因为第一次或这是ul/ol，忽略下面除了dom节点以外的内容，
+    // 我们认为下面都是dom节点
     if (root || /ul|ol/.test(contain.name)) {
       children = container.children()
     } else {
@@ -99,8 +101,12 @@ class Parser {
     this._markdown = markdown
   }
 
-  get renderer () {
+  getRenderer () {
     return this.options.renderer
+  }
+
+  setRenderer (renderer) {
+    this.renderer = renderer
   }
 
   get markdown () {
@@ -108,38 +114,11 @@ class Parser {
   }
 
   getData () {
-    this.$ = cheerio.load(`
-      <div id="container">
-        ${this.getHTML()}
-      <div>
-    `, {
-      decodeEntities: false
-    })
+    this.$ = cheerio.load(`<div id="container">${this.getHTML()}<div>`, {decodeEntities: false})
     return this.htmlToData(this.$('#container'))
   }
 
   getHTML () {
-    const renderer = this.renderer
-    //*****************************************自定义markdown语法解析*****************************************
-    renderer.heading = (text, level) => {
-      return `<h${level}>${text}</h${level}>`
-    }
-    renderer.codespan = text => `<p class="lift">${text}</p>`
-    /**
-     * 在段落内，包含行内标签
-     *  行内标签包括：
-     *   1. a
-     *   2. stromg
-     *   3. em
-     *   4. del
-     *   5. span
-     */
-    renderer.link = (href, text) => {
-      if (/^\d+$/.test(href)) {
-        href = `//www.diaox2.com/article/${href}.html`
-      }
-      return `<a target="_blank" href="${href}">${text || href}</a>`
-    }
     this.marked.setOptions(this.options)
     return this.marked(this.markdown)
   }
@@ -176,9 +155,9 @@ class Parser {
 
 module.exports = Parser
 
-const parser = new Parser(`
-这个段落中含有我们的其他文章的链接\n\n这个段落中含有引用非文章链接\n\n技术支持：有问题报给@李彦峰（大哥）
-`)
-console.log(parser.getHTML())
+// const parser = new Parser(`
+// 这个段落中含有我们的其他文章的链接\n\n这个段落中含有引用非文章链接\n\n技术支持：有问题报给@李彦峰（大哥）
+// `)
+// console.log(parser.getHTML())
 // console.log(JSON.stringify(parser.getData()))
 // console.log(JSON.stringify(parser.getAll()))

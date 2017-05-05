@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="renderer" content="webkit">
+<meta name="description" content="有调DIAOX2.COM,讲述精致生活,推荐品质好物。找到最值得买的品牌好物,海淘折扣,介绍使用经验和体验测评,推荐新奇有趣礼物,送男女朋友父母长辈,介绍全球美食和旅游攻略,分类页提供家具品牌,生活用品,电器,办公文具,时尚单品,化妆品,护理保湿,数码产品,母婴用品和户外装备的品牌,价格,评测信息">
+<meta name="MobileOptimized" content="320">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="keywords" content="有调,调调,有调积分商城,积分,商城,积分商城,签到,邀请好友,签到赢积分,邀请好友赢积分">
+<link rel="icon" href="//a.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon">
+<script src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="//c.diaox2.com/cms/diaodiao/assets/invite330.css">
+<title>下载有调 积分换好礼</title>
+</head>
+  <body data-render="<%-version%>">
+    <section class="wrapper">
+      <section class="main">
+        <section class="card-container">
+          <section class="card-up">
+            <div class="logo"><span class="top-left-line"></span><span class="bottom-left-line"></span><img src="//c.diaox2.com/cms/diaodiao/assets/invite.png" alt="有调"><span class="top-right-line"></span><span class="bottom-right-line"></span></div>
+            <p class="greet">这是一封来自 “<%-nick%>” 的问候</p>
+            <div class="sep"></div>
+            <p>邀请有品味的你，共同开启有</p>
+            <p class="diaodiao">有调</p>
+            <p>的精致生活</p>
+          </section>
+          <section class="card-down">
+            <p>邀请码</p>
+            <p class="invite-code"> <%-invite_str%> </p>
+            <p>长按邀请码复制到剪切板</p>
+          </section>
+        </section>
+        <p class="desc">下载有调后输入上方邀请码，即可获得积分奖励。<br>更有心动好礼等你来兑换！</p>
+        <button class="accept-invite-btn">接受邀请</button>
+      </section>
+    </section>
+  </body>
+  <script>
+  var isIOS = Boolean(navigator.userAgent.match(/iphone|ipod|ios|ipad/i));
+  function logAccess() {
+    var postdata = {"user": -1, "action": "ViewInvite", "value": navigator.userAgent, "method": "log", "url": location.href,
+        "self": location.href, "referer": document.referrer, "type":"JF", "isIOS": isIOS};
+    console.log(postdata);
+    jQuery.support.cors = true;
+    $.ajax
+    ({
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(postdata),
+        dataType: "json", //"html"
+        url: '//api.diaox2.com/v1/contvote',
+        success: function (data) {console.log('log成功'); console.log(data);},
+        timeout: 8000,
+        error: function (x,t,e) {console.log("log失败, error: " + e);}
+    });
+    return true;
+  }
+  function logDown() {
+    //TODO: https
+    var target = "http://a.app.qq.com/o/simple.jsp?pkgname=com.diaox2.android&g_f=991653";
+    var postdata = {"user": -1, "action": "InviteDown", "value": navigator.userAgent, "method": "log", "url": location.href,
+        "self": location.href, "referer": document.referrer, "type":"JF", "isIOS": isIOS};
+    console.log(postdata);
+    jQuery.support.cors = true;
+    $.ajax
+    ({
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(postdata),
+        dataType: "json", //"html"
+        url: '//api.diaox2.com/v1/contvote',
+        success: function (data) {console.log('log成功'); window.location.href=target;},
+        timeout: 3000,
+        error: function (x,t,e) {console.log("log失败, error: " + e); window.location.href=target;}
+    });
+    return true;
+  }
+  jQuery(document).ready(function() {
+      logAccess();
+      $("button.accept-invite-btn").bind("click", logDown);
+  });
+  </script>
+</html>

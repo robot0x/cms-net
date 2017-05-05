@@ -29,14 +29,14 @@ reader.read().then(contents => {
     // console.log(contents.map(content => content.url))
     // 文件下载器
     downloader.set(contents.map(content => content.url))
-    
+
     downloader.download((html, url, index) => {
       const content = contents[index]
       content.html = html
-      // console.log(html)
+      // console.log('36:', html)
       parser.set(content)
       const ret = parser.parse()
-      // console.log(ret)
+      // console.log('39:', ret)
       writer.write(ret)
       // console.log(`${index}：${url}`)
     })

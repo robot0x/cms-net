@@ -39,7 +39,8 @@ class Reader {
         } else {
           resolve(
             text.split(/\n/)
-            .filter(content => /goodthing|firstpage|experience|zhuankan|zhuanti/.test(content))
+            // .filter(content => /goodthing|firstpage|experience|zhuankan|zhuanti/.test(content))
+            .filter(content => /zhuankan|zhuanti/.test(content))
             .map(content => {
               let [id, type] = content.split(/\s+/)
               const item = { id, m: 'show', type }

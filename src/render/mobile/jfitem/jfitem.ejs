@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="renderer" content="webkit">
+<meta name="description" content="有调DIAOX2.COM,讲述精致生活,推荐品质好物。找到最值得买的品牌好物,海淘折扣,介绍使用经验和体验测评,推荐新奇有趣礼物,送男女朋友父母长辈,介绍全球美食和旅游攻略,分类页提供家具品牌,生活用品,电器,办公文具,时尚单品,化妆品,护理保湿,数码产品,母婴用品和户外装备的品牌,价格,评测信息">
+<meta name="MobileOptimized" content="320">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="keywords" content="有调,调调,有调积分商城,积分,商城,积分商城,签到,邀请好友,签到赢积分,邀请好友赢积分">
+<link rel="icon" href="//a.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="//c.diaox2.com/cms/diaodiao/assets/item330.css">
+<script type="text/javascript" src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="//c.diaox2.com/cms/diaodiao/assets/jfcommon.js"></script>
+<script type="text/javascript" src="//c.diaox2.com/cms/diaodiao/assets/item330.js"></script>
+<title>有调积分商城 - 商品详情</title>
+</head>
+<body data-render="<%-version%>">
+  <section class="wrapper">
+    <section id="main" class="main"></section>
+    <footer>
+      <button>立即兑换</button>
+    </footer>
+  </section>
+  <script type="text/javascript">
+    var data = {<%-data %>}
+    var isIOS = Boolean(navigator.userAgent.match(/iphone|ipod|ios|ipad/i));
+
+    <% if( pageType === 'share') {%>
+      function logAccess() {
+            var postdata = {"user": -1, "action": "ViewItem", "value": navigator.userAgent, "method": "log", "url": location.href,
+                "self": location.href, "referer": document.referrer, "type":"JF", "isIOS": isIOS};
+            console.log(postdata);
+            jQuery.support.cors = true;
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(postdata),
+                dataType: "json", //"html"
+                url: '//api.diaox2.com/v1/contvote',
+                success: function (data) {console.log('log成功'); console.log(data);},
+                timeout: 8000,
+                error: function (x,t,e) {console.log("log失败, error: " + e);}
+            });
+            return true;
+        }
+        function logDown() {
+            //TODO: 2016-12-16 这个不支持Https
+            var target = "http://a.app.qq.com/o/simple.jsp?pkgname=com.diaox2.android&g_f=991653";
+            var postdata = {"user": -1, "action": "ItemDownload", "value": navigator.userAgent, "method": "log", "url": location.href,
+                "self": location.href, "referer": document.referrer, "type":"JF", "isIOS": isIOS};
+            console.log(postdata);
+            jQuery.support.cors = true;
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(postdata),
+                dataType: "json", //"html"
+                url: '//api.diaox2.com/v1/contvote',
+                success: function (data) {console.log('log成功'); window.location.href=target;},
+                timeout: 3000,
+                error: function (x,t,e) {console.log("log失败, error: " + e); window.location.href=target;}
+            });
+            return true;
+        }
+        jQuery(document).ready(function() {
+            $("button").bind("click", logDown);
+            $("button").text("下载有调，换取好礼");
+            logAccess();
+            return true;
+        });
+    <% } else {%>
+
+          var ddIsBridgeReady = false;
+          var uid = -1;
+          var score = -1;
+
+          function logAccess() {
+            var postdata = {
+              "user": uid,
+              "action": "ViewItem",
+              "value": navigator.userAgent,
+              "method": "log",
+              "url": location.href,
+              "self": location.href,
+              "referer": document.referrer,
+              "type": "JF",
+              "isIOS": isIOS
+            };
+            console.log(postdata);
+            jQuery.support.cors = true;
+            $.ajax({
+              type: "POST",
+              contentType: "application/json",
+              data: JSON.stringify(postdata),
+              dataType: "json", //"html"
+              url: '//api.diaox2.com/v1/contvote',
+              success: function(data) {
+                console.log('log成功');
+                console.log(data);
+              },
+              timeout: 8000,
+              error: function(x, t, e) {
+                console.log("log失败, error: " + e);
+              }
+            });
+            return true;
+          }
+
+          function connectWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) {
+              callback(WebViewJavascriptBridge);
+            } else {
+              document.addEventListener('WebViewJavascriptBridgeReady', function(ev) {
+                callback(ev.bridge);
+                if (!window.WebViewJavascriptBridge && ev.bridge)
+                  window.WebViewJavascriptBridge = ev.bridge; //rare case happen?
+              }, false);
+            }
+          }
+
+          function ddGetAppEnv() {
+            if (!ddIsBridgeReady) {
+              return false;
+            }
+            WebViewJavascriptBridge.callHandler('getAppEnv', {
+              'caller': 'ddiosjsbridge1.0'
+            }, envCallback);
+            return true;
+          }
+
+          function bridgeInitCallback(bridge) {
+            //事件：WebViewJavascriptBridgeReady
+            try {
+              bridge.init(function(data, responseCallback) {
+                //这个函数是默认的handler，callHandler和registerHandler以外的事件发生了
+                console.log('Default handler called?');
+                console.log(data);
+                if (responseCallback) //typeof responseCallback === "function"
+                  responseCallback(data);
+              });
+              //bridge.init(function(message, def_handler) {return def_handler(message);});
+            } catch (e) {
+              console.log('WebViewJavascriptBridge init fail');
+              console.log(e);
+            }
+            ddIsBridgeReady = true;
+            ddGetAppEnv();
+            register(); //get_share_meta的注册
+            return true;
+          }
+          //Raw invoke
+          connectWebViewJavascriptBridge(bridgeInitCallback);
+
+          function reqLog() {
+            WebViewJavascriptBridge.callHandler('checkLogin', true, logCallback);
+          }
+
+          function logCallback(ret) {
+            if (ret == null || ret == undefined || ret.result == undefined) {
+              console.log("没有登录或返回值是空");
+              return;
+            }
+            if (ret.result == "YES")
+              ddGetAppEnv();
+            else {
+              console.log("没有登录");
+            }
+          }
+
+          function buy() {
+            $.showLoading();
+            WebViewJavascriptBridge.callHandler('RPAction', {
+              'action': 'buy',
+              'gid': data.gid
+            }, buyCallback);
+          }
+
+          function buyCallback(ret) {
+            $.closeLoading();
+            if (ret.state != 'SUCCESS' || ret.data == undefined || ret.data.data == undefined ||
+              ret.data.data.goods == undefined || ret.data.data.user == undefined) {
+              //TODO: 提示购买失败，按钮不用变，仍然是购买
+              $.closePopup();
+              if (ret.data && ret.data.msg)
+                $.dialog({
+                  content: ret.data.msg.replace(/[\r\n]+/g, "<br>"),
+                  okText: '确定',
+                  cancelText: '返回',
+                  /*ok:function(){},cancel:function(){}*/ time: 3000
+                });
+              else
+                $.dialog({
+                  content: "请求失败，请重试",
+                  okText: '确定',
+                  cancelText: '返回',
+                  /*ok:function(){},cancel:function(){}*/ time: 3000
+                });
+              return;
+            }
+            //商品,ret.data.data.goods, 可能比页面内的data新
+            if (data.type == 0)
+              //$.giftPopup({desc: data.desc, href: data.target, title: data.title, info: data.info});
+              $.giftPopup({
+                desc: ret.data.data.goods.title,
+                href: ret.data.data.goods.target,
+                title: "兑换成功！",
+                info: "恭喜获得积分好礼一份，请点击下方，前往有调官方店铺兑换。"
+              });
+            //优惠券
+            else
+              //$.couponPopup({desc: data.value, href: data.target, title: data.title, confirmText: "确认", cancelText:"走人", info: data.info});
+              $.couponPopup({
+                desc: ret.data.data.goods.value,
+                href: ret.data.data.goods.target,
+                title: "兑换成功！",
+                info: "恭喜获得优惠券一张！长按下方优惠码部分，复制后去商家兑换使用。"
+              });
+            //优化本地继续购买的显示，递减商品数量
+            data.quantity = ret.data.data.goods.quantity - 1;
+          }
+
+          function ask() {
+            //$.askPopup({points: data.price, desc: data.desc, remains: data.quantity, total: data.stocknum, confirm:function(){alert('cb');}, confirmText:"走你", cancelText:"走人"});
+            $.askPopup({
+              points: data.price,
+              desc: data.title,
+              remains: data.quantity,
+              total: data.stocknum,
+              confirm: buy,
+              type: data.type
+            });
+          }
+
+          function settarget() {
+            $.showLoading();
+            WebViewJavascriptBridge.callHandler('RPAction', {
+              'action': 'settarget',
+              'gid': data.gid
+            }, targetCallback);
+          }
+
+          function targetCallback(ret) {
+            $.closeLoading();
+            $.closePopup();
+            if (ret.state != 'SUCCESS' || ret.data == undefined || ret.data.data == undefined ||
+              ret.data.data.target_gift == undefined || ret.data.data.user == undefined) {
+              if (ret.data && ret.data.msg)
+                $.dialog({
+                  content: ret.data.msg.replace(/[\r\n]+/g, "<br>"),
+                  okText: '确定',
+                  cancelText: '返回',
+                  /*ok:function(){},cancel:function(){}*/ time: 3000
+                });
+              else
+                $.dialog({
+                  content: "设置心动好礼失败",
+                  okText: '确定',
+                  cancelText: '返回',
+                  /*ok:function(){},cancel:function(){}*/ time: 3000
+                });
+              return;
+            }
+            $.dialog({
+              content: ret.data.msg.replace(/[\r\n]+/g, "<br>"),
+              okText: '确定',
+              cancelText: '返回',
+              /*ok:function(){},cancel:function(){}*/ time: 3000
+            });
+            $("button").text("已经设置为心动好礼");
+            $("button").unbind("click");
+            $("button").css("background-color", "#7f7f7f");
+          }
+
+          function envCallback(env_data) {
+            if (env_data == null || env_data == undefined) {
+              console.log('居然env调用返回值挂了');
+              $("button").unbind("click");
+              $("button").text("检查失败，请重试");
+            } else {
+              if (env_data.uid == undefined || env_data.uid == 0) {
+                $("button").unbind("click");
+                $("button").text("请先登录");
+                $("button").bind("click", reqLog);
+                return;
+              }
+              uid = env_data.uid;
+              score = env_data.score;
+              logAccess(); //日志
+              if (score >= data.price) {
+                //可以购买，商品且有钱
+                $("button").text("立即兑换");
+                $("button").unbind("click");
+                $("button").bind("click", ask);
+              } else if (data.type == 0) {
+                //钱不足，是商品，可以设置心动好礼
+                if (env_data.target_gift && env_data.target_gift == data.gid) {
+                  $("button").text("已经设置为心动好礼");
+                  $("button").unbind("click");
+                  $("button").css("background-color", "#7f7f7f");
+                } else {
+                  $("button").text("设为心动好礼");
+                  $("button").unbind("click");
+                  $("button").bind("click", settarget);
+                }
+              } else {
+                //钱不足，是优惠券
+                $("button").text("积分不足，去赚点积分吧");
+                $("button").unbind("click");
+              }
+            }
+          }
+
+          function get_share_meta(context) {
+            var jsondict = {
+              "version": "2.0"
+            };
+            var title = data.title;
+            var desc = '我在有调app发现一个超值好礼，快来用积分免费兑换吧！';
+            var url = "http://" + location.host + "/view/app/jfitem/" + data.gid + ".html";
+
+            jsondict["title"] = title;
+            jsondict["weibo"] = title + url + "分享自@有调App，全球品质好物推荐";
+            jsondict['wechat'] = desc; //微信图片后面的字
+            jsondict['other'] = title + url + "分享自@有调App，全球品质好物推荐";
+            if (data.type == 1)
+              jsondict["pic"] = "http://www.diaox2.com/icon.png"; //icon
+            else
+              jsondict["pic"] = data.cover;
+            jsondict["desc"] = desc;
+            jsondict["url"] = url;
+
+            console.log(JSON.stringify(jsondict));
+            if (context == 'dict')
+              return jsondict;
+            return JSON.stringify(jsondict);
+          }
+
+          function register() {
+            if (typeof WebViewJavascriptBridge != 'undefined') {
+              console.log("Start register");
+              WebViewJavascriptBridge.registerHandler("get_share_meta", function(data, responseCallback) {
+                var result = get_share_meta(data);
+                if (responseCallback) //typeof responseCallback === "function"
+                  responseCallback(result);
+              });
+            } else {
+              console.log("Still no duixiang!");
+              //setTimeout(register, 3000);
+              return false;
+            }
+            return true;
+          }
+          jQuery(document).ready(function() {
+            //logAccess(); 放到envready
+            $("button").bind("click", function() {
+              alert("请稍等，获取信息中");
+            });
+            $("button").text("检查登陆状态中...");
+            return true;
+          });
+    <% }%>
+
+  </script>
+</html>
