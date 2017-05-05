@@ -60,6 +60,7 @@ class JfitemRender extends Render {
       return this.getDoc(this.template, {
         data: ret.join(','),
         pageType: this.type,
+        prefix: this.prefix,
         version: this.version
       })
     } catch (e) {

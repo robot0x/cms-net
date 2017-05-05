@@ -1,7 +1,14 @@
 const url = require('url')
+const appConfig = require('../../config/app')
 
 class Utils {
-
+  static addUrlPrefix (url) {
+    if(!url) return null
+    if(!/^(https?:)?\/\//.test(url)) {
+      url = appConfig.CDIAOX2 + url
+    }
+    return url
+  }
   static toShortId (ids) {
     const factor = 4294967297 // Math.pow(2, 32) + 1
     const factor2 = 0XFFFFFF

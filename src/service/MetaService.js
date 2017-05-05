@@ -56,7 +56,7 @@ class MetaService {
                           .getById(id)
       const author = await authorTable
                           .setColumns(['pic_uri', 'title'])
-                          .getBySource('+0' || meta.source)
+                          .getBySource(meta.source)
       const mbuylink = await this.getBuylink(id, meta.buylink)
       if(mbuylink){
         meta.has_buylink = true
@@ -98,12 +98,24 @@ class MetaService {
   }
 
   _findImageByAidAndType (aid, type, images) {
-    for(let image of images){
-      if(image.aid == aid && image.type == type){
-        return image
+    let isSwipe = type === 16
+    let ret = null
+    if(isSwipe) {
+      ret = []
+      for(let image of images){
+        if(image.aid == aid && image.type == type){
+          ret.push(image)
+        }
+      }
+    } else {
+      for(let image of images){
+        if(image.aid == aid && image.type == type){
+          ret = image
+          break
+        }
       }
     }
-    return null
+    return ret
   }
   /**
    * ids: [7880, 8090, 9225, ...]  cid list 支持长短id 或者 一个id
@@ -122,7 +134,15 @@ class MetaService {
    * getRawMetas 平均执行时间为 270 ms
    * getRawMeta  平均执行时间为 380 ms
    */
-  async getRawMetas (ids = [this.id], useBuylink = true, isShortId = false, useCoverex = false, useBanner = false, useImageSize = false) {
+  async getRawMetas (
+    ids = [this.id],
+    useBuylink = true,
+    isShortId = false,
+    useCoverex = false,
+    useBanner = false,
+    useSwipe = false ,
+    useImageSize = false
+  ) {
     // 参数处理
     if(!Utils.isValidArray(ids)){
       // 如果只传入一个id，则转化为数组，否则，参数不合法，直接返回
@@ -148,17 +168,26 @@ class MetaService {
       // console.log('[MetaService.getRawMetas]:', metaAndAuthors)
       // type = 2为cover图，type = 8 为thumb图, type = 4 coverex图
       let imageCols = ['aid', "CONCAT('//', url) AS url", 'type']
+
       if(useImageSize){
         imageCols.push('width')
         imageCols.push('height')
       }
+
       let imageTypes = [2, 8]
+
       if (useCoverex) {
         imageTypes.push(4)
       }
+
+      if (useSwipe) {
+        imageTypes.push(16)
+      }
+
       if (useBanner) {
         imageTypes.push(32)
       }
+
       const images = await this.imageTable.getSpecialImagesUrl(ids, imageTypes, imageCols)
       const metas = []
       for (let me of metaAndAuthors) {
@@ -184,11 +213,19 @@ class MetaService {
 
         let coverex_image = null
         let banner_image = null
+        let swipe_images = null // 走马灯图，可能有多个
 
         if(useCoverex) {
           coverex_image = this._findImageByAidAndType(nid, 4, images) || {}
           if(coverex_image){
             meta.coverex_image_url = coverex_image.url
+          }
+        }
+
+        if(useSwipe) {
+          swipe_images = this._findImageByAidAndType(nid, 16, images) || {}
+          if ( Utils.isValidArray(swipe_images) ) {
+            meta.swipe_image_url = swipe_images.map(swipe => swipe.url)
           }
         }
 
@@ -246,10 +283,6 @@ class MetaService {
     }
   }
 
- searchByTitle (title) {
-
- }
-
  /**
   * 一次性地通过aid，从article_meta/article_content/image/author 四张表中拿数据
   * 组装成对象，供meta接口和渲染接口使用
@@ -262,13 +295,14 @@ class MetaService {
     // return new Promise(async (resolve, reject) => {
     let meta, images, content
     try {
-      let meta = await metaTable.setColumns(['title','titleex', 'ctype', 'create_time', 'price']).getById(id)
+      let meta = await metaTable.setColumns(['title','titleex', 'ctype', 'create_time', 'price', 'author']).getById(id)
       // let images = await imageTable.getSpecialImagesUrl(id, [2, 8, 16], ['url', 'type', 'alt', 'title'])
       let images = await imageTable.setColumns(['url', 'type', 'alt', 'width', 'height']).getByAid(id)
       let content = await contentTable.getById(id)
       // 由于author表目前的数据很少，所以写死
       // let author = await authorTable.getBySource(meta.author)
-      let author = await authorTable.getBySource('+0')
+      let author = await authorTable.getBySource(meta.author)
+      author.pic_uri = Utils.addUrlPrefix(author.pic_uri)
       // 根据规则拿购买链接，把meta表中的购买链接作为第二个参数，这样在条件命中时，我们就能少访问一次数据库
       if (useBuylink){
         let buylink = await this.getBuylink(id, meta.buylink)

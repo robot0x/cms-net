@@ -60,6 +60,7 @@ class TagRender extends Render {
         allarticles,
         infos: infos,
         body: parser.setMetas(metas).getHTML(limit),
+        prefix: this.prefix,
         version: this.version
       })
    } catch (e) {

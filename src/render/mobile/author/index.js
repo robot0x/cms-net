@@ -38,6 +38,7 @@ class AuthorRender extends Render {
         infos: infos,
         author,
         body: parser.setMetas(metas).getHTML(20),
+        prefix: this.prefix,
         version: this.version
       })
    } catch (e) {

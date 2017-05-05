@@ -26,14 +26,12 @@ class AuthorService {
   async getRenderData () {
     const { authorTable, metaTable, metaService } = this
     try {
-      // let source = this.source || '+0'
-      let source = '+0'
+      let source = this.source
+      // let source = '+0'
       let author = await authorTable.getBySource(source)
       let aids = await metaTable.getAidsBySource(source)
       let metas = await metaService.getRawMetas(aids)
-      // for(let aid of aids) {
-      //   metas.push(await metaService.getRawMeta(aid.id))
-      // }
+      author.pic_uri = Utils.addUrlPrefix(author.pic_uri)
       return { author, metas }
     } catch (e) {
       console.log(e)

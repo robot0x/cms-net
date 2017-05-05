@@ -31,6 +31,7 @@ class BuyRender extends Render {
         title,
         thumb_image_url,
         body: this.parser.setBuyinfos(buyinfos).getHTML(),
+        prefix: this.prefix,
         version: this.version
       })
     } catch (e) {

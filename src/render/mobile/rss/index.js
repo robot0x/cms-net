@@ -67,6 +67,7 @@ class RssRender extends Render {
         name,
         allarticles,
         body: parser.setMetas(metas).getHTML(limit),
+        prefix: this.prefix,
         version: this.version
       })
    } catch (e) {

@@ -49,102 +49,52 @@ class Parser {
    * @return {[Array]} [返回container下所有字节点的数据片段]
    */
   htmlToData (container, root = true) {
-
     const contents = []
     let children = null
     const contain = container.get(0)
-    // 如果是第一次调用 或者 ul/ol ，则取所有的dom节点
-    if(root || /ul|ol/.test(contain.name)){
+    // 如果是第一次调用 或者 ul/ol等，则取所有的dom节点
+    // 因为第一次或这是ul/ol，忽略下面除了dom节点以外的内容，
+    // 我们认为下面都是dom节点
+    if (root || /ul|ol/.test(contain.name)) {
       children = container.children()
     } else {
       // 否则取所有的节点，包括文本节点
       children = contain.childNodes
     }
     children = Array.from(children)
-    for(let child of children){
+    for (let child of children) {
       let item = {}
       let {type, name, data, attribs} = child
       // 只处理tag和text节点
-      if(type === 'tag'){
+      if (type === 'tag') {
         item.type = name
         let childNodes = child.childNodes
-        if (name === 'a') {
+        let isImg = false
+        if (name === 'img') {
+          item.value = attribs.alt || ''
+          item.url = attribs.src
+          item.width = attribs.width || ''
+          item.height = attribs.height || ''
+          isImg = true
+         } else if (name === 'a') {
            item.url = attribs.href
-         }else if (name === 'span' && attribs.style) {
+         } else if (name === 'span' && attribs.style) {
            item.style = attribs.style
          }
-        const doms = Array.from(this.$(child).children())
         // 若child下有且仅有一个文本节点，则直接把文本节点值赋予value
-        if(childNodes.length === 1 && childNodes[0].type === 'text'){
+        if (childNodes.length === 1 && childNodes[0].type === 'text') {
           item.value = childNodes[0].data
-        } else if(doms.length === 1 && doms[0].name === 'img') {
-          // 若含有其他节点，则递归调用htmlToData
-          let [imgDom] = doms
-          let imgAttr = imgDom.attribs
-          item.type = imgDom.name
-          item.value = imgAttr.alt || ''
-          item.url = imgAttr.src
-          item.width = imgAttr.width || ''
-          item.height = imgAttr.height || ''
-        } else {
+        } else if (!isImg) {
           // 若含有其他节点，则递归调用htmlToData
           item.value = this.htmlToData(this.$(child), false)
         }
-      }else if(type === 'text'){
+      } else if (type === 'text') {
         item.type = type
         item.value = data
       }
       contents.push(item)
     }
     return contents
-
-
-    // const contents = []
-    // let children = null
-    // const contain = container.get(0)
-    // // 如果是第一次调用 或者 ul/ol等，则取所有的dom节点
-    // // 因为第一次或这是ul/ol，忽略下面除了dom节点以外的内容，
-    // // 我们认为下面都是dom节点
-    // if (root || /ul|ol/.test(contain.name)) {
-    //   children = container.children()
-    // } else {
-    //   // 否则取所有的节点，包括文本节点
-    //   children = contain.childNodes
-    // }
-    // children = Array.from(children)
-    // for (let child of children) {
-    //   let item = {}
-    //   let {type, name, data, attribs} = child
-    //   // 只处理tag和text节点
-    //   if (type === 'tag') {
-    //     item.type = name
-    //     let childNodes = child.childNodes
-    //     let isImg = false
-    //     if (name === 'img') {
-    //       item.value = attribs.alt || ''
-    //       item.url = attribs.src
-    //       item.width = attribs.width || ''
-    //       item.height = attribs.height || ''
-    //       isImg = true
-    //      } else if (name === 'a') {
-    //        item.url = attribs.href
-    //      } else if (name === 'span' && attribs.style) {
-    //        item.style = attribs.style
-    //      }
-    //     // 若child下有且仅有一个文本节点，则直接把文本节点值赋予value
-    //     if (childNodes.length === 1 && childNodes[0].type === 'text') {
-    //       item.value = childNodes[0].data
-    //     } else if (!isImg) {
-    //       // 若含有其他节点，则递归调用htmlToData
-    //       item.value = this.htmlToData(this.$(child), false)
-    //     }
-    //   } else if (type === 'text') {
-    //     item.type = type
-    //     item.value = data
-    //   }
-    //   contents.push(item)
-    // }
-    // return contents
   }
 
   set markdown (markdown) {

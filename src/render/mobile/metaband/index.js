@@ -15,7 +15,7 @@ class MetabandRender extends Render{
     try {
       const meta = await metaService.getRawMetas(id, false, true)
       const { nid , thumb_image_url, title} = meta
-      const url = `//c.diaox2.com/view/app/?m=show&id=${nid}`
+      const url = `${this.prefix}/view/app/?m=show&id=${nid}`
       return `
       <div class="relcard" data-href="${url}" data-render="${this.version}" data-action="" data-fn="">
         <a href="${url}">

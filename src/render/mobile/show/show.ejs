@@ -12,20 +12,20 @@
 <title><%-title %></title>
 <link rel="icon" href="//a.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon" />
 <link rel="stylesheet" media="only screen and (min-device-width: 1280px)" type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/pc330.css" />
-<link rel="stylesheet" media="only screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-device-width: 1280px), only screen and (-webkit-min-device-pixel-ratio: 3) and (max-width:1028px)" type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/phone330.css" />
+<link rel="stylesheet" media="only screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-device-width: 1280px), only screen and (-webkit-min-device-pixel-ratio: 3) and (max-width:1028px)" type="text/css" href="<%-prefix%>/cms/diaodiao/assets/phone330.css" />
 <script src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.lazy.min.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cycle2.min.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cycle2.swipe.min.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cookie.min.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.json-2.4.min.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/api204.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/jquery.lazy.min.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/jquery.cycle2.min.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/jquery.cycle2.swipe.min.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/jquery.cookie.min.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/jquery.json-2.4.min.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/api204.js"></script>
 </head>
 <body id="<%-4294967297 * id%>" class="<%-id%>_<%-id%>" data-type="<%-type%>" data-share="<%-pageType === 'share'? 1 : 0%>" data-render="<%-version%>">
-	<div class="total" data-thumb="<%-'//' + thumb.url%>" data-cover="<%-'//' + cover.url%>" data-self="//c.diaox2.com/view/app/?m=show&id=<%-id%>">
+	<div class="total" data-thumb="<%-'//' + thumb.url%>" data-cover="<%-'//' + cover.url%>" data-self="<%-prefix%>/view/app/?m=show&id=<%-id%>">
 
 		<% if( pageType === 'share') {%>
-			<div class="banner tpl" data-href="<%-downloadAddr%>"><img class="bannerleft" src="//c.diaox2.com/cms/diaodiao/assets/icontodown.png"><p class="bannerhigh">品质生活导购平台</p><p class="bannerlow">尽在<span> 有调</span></p><div class="bannerright">点此下载</div></div>
+			<div class="banner tpl" data-href="<%-downloadAddr%>"><img class="bannerleft" src="<%-prefix%>/cms/diaodiao/assets/icontodown.png"><p class="bannerhigh">品质生活导购平台</p><p class="bannerlow">尽在<span> 有调</span></p><div class="bannerright">点此下载</div></div>
 		<% } %>
 
 		<div class="goodsheading">
@@ -36,7 +36,7 @@
 							class="lazy"
 							alt="<%=image.alt%>"
 							title="<%=image.title%>"
-							src="//c.diaox2.com/cms/diaodiao/assets/pixel.gif"
+							src="<%-prefix%>/cms/diaodiao/assets/pixel.gif"
 							data-big="<%='//' + image.url%>"
 							data-src="<%='//' + image.url + (image.extension_name === 'gif' ? '@768w_1l' : '') %>"
 							width="<%=image.width%>"
@@ -58,7 +58,7 @@
 							<% } %>
 						</td>
 						<td class="headauthor">
-							<a href="http://c.diaox2.com/view/app/?m=author&src=<%-author.source%>">
+							<a href="http:<%-prefix%>/view/app/?m=author&src=<%-author.source%>">
 								<img src="<%=author.pic_uri%>" /><%-author.title%>
 							</a>
 						</td>
@@ -75,11 +75,11 @@
 				<div class="headgrayband"></div>
 				<div class="sephead">
 					<div class="sepinner">
-						<img src="//c.diaox2.com/cms/diaodiao/assets/srcfrom.png" /><span>本文作者</span>
+						<img src="<%-prefix%>/cms/diaodiao/assets/srcfrom.png" /><span>本文作者</span>
 					</div>
 				</div>
 				<hr class="authorhr">
-				<div id="author_info" data-author="<%=author.source%>" data-href="//c.diaox2.com/view/app/?m=author&src=<%-author.source%>">
+				<div id="author_info" data-author="<%=author.source%>" data-href="<%-prefix%>/view/app/?m=author&src=<%-author.source%>">
 					<div id="author1">
 						<img id="authorportrait" src="<%-author.pic_uri%>" />
 						<p id="authortitle"><%=author.title%></p>
@@ -102,17 +102,17 @@
 					<% if( has_buylink ) {%>
 						<tr>
 	          	<td style="width:50%" id="bot_down" class="downlink" data-href="<%-downloadAddr%>">
-								<img src="//c.diaox2.com/cms/diaodiao/assets/icontodown.png">
+								<img src="<%-prefix%>/cms/diaodiao/assets/icontodown.png">
 								<span>下载有调</span>
 							</td>
 	            <td style="width:50%" id="bot_buy">
-								<p class="buylink" data-href="//c.diaox2.com/view/app/sku/41987600295472/8383.html">立即购买</p>
+								<p class="buylink" data-href="<%-prefix%>/view/app/sku/41987600295472/8383.html">立即购买</p>
 							</td>
 	          </tr>
 						<% } else { %>
 						<tr>
 							<td style="width:100%" id="bot_intro">
-								<img src="//c.diaox2.com/cms/diaodiao/assets/icontodown.png">
+								<img src="<%-prefix%>/cms/diaodiao/assets/icontodown.png">
 								<span>有调</span>
 								<span>品质生活导购平台</span>
 								<div class="downlink" data-href="<%-downloadAddr%>">立即下载</div>
@@ -130,7 +130,7 @@
 	g_relsearch = [];
 	g_ab = null;
 </script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/ddios330.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/show203.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/wx.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/ddios330.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/show203.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/wx.js"></script>
 </html>

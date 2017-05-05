@@ -3,6 +3,7 @@
  */
 const ejs = require('ejs')
 const fs = require('fs')
+const appConfig = require('../../config/app')
 
 class Render {
   constructor () {
@@ -10,6 +11,7 @@ class Render {
     // ejs 模板
     this.ejs = ejs
     this.downloadAddr = 'http://a.app.qq.com/o/simple.jsp?pkgname=com.diaox2.android&amp;g_f=991653'
+    this.prefix = appConfig.CDIAOX2
   }
 
   setResponse (res) {

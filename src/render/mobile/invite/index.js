@@ -49,6 +49,7 @@ class InviteRender extends Render {
       return this.getDoc(this.template, {
         invite_str,
         nick,
+        prefix: this.prefix,
         version: this.version
       })
     } catch (e) {

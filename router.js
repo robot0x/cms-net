@@ -8,6 +8,7 @@ const genpub = require(`${SRC}/api/genpub`) // pub页数据生成接口
 const relsearch = require(`${SRC}/api/relsearch`) // 相关搜索接口
 const recommend = require(`${SRC}/api/recommend`) // 推荐结果接口
 const search = require(`${SRC}/api/search`) // 文章搜索。按照title搜索，按照date搜索
+const show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，按照date搜索
 const MetaTable = require(`${SRC}/db/MetaTable`)
 const metaTable = new MetaTable
 const {
@@ -159,6 +160,19 @@ router.get('/', async (req, res) => {
     }
   } else {
 
+  }
+})
+
+// APP内正文页、专刊页渲染接口
+const showReg = /\/show\/(\d+)/
+router.get(showReg, async (req, res) => {
+  let match = req.originalUrl.match(showReg)
+  let id = Utils.toShortId(match[1])
+  console.log('APP内渲染接口被命中 ....', id)
+  if (id && /\d+/.test(id)) {
+    show(id).then(result => writeJSON(result, res))
+  } else {
+    pageNotFound(res)
   }
 })
 

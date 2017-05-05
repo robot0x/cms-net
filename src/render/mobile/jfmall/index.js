@@ -52,6 +52,7 @@ class JfMallRender extends Render {
       return this.getDoc(this.template, {
         data: s.join(','),
         pageType: this.type,
+        prefix: this.prefix,
         version: this.version
       })
     } catch (e) {

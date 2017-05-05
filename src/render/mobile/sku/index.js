@@ -44,6 +44,7 @@ class SkuRender extends Render {
           brand,
           body: parser.setSales(sales).getHTML(),
           revarticles: parser.getRevarticleHTML(metas),
+          prefix: this.prefix,
           version
         })
      } catch (e) {

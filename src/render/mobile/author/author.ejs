@@ -8,14 +8,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="format-detection" content="telephone=no">
 <title><%=author.title%> 的全部文章</title>
-<link rel="icon" href="//c.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" media="only screen and (min-device-width: 1280px)" type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/authorpc200.css" />
-<link rel="stylesheet" media="only screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-device-width: 1280px), only screen and (-webkit-min-device-pixel-ratio: 3) and (max-width:1028px)" type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/authorphone200.css" />
+<link rel="icon" href="<%-prefix%>/cms/diaodiao/assets/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" media="only screen and (min-device-width: 1280px)" type="text/css" href="<%-prefix%>/cms/diaodiao/assets/authorpc200.css"/>
+<link rel="stylesheet" media="only screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-device-width: 1280px), only screen and (-webkit-min-device-pixel-ratio: 3) and (max-width:1028px)" type="text/css" href="<%-prefix%>/cms/diaodiao/assets/authorphone200.css" />
 <script src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.json-2.4.min.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cookie.min.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/waypoints.min.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/api201.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/jquery.json-2.4.min.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/jquery.cookie.min.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/waypoints.min.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/api201.js"></script>
 </head>
 <body data-type="author_single" data-render="<%=version%>">
 	<div class="total">
@@ -23,7 +23,7 @@
 			<div class="bottomshadow">
 				<div class="sephead">
 					<div class="sepinner">
-						<img src="//c.diaox2.com/cms/diaodiao/assets/srcfrom.png" /><span>作者</span>
+						<img src="<%-prefix%>/cms/diaodiao/assets/srcfrom.png" /><span>作者</span>
 					</div>
 				</div>
 				<hr class="authorhr">
@@ -42,7 +42,7 @@
 			<div class="headgrayband"></div>
 			<div class="sephead">
 				<div class="sepinner">
-					<img src="//c.diaox2.com/cms/diaodiao/assets/recent.png" /><span>最近文章</span>
+					<img src="<%-prefix%>/cms/diaodiao/assets/recent.png" /><span>最近文章</span>
 				</div>
 			</div>
 			<hr class="articlesep">

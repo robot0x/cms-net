@@ -9,20 +9,20 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="format-detection" content="telephone=no">
 <title><%-title %></title>
-<link rel="icon" href="//c.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" media="only screen and (min-device-width: 1280px)" type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/authorpc200.css" />
+<link rel="icon" href="<%-prefix%>/cms/diaodiao/assets/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" media="only screen and (min-device-width: 1280px)" type="text/css" href="<%-prefix%>/cms/diaodiao/assets/authorpc200.css" />
 <link rel="stylesheet" media="only screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-device-width: 1280px), only screen and (-webkit-min-device-pixel-ratio: 3) and (max-width:1028px)"
-    type="text/css" href="//c.diaox2.com/cms/diaodiao/assets/authorphone200.css" />
+    type="text/css" href="<%-prefix%>/cms/diaodiao/assets/authorphone200.css" />
 <script src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cookie.min.js"></script>
-<script src="//c.diaox2.com/cms/diaodiao/assets/api204.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/jquery.cookie.min.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/api204.js"></script>
 </head>
 
 <body data-type="zhuanti" id="<%-4294967297 * id%>" data-render="<%-version%>">
-  <div class="total" data-id="<%-4294967297 * id%>" data-thumb="http://a.diaox2.com/cms/sites/default/files/20160803/zt/woxihuandewenju.JPG" data-self="http://c.diaox2.com/view/app/?m=zt&id=%-id%>">
+  <div class="total" data-id="<%-4294967297 * id%>" data-thumb="http://a.diaox2.com/cms/sites/default/files/20160803/zt/woxihuandewenju.JPG" data-self="http:<%-prefix%>/view/app/?m=zt&id=%-id%>">
 
     <% if( pageType === 'share') {%>
-      <div class="banner tpl" data-href="<%-downloadAddr%>"><img class="bannerleft" src="//c.diaox2.com/cms/diaodiao/assets/icontodown.png"><p class="bannerhigh">品质生活导购平台</p><p class="bannerlow">尽在<span> 有调</span></p><div class="bannerright">点此下载</div></div>
+      <div class="banner tpl" data-href="<%-downloadAddr%>"><img class="bannerleft" src="<%-prefix%>/cms/diaodiao/assets/icontodown.png"><p class="bannerhigh">品质生活导购平台</p><p class="bannerlow">尽在<span> 有调</span></p><div class="bannerright">点此下载</div></div>
     <% } %>
 
     <div class="content">
@@ -33,7 +33,7 @@
     				<tbody>
     					<tr>
     						<td style="width:100%" id="bot_intro">
-    							<img src="//c.diaox2.com/cms/diaodiao/assets/icontodown.png">
+    							<img src="<%-prefix%>/cms/diaodiao/assets/icontodown.png">
     							<span>有调</span>
     							<span>品质生活导购平台</span>
     							<div class="downlink" data-href="<%-downloadAddr%>">立即下载</div>
@@ -127,7 +127,7 @@
       if (title == undefined || title.length == 0)
         title = "来自有调app的美文";
       var desc = title;
-      //var url = "http://c.diaox2.com/view/app/invite/" + a[1] + ".html";
+      //var url = "http:c.diaox2.com/view/app/invite/" + a[1] + ".html";
       var thumb = $("div.total").attr('data-thumb');
       var cid = $("body").attr('id');
       var base = "/share/"; //TODO: share

@@ -87,6 +87,7 @@ class ShowRender extends Render {
          buylink,
          pageType: this.pageType,
          downloadAddr: this.downloadAddr,
+         prefix: this.prefix,
          version: this.version,
        })
    } catch (e) {
