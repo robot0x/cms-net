@@ -41,27 +41,32 @@ class MetaTable extends Table {
     return await this.getByCond({ author: source })
   }
 
-  async getAidsByCond (cond) {
-    const list = await this.exec(`SELECT id FROM ${this.table} WHERE ${cond}`)
-    const aids = []
+  async getRecordsByCond (col, cond) {
+    const list = await this.exec(`SELECT ${col} FROM ${this.table} WHERE ${cond}`)
+    const records = []
     for(let item of list){
-      aids.push(item.id)
+      records.push(item[col])
     }
-    return aids
+    return records
   }
 
-  async getAidsBySource (source) {
-    return this.getAidsByCond(`author = ${super.escape(source)}`)
+  async getBuylinkById (id) {
+    return Utils.getFirst(await this.getRecordsByCond('buylink' ,`id = ${id}`))
+  }
+
+  getAidsBySource (source) {
+    return this.getRecordsByCond('id' ,`author = ${super.escape(source)}`)
   }
 
   async getCtypeById (id) {
-    let data =  await this.exec(`SELECT ctype FROM ${this.table} WHERE id = ${id}`)
-    let meta = Utils.getFirst(data)
-    let ctype = null
-    if(meta){
-      ctype = meta.ctype
-    }
-    return ctype
+    return Utils.getFirst(await this.getRecordsByCond('ctype' ,`id = ${id}`))
+    // let data =  await this.exec(`SELECT ctype FROM ${this.table} WHERE id = ${id}`)
+    // let meta = Utils.getFirst(data)
+    // let ctype = null
+    // if(meta){
+    //   ctype = meta.ctype
+    // }
+    // return ctype
   }
 
   async getMetas (ids) {
@@ -82,6 +87,9 @@ class MetaTable extends Table {
 }
 
 // const metaTable = new MetaTable()
+// metaTable.getCtypeById(1).then(data => console.log('ctype:', data))
+// metaTable.getAidsBySource('ZRJ').then(data => console.log('aids:', data))
+// metaTable.getBuylinkById(1).then(data => console.log('buylink:', data))
 // metaTable.setColumns(['title', 'titleex', 'titlecolor', 'ctype', 'price', 'buylink', 'author'])
 //          .getById(1)
 //          .then(data => {

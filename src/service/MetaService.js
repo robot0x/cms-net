@@ -12,6 +12,8 @@ const BuyinfoTable = require('../db/BuyinfoTable')
 const DB = require('../db/DB')
 const Utils = require('../utils/Utils')
 const request = require('request')
+const Promise = require('bluebird')
+const moment = require('moment')
 
 class MetaService {
   constructor (id) {
@@ -45,57 +47,7 @@ class MetaService {
       "author":{"pic": "people/Iris.jpg", "name": "小莫"},
       "thumb_image_url": "http://a.diaox2.com/cms/sites/default/files/20150520/goodthing/13591067658Cfg3MWV (1).jpg"
    */
-  async getRawMeta (id = this.id) {
-    try {
-      const {imageTable, metaTable, authorTable} = this
-      // const data = await this.fetchAll(id)
-      // [2, 8] type = 2 是cover图，type = 8 是thumb图
-      const images = await imageTable.getSpecialImagesUrl(id, [2, 8])
-      const meta = await metaTable
-                          .setColumns(['title', 'titleex', 'titlecolor', 'ctype', 'price', 'buylink', 'author'])
-                          .getById(id)
-      const author = await authorTable
-                          .setColumns(['pic_uri', 'title'])
-                          .getBySource(meta.source)
-      const mbuylink = await this.getBuylink(id, meta.buylink)
-      if(mbuylink){
-        meta.has_buylink = true
-        meta.buylink = mbuylink
-      }else {
-        meta.has_buylink = false
-      }
-      let {title, titleex, titlecolor, ctype, price, buylink, has_buylink} = meta
-      let cover_image_url = images.filter(image => {
-        return (image.type & 2) === 2
-      })
-      let thumb_image_url = images.filter(image => {
-        return (image.type & 8) === 8
-      })
-      if(Utils.isValidArray(cover_image_url)){
-        cover_image_url = 'http://' + cover_image_url[0].url
-      }
-      if(Utils.isValidArray(thumb_image_url)){
-        thumb_image_url = 'http://' + thumb_image_url[0].url
-      }
-      title = titleex? [title, titleex] : [title]
-      return {
-        nid: id,
-        is_external: false,
-        title_color: titlecolor || 4294967295,
-        title,
-        price,
-        ctype,
-        has_buylink,
-        buylink,
-        author: { pic: author.pic_uri, name: author.title },
-        cover_image_url,
-        thumb_image_url
-      }
-    } catch (e) {
-      console.log(e)
-      throw new Error(e)
-    }
-  }
+
 
   _findImageByAidAndType (aid, type, images) {
     let isSwipe = type === 16
@@ -133,6 +85,8 @@ class MetaService {
    * 取30条的话，
    * getRawMetas 平均执行时间为 270 ms
    * getRawMeta  平均执行时间为 380 ms
+   *
+   * 专题由于没有timetopublish字段，所有，专题没有meta
    */
   async getRawMetas (
     ids = [this.id],
@@ -158,13 +112,14 @@ class MetaService {
     }
     // console.log('ids:', ids)
     // const metaAndAuthors = await DB.exec(`SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM article_meta AS meta ,author AS au where meta.author = au.source AND meta.id in (${ids.join(',')})`)
-    const sql = ` SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, au.pic_uri, au.title AS author_name FROM article_meta AS meta ,diaodiao_author AS au WHERE meta.id in (${ids.join(',')}) AND meta.author = au.source `
+    // 取meta需要加上时间限制，timetopublish必须处在20141108和今天之间
+    const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.timetopublish, au.pic_uri, au.title AS author_name FROM article_meta AS meta ,diaodiao_author AS au WHERE meta.id in (${ids.join(',')}) AND meta.author = au.source AND meta.timetopublish BETWEEN 20141108 AND ${Number(moment().add(1, 'days').format('YYYYMMDD'))}`
     // const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM article_meta AS meta LEFT JOIN author AS au ON meta.author = au.source`
     // const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM article_meta AS meta LEFT JOIN author AS au ON meta.id in (${ids.join(',')}) and meta.author = au.source`
     // console.log(sql)
     try {
       const metaAndAuthors = await DB.exec(sql)
-
+      console.log('metaAndAuthors:', metaAndAuthors);
       // console.log('[MetaService.getRawMetas]:', metaAndAuthors)
       // type = 2为cover图，type = 8 为thumb图, type = 4 coverex图
       let imageCols = ['aid', "CONCAT('//', url) AS url", 'type']
@@ -191,10 +146,11 @@ class MetaService {
       const images = await this.imageTable.getSpecialImagesUrl(ids, imageTypes, imageCols)
       const metas = []
       for (let me of metaAndAuthors) {
-        let {nid, title, titleex, titlecolor, ctype, price, pic_uri, author_name} = me
+        let {nid, title, titleex, titlecolor, ctype, price, pic_uri, author_name, timetopublish} = me
         // console.log('getRawMetas:', me);
         title = titleex? [title, titleex || ''] : [title || ''] // 防止出现[null]的情况，这种情况应该转换为空数组，即[]
         let meta = Object.create(null) // 使用超轻量对象，提升性能
+        meta.timetopublish = timetopublish
         // author字段变形
         meta.author = { pic: pic_uri, name: author_name }
         // 这个可能在app内用来控制title的颜色
@@ -295,21 +251,26 @@ class MetaService {
     // return new Promise(async (resolve, reject) => {
     let meta, images, content
     try {
-      let meta = await metaTable.setColumns(['title','titleex', 'ctype', 'create_time', 'price', 'author']).getById(id)
+      let meta = await metaTable.setColumns(['title','titleex', 'ctype', 'timetopublish', 'price', 'author']).getById(id)
+      let {timetopublish} = meta
+      if (timetopublish < 20141108 && timetopublish > Number(moment().format('YYYYMMDD'))) return
       // let images = await imageTable.getSpecialImagesUrl(id, [2, 8, 16], ['url', 'type', 'alt', 'title'])
       let images = await imageTable.setColumns(['url', 'type', 'alt', 'width', 'height']).getByAid(id)
       let content = await contentTable.getById(id)
+      // console.log('author:', meta.author)
       // 由于author表目前的数据很少，所以写死
       // let author = await authorTable.getBySource(meta.author)
       let author = await authorTable.getBySource(meta.author)
-      author.pic_uri = Utils.addUrlPrefix(author.pic_uri)
+      if(author){
+        author.pic_uri = Utils.addUrlPrefix(author.pic_uri)
+      }
       // 根据规则拿购买链接，把meta表中的购买链接作为第二个参数，这样在条件命中时，我们就能少访问一次数据库
       if (useBuylink){
         let buylink = await this.getBuylink(id, meta.buylink)
         if(buylink){
           meta.has_buylink = true
           meta.buylink = buylink
-        }else {
+        } else {
           meta.has_buylink = false
         }
       }
@@ -336,7 +297,7 @@ class MetaService {
         }
         try {
           const {state, data}  = JSON.parse(body.body)
-          const skus = data[4294967297 * id]
+          const skus = data[Utils.toLongId(id)]
           // 如果只有1个sku，则把SKU页作为购买页
           if(Utils.isValidArray(skus) && skus.length === 1){
             resolve(`http://c.diaox2.com/view/app/sku/${id}/${skus[0].sid}.html`)
@@ -345,12 +306,12 @@ class MetaService {
             // const buy_info = await this.metaTable.exec(`SELECT * FROM diaodiao_buyinfo where aid = ${id}`)
             const buy_info = await this.buyinfoTable.getByAid(id)
             // 如果diaodiao_buyinfo表存在购买信息
-            if(buy_info.length > 0 && buy_info[0].link){
+            if (buy_info.length > 0 && buy_info[0].link) {
               resolve(`http://c.diaox2.com/view/app/?m=buy&aid=${id}`)
-            } else if(cms_buy_link) {
-                resolve(cms_buy_link)
+            } else if (cms_buy_link) {
+              resolve(cms_buy_link)
             } else {
-               resolve(null)
+              resolve(await this.metaTable.getBuylinkById(id))
             }
           }
         } catch (e) {
@@ -362,5 +323,57 @@ class MetaService {
   }
 }
 
-
 module.exports = MetaService
+
+
+// async getRawMeta (id = this.id) {
+//   try {
+//     const {imageTable, metaTable, authorTable} = this
+//     // const data = await this.fetchAll(id)
+//     // [2, 8] type = 2 是cover图，type = 8 是thumb图
+//     const images = await imageTable.getSpecialImagesUrl(id, [2, 8])
+//     const meta = await metaTable
+//                         .setColumns(['title', 'titleex', 'titlecolor', 'ctype', 'price', 'buylink', 'author'])
+//                         .getById(id)
+//     const author = await authorTable
+//                         .setColumns(['pic_uri', 'title'])
+//                         .getBySource(meta.source)
+//     const mbuylink = await this.getBuylink(id, meta.buylink)
+//     if (mbuylink) {
+//       meta.has_buylink = true
+//       meta.buylink = mbuylink
+//     } else {
+//       meta.has_buylink = false
+//     }
+//     let {title, titleex, titlecolor, ctype, price, buylink, has_buylink} = meta
+//     let cover_image_url = images.filter(image => {
+//       return (image.type & 2) === 2
+//     })
+//     let thumb_image_url = images.filter(image => {
+//       return (image.type & 8) === 8
+//     })
+//     if(Utils.isValidArray(cover_image_url)){
+//       cover_image_url = 'http://' + cover_image_url[0].url
+//     }
+//     if(Utils.isValidArray(thumb_image_url)){
+//       thumb_image_url = 'http://' + thumb_image_url[0].url
+//     }
+//     title = titleex? [title, titleex] : [title]
+//     return {
+//       nid: id,
+//       is_external: false,
+//       title_color: titlecolor || 4294967295,
+//       title,
+//       price,
+//       ctype,
+//       has_buylink,
+//       buylink,
+//       author: { pic: author.pic_uri, name: author.title },
+//       cover_image_url,
+//       thumb_image_url
+//     }
+//   } catch (e) {
+//     console.log(e)
+//     throw new Error(e)
+//   }
+// }

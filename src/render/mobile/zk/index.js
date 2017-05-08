@@ -13,6 +13,7 @@ class ZKRender extends Render {
     this.setId(id)
     this.template = this.readTemplate(__dirname + '/zk.ejs')
     this.parser = new Parser
+    this.metaService = new MetaService
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
@@ -34,14 +35,37 @@ class ZKRender extends Render {
      return this
    }
 
+  getCidByMarkdown (markdown) {
+    const idReg =  /id[:：]\s*(\d+)\s*title[:：]/
+    const allCardReg = /```card[\s\S]+?```/ig
+    const allCardMarkdown = markdown.match(allCardReg)
+    const ret = []
+    for(let cardMarkdown of allCardMarkdown){
+      let id = cardMarkdown.match(idReg)
+      if(Utils.isValidArray(id)){
+        ret.push(Number(id[1]))
+      }
+    }
+    return ret
+  }
+
   async rende() {
-    const { parser,id } = this
+    const { parser, id, metaService } = this
     if(!id) return
     try {
-      let { content, meta, images } = await new MetaService().getRenderData(id)
+      let { content, meta, images } = await metaService.getRenderData(id)
       let { title } = meta
       parser.markdown = content // markdown is a setter like method `setMarkdown`
-      let body = parser.getHTML()
+      //  对于专刊，我们要先取出所引用的所有文章id
+      let cids = this.getCidByMarkdown(content)
+      let buylinks = []
+      // 根据文章id获取其buylink
+      for(let cid of cids) {
+        let buylink = await metaService.getBuylink(cid)
+        buylinks.push({cid, link: Utils.convertSkuUrl(buylink, cid) })
+      }
+      let body = parser.setBuylinks(buylinks).getHTML()
+      // console.log(`ID为${id}的专刊引用的文章ID列表为：`,cids)
       // body = imageHandler(body, images)
       //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
       let cover = images.filter(img => {
@@ -53,10 +77,8 @@ class ZKRender extends Render {
       const swipes = images.filter(img => {
         return (img.type & 16) === img.type
       })
-
       thumb = Utils.getFirst(thumb)
       cover = Utils.getFirst(cover)
-
       return this.getDoc(this.template, {
         id,
         title,

@@ -56,15 +56,17 @@ class ZKParser extends Parser {
        *  1. 先拿文章的
        */
       if(/card/i.test(type)) {
-        return `<div class="bottomshadow card goodthing" data-href="//c.diaox2.com/view/app/?m=show&amp;id=${id}">
+        // 专刊页上的购买链接，如果是sku页，则必须用 /sku/longid/sid.html这种形式
+        let buylink = this.getBuylinkById(id) || `//c.diaox2.com/view/app/?m=buy&aid=${id}`
+        return `<div class="bottomshadow card goodthing" data-href="//c.diaox2.com/view/app/?m=show&id=${id}">
                 <div class="wrapper">
-                    <div class="img">
-                                    <img class="direct" src="//${image}" data-w="596" data-h="486" style="width: 672px; height: 547px;">
-                                </div>
-                              </div>
+                        <div class="img">
+                          <img class="direct" src="//${image}" data-w="596" data-h="486" style="width: 672px; height: 547px;">
+                        </div>
+                        </div>
                         <p class="title">${title}</p>
                         <p class="desc">${desc}</p>
-                        <div class="pseudoB"><p>查看详情</p><span data-link="/view/app/?m=buy&amp;aid=${id}">立即购买</span></div>
+                        <div class="pseudoB"><p>查看详情</p><span data-link="${buylink}">立即购买</span></div>
                     </div>
                     ${delimiter}
                     `
@@ -79,13 +81,28 @@ class ZKParser extends Parser {
               </div>
               ${delimiter}
               `
-
       }else{
         return ''
       }
     }
     super.setRenderer(renderer)
   }
+
+  setBuylinks (buylinks) {
+    this.buylinks = buylinks
+    return this
+  }
+
+  getBuylinkById(id) {
+    let {buylinks} = this
+    for(let buylink of buylinks) {
+      if(buylink.cid == id) {
+        return buylink.link
+      }
+    }
+    return null
+  }
+
 }
 
 module.exports = ZKParser

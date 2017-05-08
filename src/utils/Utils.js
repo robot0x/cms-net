@@ -2,6 +2,20 @@ const url = require('url')
 const appConfig = require('../../config/app')
 
 class Utils {
+  // 把sku的形如：http://c.diaox2.com/view/app/sku/8383.html
+  // 转换为     ：http://c.diaox2.com/view/app/sku/41987600295472/8383.html
+  static convertSkuUrl (buylink, id) {
+    // console.log('[Utils.convertSkuUrl] input  is:', buylink)
+    //  如果有购买链接且购买链接是sku页，则需要转成 /sku/longid/sid.html这种形式，用来进行统计
+     if(/\/sku\//i.test(buylink)) {
+        let mSkuReg = /\/sku\/(?:\d+\/)?(\d+)\.html/
+        let match = buylink.match(mSkuReg)
+        let sid = match[1]
+        buylink = `//c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${sid}.html`
+     }
+    //  console.log('[Utils.convertSkuUrl] output is:', buylink)
+     return buylink
+  }
   static addUrlPrefix (url) {
     if(!url) return null
     if(!/^(https?:)?\/\//.test(url)) {
@@ -286,5 +300,9 @@ class Utils {
 // console.log(Utils.toLongId(lcid))
 // console.log(Utils.toLongId(scids))
 // console.log(Utils.toLongId(scid))
+
+// console.log(Utils.convertSkuUrl('http://c.diaox2.com/view/app/sku/8383.html', 7080))
+// console.log(Utils.convertSkuUrl('http://c.diaox2.com/view/app/?m=buy&aid=1598', 7080))
+// console.log(Utils.convertSkuUrl('http://c.diaox2.com/view/app/sku/1047/259.html', 7080))
 
 module.exports = Utils

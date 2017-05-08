@@ -36,7 +36,7 @@ class SkuRender extends Render {
        console.log(JSON.stringify(data))
        let {title, brand, sales, images, revarticles} = data
        images = images.map(image => image.url)
-       const metas = await metaService.getRawMetas(revarticles)
+       const metas = await metaService.getRawMetas(revarticles, false)
        return this.getDoc(this.template, {
           sid,
           title,

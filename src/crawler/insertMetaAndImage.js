@@ -6,7 +6,6 @@ const runLogger = Log.getLogger('cms_run')
 const Promise = require('bluebird')
 const Utils = require('../utils/Utils')
 const DB = require('../db/DB')
-const db = new DB()
 
 fs.readFile('./data/ztjson', 'utf8', (err, text) => {
   if (err) {
@@ -42,9 +41,7 @@ fs.readFile('./data/ztjson', 'utf8', (err, text) => {
         const {node, meta} = article
         let {nid, type, title, created, changed, status, promote} = node
         let {
-
           timetopublish, price, buylink, source, author, titlecolor, titleex,
-
           coverimage,  // cover图
           coverex,     // coverex图
           thumb,       // thumb图
@@ -91,58 +88,60 @@ fs.readFile('./data/ztjson', 'utf8', (err, text) => {
         } else {
           timetopublish = 0
         }
-
         if (isValidArray(price)) {
-          price = db.escape(price[0].value)
-        }else {
-          price = db.escape('')
+          price = DB.escape(price[0].value || '')
+        } else {
+          price = DB.escape('')
         }
 
         if (isValidArray(buylink)) {
-          buylink = db.escape(buylink[0].value)
+          buylink = DB.escape(buylink[0].value || '')
+        } else {
+          buylink = DB.escape('')
         }
+
         if(isValidArray(source)) {
-          source = db.escape(source[0].value)
+          author = DB.escape(source[0].value || '')
+        } else if(isValidArray(author)) {
+          author = DB.escape(author[0].value || '')
+        } else {
+          author = DB.escape('')
         }
-        if(isValidArray(author)) {
-          author = db.escape(author[0].value)
+
+        // if(isValidArray(author)) {
+        //   author = DB.escape(author[0].value || '')
+        // } else {
+        //   author = DB.escape('')
+        // }
+
+        title = DB.escape(title || '')
+
+        if(isValidArray(titleex)) {
+          titleex = DB.escape(titleex[0].value || '')
+        } else {
+          titleex = DB.escape('')
         }
 
         if(isValidArray(titlecolor)) {
           titlecolor = titlecolor[0].value
+          if(!/\d+/.test(titlecolor)) {
+            titlecolor = 0
+          }
         } else {
           titlecolor = 0
         }
-
-        if(isValidArray(titleex)) {
-          titleex = db.escape(titleex[0].value)
-        } else {
-          titleex = db.escape('')
-        }
-
+        // console.log(`the author is ${author}`)
+        let sql = `INSERT INTO article_meta SET id=${nid}, title=${title}, ctype=${type}, timetopublish=${timetopublish}, buylink=${buylink}, price=${price}, titlecolor=${titlecolor}, titleex=${titleex}, create_time=${DB.escape(new Date(created * 1000))}, last_update_time=${DB.escape(new Date(changed * 1000))}, author=${source || author}`
+        // 目前的问题，timetopublish有将近100篇为0
+        // 所有的buylink字段为空
         batch.push(
-          table
-          .exec(`
-            INSERT INTO
-              article_meta
-            SET
-              id=${nid},
-              title=${db.escape(title)},
-              ctype=${type},
-              timetopublish=${timetopublish},
-              price=${price},
-              titlecolor=${titlecolor},
-              titleex=${titleex},
-              create_time=${db.escape(new Date(created * 1000))},
-              last_update_time=${db.escape(new Date(changed * 1000))},
-              author=${source || author}
-            `)
+          DB
+          .exec(sql)
           .then(data => {
             console.log(`ID为 ${nid} 的META更新成功 ....`)
           })
           .catch(err => {
-            console.log(err)
-            runLogger.error(`ID为 ${nid} 的META更新失败，出错信息：`, err.message)
+              runLogger.error(`ID为${nid}的META更新失败， SQL:${sql} 出错信息：`, err.message)
           })
         )
 
@@ -180,7 +179,7 @@ fs.readFile('./data/ztjson', 'utf8', (err, text) => {
         Promise.all(batch).then(() => {
           console.log(`ID为${nid}的文章入库成功 ....`)
         }).catch(e => {
-            console.log(`ID为${nid}的文章入库失败 .... 信息：`, e)
+            console.log(`ID为${nid}的文章入库失败 SQL:${sql} 出错信息：`, e)
         })
       })
   }

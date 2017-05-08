@@ -94,7 +94,7 @@ class TagService {
       }
       // 拿到所有aids，通过aids拿出所有meta，这个需要写自己写sql
       const aids = tags.map(tag => tag.aid)
-      const metas = await DB.exec(`SELECT id, CONCAT(title,titleex) AS title FROM article_meta where id in (${aids.join(',')})`)
+      const metas = await DB.exec(`SELECT id, CONCAT(title,titleex) AS title FROM article_meta where id in (${aids.join(',')}) ORDER BY timetopublish DESC`)
       let slice_aids = null
 
       if(limit !== -1) {

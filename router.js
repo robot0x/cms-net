@@ -9,8 +9,10 @@ const relsearch = require(`${SRC}/api/relsearch`) // 相关搜索接口
 const recommend = require(`${SRC}/api/recommend`) // 推荐结果接口
 const search = require(`${SRC}/api/search`) // 文章搜索。按照title搜索，按照date搜索
 const show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，按照date搜索
+const getMetas = require(`${SRC}/api/meta`) // meta接口
 const MetaTable = require(`${SRC}/db/MetaTable`)
 const metaTable = new MetaTable
+
 const {
   mShowRender, mZKRender, mZTRender, mAuthorRender, mTagRender, // 移动端渲染器
   mBuyRender, mSkuRender,
@@ -134,7 +136,8 @@ router.get('/', async (req, res) => {
     } else if (/meta/i.test(m)) {
       console.log('meta接口的路由被命中：', id)
       if(id && /\d+/.test(id)){
-        metaService.getRawMetas(id).then(meta => writeJSON(meta, res))
+        getMetas(id).then(meta => writeJSON(meta, res))
+        // metaService.getRawMetas(id).then(meta => writeJSON(meta, res))
       } else {
         pageNotFound(res)
       }
@@ -252,7 +255,7 @@ router.get(pcShowReg, async (req, res) => {
   }
 })
 
-const mSkuReg = /\/sku\/(\d+)\.html/
+const mSkuReg = /\/sku\/(?:\d+\/)?(\d+)\.html/
 router.get(mSkuReg, (req, res) => {
   let match = req.originalUrl.match(mSkuReg)
   let sid = match[1]
@@ -290,7 +293,8 @@ router.post('/', async (req, res) => {
       genpub(postData).then(data => writeJSON(data, res))
     } else if (/meta/i.test(m)) {
       console.log('命中meta POST接口 ....')
-      metaService.getRawMetas(postData).then(meta => writeJSON(meta, res))
+      getRawMetas(postData).then(meta => writeJSON(meta, res))
+      // metaService.getRawMetas(postData).then(meta => writeJSON(meta, res))
     } else if (/TS/i.test(m)) {
       console.log('命中TS POST接口 ....')
       console.log(postData)

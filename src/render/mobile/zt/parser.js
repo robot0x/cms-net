@@ -83,6 +83,11 @@ class ZTParser extends Parser {
     }
     super.setRenderer(renderer)
   }
+  
+  setBuylinks (buylinks) {
+    this.buylinks = buylinks
+    return this
+  }
 }
 
 module.exports = ZTParser
