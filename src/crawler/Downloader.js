@@ -6,7 +6,6 @@
  *  为了减轻服务器的压力，要使异步任务顺序化，而不是近1W个url一次性地请求完
  *  请求完一个url，并成功返回结果，才接着请求下一个url
  */
-
 const request = require('request')
 const Promise = require('bluebird')
 const Log = require('../utils/Log')

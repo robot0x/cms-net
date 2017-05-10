@@ -7,7 +7,7 @@ const Promise = require('bluebird')
 const Utils = require('../utils/Utils')
 const DB = require('../db/DB')
 
-fs.readFile('./data/ztjson', 'utf8', (err, text) => {
+fs.readFile('./data/ajson', 'utf8', (err, text) => {
   if (err) {
     console.log(err)
     reject(err)
@@ -132,43 +132,40 @@ fs.readFile('./data/ztjson', 'utf8', (err, text) => {
           DB
           .exec(sql)
           .then(data => {
-            console.log(`ID为${nid}的文章入库成功 ....`)
-          })
-          .catch(err => {
-              runLogger.error(`ID为${nid}的META更新失败， SQL:${sql} 出错信息：`, err.message)
-          })
+            console.log(`ID为 ${nid} 的文章入库成功 ....`)
+          }).catch(err => {runLogger.error(`ID为${nid}的META更新失败， SQL:${sql} 出错信息：`, err.message)})
         )
 
-        // const images = [].concat(setImage(1, pics))
-        //   .concat(setImage(2, coverimage))
-        //   .concat(setImage(4, coverex))
-        //   .concat(setImage(8, thumb))
-        //   .concat(setImage(16, swipeimage))
-        //   .concat(setImage(32, banner))
-        //
-        // for (let image of images) {
-        //   batch.push(table.exec(`
-        //     INSERT INTO
-        //       diaodiao_article_image
-        //     SET
-        //       aid=${nid},
-        //       url=${db.escape(image.url)},
-        //       used=1,
-        //       type=${image.type},
-        //       extension_name=${db.escape(image.extension_name)},
-        //       size=${image.size || 0},
-        //       width=${image.width || 0},
-        //       height=${image.height || 0},
-        //       alt=${db.escape(image.alt)},
-        //       title=${db.escape(image.title)},
-        //       create_time=${db.escape(new Date(image.create_time * 1000))}
-        //   `).then(data => {
-        //     console.log(`ID为 ${nid} 的image更新成功 ....`)
-        //   }).catch(err => {
-        //     console.log(err)
-        //     runLogger.error(`D为 ${nid} 的image更新成功，出错信息：`, err.message)
-        //   }))
-        // }
+        const images = [].concat(setImage(1, pics))
+          .concat(setImage(2, coverimage))
+          .concat(setImage(4, coverex))
+          .concat(setImage(8, thumb))
+          .concat(setImage(16, swipeimage))
+          .concat(setImage(32, banner))
+
+        for (let image of images) {
+          batch.push(table.exec(`
+            INSERT INTO
+              diaodiao_article_image
+            SET
+              aid=${nid},
+              url=${DB.escape(image.url)},
+              used=1,
+              type=${image.type},
+              extension_name=${DB.escape(image.extension_name)},
+              size=${image.size || 0},
+              width=${image.width || 0},
+              height=${image.height || 0},
+              alt=${DB.escape(image.alt)},
+              title=${DB.escape(image.title)},
+              create_time=${DB.escape(new Date(image.create_time * 1000))}
+          `).then(data => {
+            console.log(`ID为 ${nid} 的image更新成功 ....`)
+          }).catch(err => {
+            console.log(err)
+            runLogger.error(`D为 ${nid} 的image更新成功，出错信息：`, err.message)
+          }))
+        }
 
         Promise.all(batch).then(() => {
           // console.log(`ID为${nid}的文章入库成功 ....`)

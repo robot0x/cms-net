@@ -99,8 +99,8 @@ class DB {
            runLogger.error(err)
            reject(err)
          }
-         console.log("[DB.exec] got connetion")
-         console.log(`[DB.exe] prepare to run ${sql} ${data? `with ${data}` : ''}`)
+        //  console.log("[DB.exec] got connetion")
+        //  console.log(`[DB.exe] prepare to run ${sql} ${data? `with ${data}` : ''}`)
          connection.query(sql, data, (error, rows) => {
            connection.release()
            if(error){
