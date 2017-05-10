@@ -7,7 +7,7 @@
   "config": {
     "root": "",
     "root2": "cms/api/v1/",
-    "port": 3001
+    "port": 3003
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
