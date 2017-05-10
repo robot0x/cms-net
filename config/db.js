@@ -22,10 +22,10 @@
    'cms': {
      'host': 'rds7bz3av7bz3av.mysql.rds.aliyuncs.com',
      //  reader是只读帐号，渲染相关的都是只需要读就可以了
-     'user': 'reader',
-     'password': 'reader',
-     //  'user': 'diaodiao',
-     //  'password': 'diaodiao',
+    //  'user': 'reader',
+    //  'password': 'reader',
+      'user': 'diaodiao',
+      'password': 'diaodiao',
      'database': 'diaodiao',
      'charset': 'utf8mb4',
      'multipleStatement': true,
