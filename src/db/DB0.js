@@ -133,7 +133,7 @@ class DB {
    }
 }
 DB.pool = DB.use()
-// DB.exec('select * from article_meta').then(data => console.log(data.length))
+// DB.exec('select * from diaodiao_article_meta').then(data => console.log(data.length))
 // console.log(DB.escape('你好，再见\\ or 1 = 1'));
 // console.log(DB.escapeValue({
 //   name: '你好，再见\\ or 1 = 1'

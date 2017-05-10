@@ -83,8 +83,8 @@ class DB {
    */
   static initPoolCluster (config) {
     const poolCluster = mysql.createPoolCluster()
+    // poolCluster.add(DIAODIAO, dbConfig[DIAODIAO])
     poolCluster.add(CMS, dbConfig[CMS])
-    poolCluster.add(DIAODIAO, dbConfig[DIAODIAO])
     DB.poolCluster = poolCluster
   }
   /**
@@ -92,7 +92,8 @@ class DB {
    */
    static exec (sql, data) {
      return new Promise((resolve, reject) => {
-       DB.poolCluster.getConnection(CMS, DIAODIAO, function(err, connection) {
+       DB.poolCluster.getConnection(CMS, function(err, connection) {
+      //  DB.poolCluster.getConnection(CMS, DIAODIAO, function(err, connection) {
          if(err) {
            console.log(err)
            runLogger.error(err)

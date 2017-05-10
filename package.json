@@ -11,8 +11,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node cms-net.js",
-    "dev": "nodemon cms-net.js"
+    "start": "pm2 start cms-net.js -i max",
+    "nstart": "node cms-be.js",
+    "dev": "NODE_ENV=dev nodemon cms-net.js"
   },
   "keywords": [
     "有调",

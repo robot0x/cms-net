@@ -3,7 +3,7 @@ const Utils = require('../utils/Utils')
 
 class ImageTable extends Table {
   constructor () {
-    super('image', [
+    super('diaodiao_article_image', [
       'id',
       'aid',
       'url',

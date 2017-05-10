@@ -6,7 +6,7 @@ const varLogger = Log.getLogger('cms_var')
 
 class MetaTable extends Table {
   constructor () {
-    super('article_meta', [
+    super('diaodiao_article_meta', [
           'id',
           'title',
           'share_title',

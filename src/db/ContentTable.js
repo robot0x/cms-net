@@ -4,7 +4,7 @@ const Utils = require('../utils/Utils')
 class ContentTable extends Table {
   constructor () {
     // super('article_content', ['aid', 'content'], null, null)
-    super('article_content', ['content'], null, null)
+    super('diaodiao_article_content', ['content'], null, null)
   }
   // article_content的主键为aid
   async getById (id) {

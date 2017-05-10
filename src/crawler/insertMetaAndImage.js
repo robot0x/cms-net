@@ -125,7 +125,7 @@ fs.readFile('./data/ztjson', 'utf8', (err, text) => {
           titlecolor = 0
         }
         // console.log(`the author is ${author}`)
-        let sql = `INSERT INTO article_meta SET id=${nid}, title=${title}, ctype=${type}, timetopublish=${timetopublish}, buylink=${buylink}, price=${price}, titlecolor=${titlecolor}, titleex=${titleex}, create_time=${DB.escape(new Date(created * 1000))}, last_update_time=${DB.escape(new Date(changed * 1000))}, author=${author}`
+        let sql = `INSERT INTO diaodiao_article_meta SET id=${nid}, title=${title}, ctype=${type}, timetopublish=${timetopublish}, buylink=${buylink}, price=${price}, titlecolor=${titlecolor}, titleex=${titleex}, create_time=${DB.escape(new Date(created * 1000))}, last_update_time=${DB.escape(new Date(changed * 1000))}, author=${author}`
         // 目前的问题，timetopublish有将近100篇为0
         // 所有的buylink字段为空
         batch.push(
@@ -149,7 +149,7 @@ fs.readFile('./data/ztjson', 'utf8', (err, text) => {
         // for (let image of images) {
         //   batch.push(table.exec(`
         //     INSERT INTO
-        //       image
+        //       diaodiao_article_image
         //     SET
         //       aid=${nid},
         //       url=${db.escape(image.url)},
