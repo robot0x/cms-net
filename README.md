@@ -8,8 +8,8 @@
 # 安装依赖
 npm install
 
-# 启动server
-pm2 start cms-net.js -i max
+# 启动server 相当于执行：pm2 start cms-net.js -i max
+npm start
 
 # 跑单元测试
 npm test
