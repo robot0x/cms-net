@@ -25,10 +25,13 @@ const parser = new Parser()
 const writer = new Writer()
 
 reader.read().then(contents => {
+  // console.log(contents)
   try{
     // console.log(contents.map(content => content.url))
     // 文件下载器
-    downloader.set(contents.map(content => content.url))
+    const urls = contents.filter(content => !!content).map(content => content.url)
+    // console.log(urls)
+    downloader.set(urls)
 
     downloader.download((html, url, index) => {
       const content = contents[index]

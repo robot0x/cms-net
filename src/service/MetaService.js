@@ -114,9 +114,9 @@ class MetaService {
     // console.log('ids:', ids)
     // const metaAndAuthors = await DB.exec(`SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM diaodiao_article_meta AS meta ,diaodiao_author AS au where meta.author = au.source AND meta.id in (${ids.join(',')})`)
     // 取meta需要加上时间限制，timetopublish必须处在20141108和今天之间
-    const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.timetopublish, au.pic_uri, au.title AS author_name FROM article_meta AS meta ,diaodiao_author AS au WHERE meta.id in (${ids.join(',')}) AND meta.author = au.source AND meta.timetopublish BETWEEN 20141108 AND ${Number(moment().add(1, 'days').format('YYYYMMDD'))}`
+    const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.timetopublish, au.pic_uri, au.title AS author_name FROM diaodiao_article_meta AS meta ,diaodiao_author AS au WHERE meta.id in (${ids.join(',')}) AND meta.author = au.source AND meta.timetopublish BETWEEN 20141108 AND ${Number(moment().add(1, 'days').format('YYYYMMDD'))}`
     // const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM diaodiao_article_meta AS meta LEFT JOIN author AS au ON meta.author = au.source`
-    // const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM article_meta AS meta LEFT JOIN diaodiao_author AS au ON meta.id in (${ids.join(',')}) and meta.author = au.source`
+    // const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM diaodiao.article_meta AS meta LEFT JOIN diaodiao_author AS au ON meta.id in (${ids.join(',')}) and meta.author = au.source`
     // console.log(sql)
     try {
       const metaAndAuthors = await DB.exec(sql)

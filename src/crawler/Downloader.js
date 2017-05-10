@@ -2,7 +2,7 @@
  * @Author: liyanfeng
  * @Date: 2017-04-18 14:44:46
  * @Last Modified by: liyanfeng
- * @Last Modified time: 2017-04-18 17:22:50
+ * @Last Modified time: 2017-05-10 21:59:27
  *  为了减轻服务器的压力，要使异步任务顺序化，而不是近1W个url一次性地请求完
  *  请求完一个url，并成功返回结果，才接着请求下一个url
  */

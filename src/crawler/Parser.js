@@ -333,7 +333,7 @@ class Parser {
           md += `<u>${this.getShowMarkdown($child, false)}</u>`
         }
       } else if (name === 'a') {
-        console.log('a标签内的文本是：', innerText)
+        // console.log('a标签内的文本是：', innerText)
         md += `[${innerText}](${Utils.normalize(attribs.href)})`
       } else if (name === 'img') {
         md += `![${attribs.alt}](${attribs['data-big'] || attribs.src})`
