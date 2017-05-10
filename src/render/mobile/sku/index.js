@@ -6,7 +6,10 @@ const request = require('request')
 const Promise = require('bluebird')
 /**
  * 渲染：
- *  1. 购买页 http://c.diaox2.com/view/app/sku/2112.html
+ *  1. SKU页
+ *     http://c.diaox2.com/view/app/?m=sku&sid=2112
+ *     http://c.diaox2.com/view/app/sku/5239860102340/2112.html
+ *     http://c.diaox2.com/view/app/sku/1220/2112.html
  */
 class SkuRender extends Render {
 

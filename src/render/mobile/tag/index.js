@@ -4,7 +4,9 @@ const Parser = require('./parser')
 const TagService = require('../../../service/TagService')
 /**
  * 渲染：
- *  1. 作者页 http://www.diaox2.com/category/100003.html
+ *  1. tag页
+ *   http://c.diaox2.com/view/app/?m=tag&tid=100000
+ *   http://www.diaox2.com/category/100000.html
  */
 class TagRender extends Render {
 

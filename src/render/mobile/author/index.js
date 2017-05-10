@@ -4,7 +4,9 @@ const Parser = require('./parser')
 const AuthorService = require('../../../service/AuthorService')
 /**
  * 渲染：
- *  1. 作者页 http://c.diaox2.com/view/app/?m=author&src=ZRJ
+ *  1. 作者页
+ *   http://c.diaox2.com/view/app/?m=author&src=ZRJ
+ *   http://www.diaox2.com/editor/ZRJ.html
  */
 class AuthorRender extends Render {
 
