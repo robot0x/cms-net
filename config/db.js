@@ -32,7 +32,7 @@
      'connectionLimit': 50
    }
  }
- console.log(`isDebug:${isDebug}, use: ${dbConfig}`)
+ console.log(`isDebug:${isDebug}, use: ${JSON.stringify(dbConfig)}`)
  module.exports = dbConfig
 
 //  module.exports = {
