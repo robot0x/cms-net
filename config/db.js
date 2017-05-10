@@ -8,7 +8,7 @@
 //     "connectionLimit": 15
 //  }
  const isDebug =  process.env.NODE_ENV === 'dev' ? true : false
- module.exports = isDebug ? {
+ const dbConfig = isDebug ? {
    'cms': {
      'host': '172.16.1.121',
      'user': 'root',
@@ -32,6 +32,8 @@
      'connectionLimit': 50
    }
  }
+ console.log(`isDebug:${isDebug}, use: ${dbConfig}`)
+ module.exports = dbConfig
 
 //  module.exports = {
 //    'cms': {

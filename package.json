@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "author": "liyanfeng",
   "description": "有调CMS系统相关接口",
-  "main": "cms.js",
+  "main": "cms-net.js",
   "config": {
     "root": "",
     "root2": "cms/api/v1/",
