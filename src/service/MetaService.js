@@ -15,6 +15,7 @@ const request = require('request')
 const Promise = require('bluebird')
 const moment = require('moment')
 
+
 class MetaService {
   constructor (id) {
     this.metaTable = new MetaTable
