@@ -38,7 +38,7 @@ async function showArticle (id) {
     return {
       header: {
         title: Utils.getFirst(title),
-        price: { type: 'price', value: '￥30起' },
+        price: { type: 'price', value: price },
         banners: swipe_image_url,
         author: { url: author.pic, value: author.name }
       },
@@ -50,7 +50,7 @@ async function showArticle (id) {
 }
 
 async function showZK (id) {
-  
+
 }
 
 async function showZT (id) {
