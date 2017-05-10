@@ -43,7 +43,7 @@ class TagRender extends Render {
      // console.log(metas)
      for (let meta of metas) {
        let {id, title} = meta
-       let longid = id * 4294967297
+       let longid = Utils.toLongId(id)
        allarticles.push(longid)
        infos += `"${longid}":"${escape(title).replace(/%u/g,'\\u').replace(/%20/g,' ')}",`
        let thumb = this._findImageByAid(images, id)
