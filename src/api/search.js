@@ -36,14 +36,15 @@ class Search {
       // 如果没有结束日期，则定为 今天
       end = moment().format(pattern)
     }
-    start = +start
-    end = +end
+    start = Number(start)
+    end = Number(end)
     if(start > end) {
       [start, end] = [end, start] // 交换位置
     }
     stimestamp = moment(start, pattern).valueOf()
     etimestamp = moment(end, pattern).valueOf()
-    return this.doQuery(` create_time BETWEEN ${DB.escape(new Date(stimestamp))} AND ${DB.escape(new Date(etimestamp))} `)
+    return this.doQuery(` timetopublish BETWEEN ${stimestamp} AND ${etimestamp} `)
+    // return this.doQuery(` create_time BETWEEN ${DB.escape(new Date(stimestamp))} AND ${DB.escape(new Date(etimestamp))} `)
   }
   /**
    * {
@@ -72,6 +73,7 @@ class Search {
 }
    */
   _handleMeta (meta) {
+    const { nid } = meta
     meta.thumb = meta.thumb_image_url
     meta.cover = meta.cover_image_url
     meta.coverex = meta.coverex_image_url
@@ -79,12 +81,12 @@ class Search {
     meta.buy = meta.buylink
     meta.title = meta.title.join(',')
 
-    let longId = Utils.toLongId(meta.nid)
+    let longId = Utils.toLongId(nid)
     meta.body = ''
     meta.thumbclass = ''
     meta.coverclass = ' debug'
     meta.applink = `diaodiao://c.diaox2.com/view/app/?m=${Utils.ctypeToM(meta.ctype)}&id=7691`
-    meta.url = meta.oriUrl = `/view/app/?m=${Utils.ctypeToM(meta.ctype)}&id=7691`
+    meta.url = meta.oriUrl = `/view/app/?m=${Utils.ctypeToM(meta.ctype)}&id=${nid}`
     meta.share = `/share/${longId}.html`
     meta.share = `/share/${longId}.html`
     meta.serverid = longId
