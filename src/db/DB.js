@@ -100,7 +100,6 @@ class DB {
          }
          console.log("[DB.exec] got connetion")
          console.log(`[DB.exe] prepare to run ${sql} ${data? `with ${data}` : ''}`)
-         console.log(sql)
          connection.query(sql, data, (error, rows) => {
            connection.release()
            if(error){

@@ -65,23 +65,19 @@ router.get('/', async (req, res) => {
     if (/show|z(k|t)/.test(m)) {
       if (id && /\d+/.test(id)) {
         // showAndZKAndZTRouter(id, 'inapp', req, res)
-        const trueM = Utils.ctypeToM(await metaTable.getCtypeById(id))
+        const ctype = await metaTable.getCtypeById(id)
+        console.log('ctype: ', ctype);
+        const trueM = Utils.ctypeToM(ctype)
         if( trueM ) {
           if( m !== trueM ) {
+            console.log('redirect ....');
             redirect(res, `//${req.headers.host}/?m=${trueM}&id=${id}`)
           } else {
+            console.log('not redirect ....');
             showAndZKAndZTRouter(m, id, 'inapp', req, res)
-            // if (/show/.test(m)) {
-            //   mShowRender.setPageType('inapp').setId(id).rende().then(doc => writeDoc(doc, res))
-            // } else if (/zk/.test(m)) {
-            //   mZKRender.setPageType('inapp').setId(id).rende().then(doc => writeDoc(doc, res))
-            // } else if (/zt/.test(m)) {
-            //   mZTRender.setPageType('inapp').setId(id).rende().then(doc => writeDoc(doc, res))
-            // } else {
-            //   pageNotFound(res)
-            // }
           }
         } else {
+          console.log('pageNotFound ....');
           pageNotFound(res)
         }
       } else {
@@ -101,6 +97,7 @@ router.get('/', async (req, res) => {
       }
     } else if (/buy/i.test(m)) {
       if(aid && /\d+/.test(aid)){
+        console.log('购买页路由被命中，aid为', aid)
         mBuyRender.setAid(aid).rende().then(doc => writeDoc(doc, res))
       } else {
         pageNotFound(res)
@@ -156,7 +153,7 @@ router.get('/', async (req, res) => {
         pageNotFound(res)
       }
     } else if (/TR/i.test(m)) {
-      console.log('文章搜索按照date的接口的路由被命中ID为', id)
+      console.log(`文章搜索按照date的接口的路由被命中，start = ${start}, end = ${end}` )
       search.byDate(start, end).then(meta => writeJSON(meta, res))
     } else {
       pageNotFound(res)
@@ -292,8 +289,13 @@ router.post('/', async (req, res) => {
       console.log('命中genpub接口 ....')
       genpub(postData).then(data => writeJSON(data, res))
     } else if (/meta/i.test(m)) {
-      console.log('命中meta POST接口 ....')
-      getRawMetas(postData).then(meta => writeJSON(meta, res))
+      console.log('命中meta POST接口 ...., postData为：', postData)
+      let cids = postData.cids
+      if(Utils.isValidArray(cids)) {
+        getMetas(cids).then(meta => writeJSON(meta, res))
+      } else {
+        // TODO:返回参数错误信息
+      }
       // metaService.getRawMetas(postData).then(meta => writeJSON(meta, res))
     } else if (/TS/i.test(m)) {
       console.log('命中TS POST接口 ....')

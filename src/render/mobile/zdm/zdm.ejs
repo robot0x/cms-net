@@ -25,7 +25,7 @@
          <div class="bannerright">点此下载</div>
      </section>
    <% } %>
-  <section class="main <%- type=== 'share'? 'share-page': ''%>" id="main">
+  <section class="main <%-pageType=== 'share'? 'share-page': ''%>" id="main">
     <section class="banner-area"></section>
     <section class="banner-info"></section>
     <section class="card-and-drawer-area"></section>
@@ -36,15 +36,9 @@
   </section>
 </section>
 <script type="text/javascript">
-  // var data = [];
-  // var selection = -1;
-  // var cid = 3435973836800000;
   var data = {<%-data %>}
   var selection = -1
   var cid = <%-cid %>
-  // <% if( type === 'share') {%>
-  // <% } else {%>
-  // <% } %>
 </script>
 <script type="text/javascript" src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="<%-prefix%>/cms/diaodiao/assets/jquery.cookie.min.js"></script>

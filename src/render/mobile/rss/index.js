@@ -37,21 +37,11 @@ class RssRender extends Render {
       name = '专刊'
     }
     if(ctype === -1) return
+    const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, CONCAT('//',image.url) AS thumb_image_url FROM article_meta as meta, image WHERE meta.id = image.aid AND meta.ctype = ${ctype} AND image.type & 8 = 8`
+    console.log('[RssRender.getRenderData] sql:', sql);
     return {
       name,
-      metas: await DB.exec(`
-        SELECT
-          meta.id, meta.id * 4294967297 AS longid, meta.title, CONCAT('//',image.url) AS thumb_image_url
-        FROM
-          article_meta as meta,
-          image
-        WHERE
-          meta.id = image.aid
-        AND
-          meta.ctype = ${ctype}
-        AND
-          image.type & 8 = 8
-      `),
+      metas: await DB.exec(sql)
     }
   }
 
@@ -60,8 +50,10 @@ class RssRender extends Render {
    if(!type) return
    try {
      let limit = 20
-     let { metas, name } = await this.getRenderData(type)
-     console.log(metas)
+     let data = await this.getRenderData(type)
+     console.log('[RssRender.rende] data', data)
+     let { metas, name } = data
+     console.log('[RssRender.rende] metas', metas)
      let allarticles = metas.map(meta => meta.longid)
      return this.getDoc(this.template, {
         name,

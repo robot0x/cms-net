@@ -108,12 +108,6 @@ fs.readFile('./data/ztjson', 'utf8', (err, text) => {
           author = DB.escape('')
         }
 
-        // if(isValidArray(author)) {
-        //   author = DB.escape(author[0].value || '')
-        // } else {
-        //   author = DB.escape('')
-        // }
-
         title = DB.escape(title || '')
 
         if(isValidArray(titleex)) {
@@ -131,14 +125,14 @@ fs.readFile('./data/ztjson', 'utf8', (err, text) => {
           titlecolor = 0
         }
         // console.log(`the author is ${author}`)
-        let sql = `INSERT INTO article_meta SET id=${nid}, title=${title}, ctype=${type}, timetopublish=${timetopublish}, buylink=${buylink}, price=${price}, titlecolor=${titlecolor}, titleex=${titleex}, create_time=${DB.escape(new Date(created * 1000))}, last_update_time=${DB.escape(new Date(changed * 1000))}, author=${source || author}`
+        let sql = `INSERT INTO article_meta SET id=${nid}, title=${title}, ctype=${type}, timetopublish=${timetopublish}, buylink=${buylink}, price=${price}, titlecolor=${titlecolor}, titleex=${titleex}, create_time=${DB.escape(new Date(created * 1000))}, last_update_time=${DB.escape(new Date(changed * 1000))}, author=${author}`
         // 目前的问题，timetopublish有将近100篇为0
         // 所有的buylink字段为空
         batch.push(
           DB
           .exec(sql)
           .then(data => {
-            console.log(`ID为 ${nid} 的META更新成功 ....`)
+            console.log(`ID为${nid}的文章入库成功 ....`)
           })
           .catch(err => {
               runLogger.error(`ID为${nid}的META更新失败， SQL:${sql} 出错信息：`, err.message)
@@ -177,7 +171,7 @@ fs.readFile('./data/ztjson', 'utf8', (err, text) => {
         // }
 
         Promise.all(batch).then(() => {
-          console.log(`ID为${nid}的文章入库成功 ....`)
+          // console.log(`ID为${nid}的文章入库成功 ....`)
         }).catch(e => {
             console.log(`ID为${nid}的文章入库失败 SQL:${sql} 出错信息：`, e)
         })

@@ -54,12 +54,19 @@ class MetaTable extends Table {
     return Utils.getFirst(await this.getRecordsByCond('buylink' ,`id = ${id}`))
   }
 
+  async getAidsByCond (cond) {
+    return this.getRecordsByCond('id', cond)
+  }
+
   getAidsBySource (source) {
-    return this.getRecordsByCond('id' ,`author = ${super.escape(source)}`)
+    return this.getAidsByCond('id', `author = ${super.escape(source)}`)
+    // return this.getRecordsByCond('id' ,`author = ${super.escape(source)}`)
   }
 
   async getCtypeById (id) {
-    return Utils.getFirst(await this.getRecordsByCond('ctype' ,`id = ${id}`))
+    let ctypes = await this.getRecordsByCond('ctype' ,`id = ${id}`)
+    // console.log('ctypes:', ctypes)
+    return Utils.getFirst(ctypes)
     // let data =  await this.exec(`SELECT ctype FROM ${this.table} WHERE id = ${id}`)
     // let meta = Utils.getFirst(data)
     // let ctype = null
