@@ -1,6 +1,6 @@
 // const fs = require('fs')
-const Table = require('../db/Table')
-const table = new Table('article_meta', ['aid', 'content'])
+// const Table = require('../db/Table')
+// const table = new Table('article_meta', ['aid', 'content'])
 const Log = require('../utils/Log')
 const runLogger = Log.getLogger('cms_run')
 const Promise = require('bluebird')
@@ -11,6 +11,7 @@ const lineReader = require('readline').createInterface({
   output: process.stdout,
   terminal: false
 })
+
 lineReader.on('line', json => {
   if(!json) return;
   // 这个脚本填充 article_meta 和 image表
@@ -35,7 +36,7 @@ lineReader.on('line', json => {
   // `lock_by` varchar(60) DEFAULT '' COMMENT '被那个用户锁定',
   // `last_update_by` varchar(60) DEFAULT '' COMMENT '最后一次更新的用户',
   // `author` varchar(60) DEFAULT '' COMMENT '文章作者姓名',
-  const batch = []
+  // const batch = []
   const {node, meta} = article
   let {nid, type, title, created, changed, status, promote} = node
   let {
@@ -126,13 +127,13 @@ lineReader.on('line', json => {
   let sql = `INSERT INTO diaodiao_article_meta SET id=${nid}, title=${title}, ctype=${type}, timetopublish=${timetopublish}, buylink=${buylink}, price=${price}, titlecolor=${titlecolor}, titleex=${titleex}, create_time=${DB.escape(new Date(created * 1000))}, last_update_time=${DB.escape(new Date(changed * 1000))}, author=${author}`
   // 目前的问题，timetopublish有将近100篇为0
   // 所有的buylink字段为空
-  batch.push(
+  // batch.push(
     DB
     .exec(sql)
     .then(data => {
       console.log(`ID为 ${nid} 的文章入库成功 ....`)
     }).catch(err => {runLogger.error(`ID为${nid}的META更新失败， SQL:${sql} 出错信息：`, err.message)})
-  )
+  // )
 
   const images = [].concat(setImage(1, pics))
     .concat(setImage(2, coverimage))
@@ -142,7 +143,8 @@ lineReader.on('line', json => {
     .concat(setImage(32, banner))
 
   for (let image of images) {
-    batch.push(table.exec(`
+    // batch.push(
+      DB.exec(`
       INSERT INTO
         diaodiao_article_image
       SET
@@ -162,14 +164,15 @@ lineReader.on('line', json => {
     }).catch(err => {
       console.log(err)
       runLogger.error(`D为 ${nid} 的image更新成功，出错信息：`, err.message)
-    }))
+    })
+  // )
   }
 
-  Promise.all(batch).then(() => {
-    // console.log(`ID为${nid}的文章入库成功 ....`)
-  }).catch(e => {
-      console.log(`ID为${nid}的文章入库失败 SQL:${sql} 出错信息：`, e)
-  })
+  // Promise.all(batch).then(() => {
+  //   // console.log(`ID为${nid}的文章入库成功 ....`)
+  // }).catch(e => {
+  //     console.log(`ID为${nid}的文章入库失败 SQL:${sql} 出错信息：`, e)
+  // })
 })
 
 // fs.readFile('./data/ajson', 'utf8', (err, text) => {

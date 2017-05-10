@@ -172,3 +172,59 @@
 [2017-05-10 20:09:13.287] [ERROR] cms_run - ID为8803的META更新失败， SQL:INSERT INTO diaodiao_article_meta SET id=8803, title='穿上这些，释放男人的野性', ctype=9, timetopublish=0, buylink='', price='', titlecolor=0, titleex='', create_time='2017-01-06 14:31:55.000', last_update_time='2017-01-06 14:31:55.000', author='琛哥' 出错信息： ER_DUP_ENTRY: Duplicate entry '8803' for key 'PRIMARY'
 [2017-05-10 20:09:13.287] [ERROR] cms_run - null
 [2017-05-10 20:09:13.287] [ERROR] cms_run - ID为8842的META更新失败， SQL:INSERT INTO diaodiao_article_meta SET id=8842, title='众筹能买到什么好东西？', ctype=9, timetopublish=0, buylink='', price='', titlecolor=0, titleex='', create_time='2017-01-11 17:40:01.000', last_update_time='2017-01-14 18:14:39.000', author='李大猫' 出错信息： ER_DUP_ENTRY: Duplicate entry '8842' for key 'PRIMARY'
+[2017-05-10 20:55:04.660] [ERROR] cms_run - { Error: Handshake inactivity timeout
+    at Handshake.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:160:17)
+    at emitNone (events.js:86:13)
+    at Handshake.emit (events.js:188:7)
+    at Handshake._onTimeout (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:127:8)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at Protocol.handshake (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:52:41)
+    at PoolConnection.connect (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:130:18)
+    at Pool.getConnection (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Pool.js:48:16)
+    at PoolCluster._getConnection (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/PoolCluster.js:229:13)
+    at PoolNamespace.getConnection (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/PoolNamespace.js:40:11)
+    at PoolCluster.getConnection (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/PoolCluster.js:145:13)
+    at Promise (/Users/liyanfeng/work/cms-net/src/db/DB.js:95:23)
+    at Function.exec (/Users/liyanfeng/work/cms-net/src/db/DB.js:94:13)
+    at Interface.lineReader.on (/Users/liyanfeng/work/cms-net/src/crawler/insertMetaAndImage.js:131:14)
+    at emitOne (events.js:96:13)
+    at Interface.emit (events.js:191:7)
+    at Interface._onLine (readline.js:241:10)
+    at Interface._normalWrite (readline.js:384:12)
+    at ReadStream.ondata (readline.js:101:10)
+    at emitOne (events.js:96:13)
+  code: 'PROTOCOL_SEQUENCE_TIMEOUT',
+  fatal: true,
+  timeout: 10000 }
+[2017-05-10 21:00:50.929] [ERROR] cms_run - { Error: Handshake inactivity timeout
+    at Handshake.<anonymous> (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:160:17)
+    at emitNone (events.js:86:13)
+    at Handshake.emit (events.js:188:7)
+    at Handshake._onTimeout (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/sequences/Sequence.js:127:8)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+    --------------------
+    at Protocol._enqueue (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:141:48)
+    at Protocol.handshake (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/protocol/Protocol.js:52:41)
+    at PoolConnection.connect (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Connection.js:130:18)
+    at Pool.getConnection (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/Pool.js:48:16)
+    at PoolCluster._getConnection (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/PoolCluster.js:229:13)
+    at PoolNamespace.getConnection (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/PoolNamespace.js:40:11)
+    at PoolCluster.getConnection (/Users/liyanfeng/work/cms-net/node_modules/mysql/lib/PoolCluster.js:145:13)
+    at Promise (/Users/liyanfeng/work/cms-net/src/db/DB.js:95:23)
+    at Function.exec (/Users/liyanfeng/work/cms-net/src/db/DB.js:94:13)
+    at Interface.lineReader.on (/Users/liyanfeng/work/cms-net/src/crawler/insertMetaAndImage.js:131:14)
+    at emitOne (events.js:96:13)
+    at Interface.emit (events.js:191:7)
+    at Interface._onLine (readline.js:241:10)
+    at Interface._normalWrite (readline.js:384:12)
+    at ReadStream.ondata (readline.js:101:10)
+    at emitOne (events.js:96:13)
+  code: 'PROTOCOL_SEQUENCE_TIMEOUT',
+  fatal: true,
+  timeout: 10000 }
