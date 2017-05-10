@@ -7,7 +7,7 @@ const appConfig = require('../../config/app')
 
 class Render {
   constructor () {
-    this.version = '0.0.1'
+    this.version = appConfig.renderVersion
     // ejs 模板
     this.ejs = ejs
     this.downloadAddr = 'http://a.app.qq.com/o/simple.jsp?pkgname=com.diaox2.android&amp;g_f=991653'
