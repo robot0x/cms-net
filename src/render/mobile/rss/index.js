@@ -37,7 +37,7 @@ class RssRender extends Render {
       name = '专刊'
     }
     if(ctype === -1) return
-    const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, CONCAT('//',image.url) AS thumb_image_url FROM article_meta as meta, image WHERE meta.id = image.aid AND meta.ctype = ${ctype} AND image.type & 8 = 8`
+    const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, CONCAT('//',image.url) AS thumb_image_url FROM diaodiao_article_meta as meta, diaodiao_article_image AS image WHERE meta.id = image.aid AND meta.ctype = ${ctype} AND image.type & 8 = 8`
     console.log('[RssRender.getRenderData] sql:', sql);
     return {
       name,
