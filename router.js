@@ -12,6 +12,8 @@ const show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，�
 const getMetas = require(`${SRC}/api/meta`) // meta接口
 const MetaTable = require(`${SRC}/db/MetaTable`)
 const metaTable = new MetaTable
+const moment = require('moment')
+const cache = require('./config/cache')
 
 const {
   mShowRender, mZKRender, mZTRender, mAuthorRender, mTagRender, // 移动端渲染器
@@ -34,11 +36,11 @@ const {
 
 async function showAndZKAndZTRouter (m, id, pageType, req, res) {
   if (/show/.test(m)) {
-    mShowRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res))
+    mShowRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share'? 'showShare' : 'show'))
   } else if (/zk/.test(m)) {
-    mZKRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res))
+    mZKRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share'? 'zkShare' : 'zk'))
   } else if (/zt/.test(m)) {
-    mZTRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res))
+    mZTRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share'? 'ztShare' : 'zt'))
   } else {
     pageNotFound(res)
   }
@@ -85,55 +87,55 @@ router.get('/', async (req, res) => {
       }
     } else if (/author/i.test(m)) {
       if (src) {
-        mAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res))
+        mAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res, 'author'))
       } else {
         pageNotFound(res)
       }
     } else if (/tag/i.test(m)) {
       if(tid && /\d+/.test(tid)){
-        mTagRender.setTid(tid).rende().then(doc => writeDoc(doc, res))
+        mTagRender.setTid(tid).rende().then(doc => writeDoc(doc, res, 'tag'))
       } else {
         pageNotFound(res)
       }
     } else if (/buy/i.test(m)) {
       if(aid && /\d+/.test(aid)){
         console.log('购买页路由被命中，aid为', aid)
-        mBuyRender.setAid(aid).rende().then(doc => writeDoc(doc, res))
+        mBuyRender.setAid(aid).rende().then(doc => writeDoc(doc, res, 'buy'))
       } else {
         pageNotFound(res)
       }
     } else if (/sku/i.test(m)) {
       if(sid && /\d+/.test(sid)) {
-        mSkuRender.setSid(sid).rende().then(doc => writeDoc(doc, res))
+        mSkuRender.setSid(sid).rende().then(doc => writeDoc(doc, res, 'sku'))
       } else {
         pageNotFound(res)
       }
     } else if (/rss/i.test(m)) {
       if(type) {
-        mRssRender.setType(type).rende().then(doc => writeDoc(doc, res))
+        mRssRender.setType(type).rende().then(doc => writeDoc(doc, res, 'rss'))
       } else {
         pageNotFound(res)
       }
     } else if (/jfitem/i.test(m)) {
       if(gid && /\d+/.test(gid)) {
-        mJfitemRender.setGid(gid).rende().then(doc => writeDoc(doc, res))
+        mJfitemRender.setGid(gid).rende().then(doc => writeDoc(doc, res, 'jfitem'))
       } else {
         pageNotFound(res)
       }
     } else if (/jfmall/i.test(m)) {
         console.log('积分商城页路由命中 ....')
-        mJfMallRender.rende().then(doc => writeDoc(doc, res))
+        mJfMallRender.rende().then(doc => writeDoc(doc, res, 'jfmall'))
     } else if (/metaband/i.test(m)) {
         console.log('文章列表条html路由命中 ....')
         if(id && /\d+/.test(id)){
-          mMetabandRender.setId(id).rende().then(doc => writeDoc(doc, res))
+          mMetabandRender.setId(id).rende().then(doc => writeDoc(doc, res, 'metaband'))
         } else {
           pageNotFound(res)
         }
     } else if (/meta/i.test(m)) {
       console.log('meta接口的路由被命中：', id)
       if(id && /\d+/.test(id)){
-        getMetas(id).then(meta => writeJSON(meta, res))
+        getMetas(id).then(meta => writeJSON(meta, res, 'meta_get'))
         // metaService.getRawMetas(id).then(meta => writeJSON(meta, res))
       } else {
         pageNotFound(res)
@@ -141,20 +143,20 @@ router.get('/', async (req, res) => {
     } else if (/relsearch/i.test(m)) {
       console.log('相关搜索接口的路由被命中：', id)
       if(id && /\d+/.test(id)){
-        relsearch(id).then(result => writeJSON(result, res))
+        relsearch(id).then(result => writeJSON(result, res, 'relsearch'))
       } else {
         pageNotFound(res)
       }
     } else if (/recommend/i.test(m)) {
       console.log('推荐结果接口的路由被命中ID为', id)
       if(id && /\d+/.test(id)){
-        recommend(id).then(result => writeJSON(result, res))
+        recommend(id).then(result => writeJSON(result, res, 'recommend'))
       } else {
         pageNotFound(res)
       }
     } else if (/TR/i.test(m)) {
       console.log(`文章搜索按照date的接口的路由被命中，start = ${start}, end = ${end}` )
-      search.byDate(start, end).then(meta => writeJSON(meta, res))
+      search.byDate(start, end).then(meta => writeJSON(meta, res, 'TR'))
     } else {
       pageNotFound(res)
     }
@@ -170,7 +172,7 @@ router.get(showReg, async (req, res) => {
   let id = Utils.toShortId(match[1])
   console.log('APP内渲染接口被命中 ....', id)
   if (id && /\d+/.test(id)) {
-    show(id).then(result => writeJSON(result, res))
+    show(id).then(result => writeJSON(result, res, 'app_show'))
   } else {
     pageNotFound(res)
   }
@@ -197,7 +199,7 @@ router.get(inapp_zdmReg, (req, res) => {
   let activity_cid = match[1]
   let goods_cid = match[2]
   console.log(`app内的值得买活动路由被激活,activity_cid:${activity_cid}, goods_cid:${goods_cid}`)
-  mZDMRender.setData(activity_cid, goods_cid).setPageType('inapp').rende().then(doc => writeDoc(doc, res))
+  mZDMRender.setData(activity_cid, goods_cid).setPageType('inapp').rende().then(doc => writeDoc(doc, res, 'zdmactivity'))
 })
 
 const share_zdmReg = /\/zdmshare\/(\d+)_?(\d+)?\.html/
@@ -206,11 +208,11 @@ router.get(share_zdmReg, (req, res) => {
   let activity_cid = match[1]
   let goods_cid = match[2]
   console.log(`值得买活动share页路由被激活,activity_cid:${activity_cid}, goods_cid:${goods_cid}`)
-  mZDMRender.setData(activity_cid, goods_cid).setPageType('share').rende().then(doc => writeDoc(doc, res))
+  mZDMRender.setData(activity_cid, goods_cid).setPageType('share').rende().then(doc => writeDoc(doc, res, 'zdmshare'))
 })
 
 router.get(/\/mall\.html/, (req, res) => {
-  mJfMallRender.setPageType('share').rende().then(doc => writeDoc(doc, res))
+  mJfMallRender.setPageType('share').rende().then(doc => writeDoc(doc, res, 'jfmallShare'))
 })
 
 
@@ -219,14 +221,14 @@ const gidReg = /\/jfitem\/(\d+)\.html/
 router.get(gidReg, (req, res) => {
   let match = req.originalUrl.match(gidReg)
   let gid = match[1]
-  mJfitemRender.setPageType('share').setGid(gid).rende().then(doc => writeDoc(doc, res))
+  mJfitemRender.setPageType('share').setGid(gid).rende().then(doc => writeDoc(doc, res, 'jfitem'))
 })
 
 const uidReg = /\/invite\/(\d+)\.html/
 router.get(uidReg, (req, res) => {
   let match = req.originalUrl.match(uidReg)
   let uid = match[1]
-  mInviteRender.setUid(uid).rende().then(doc => writeDoc(doc, res))
+  mInviteRender.setUid(uid).rende().then(doc => writeDoc(doc, res, 'invite'))
 })
 
 const pcShowReg = /\/article\/(\d+)\.html/
@@ -241,9 +243,9 @@ router.get(pcShowReg, async (req, res) => {
     // 好物/首页/经验/活动
     // if(ctype === 1 || ctype === 2 || ctype === 4 || ctype === 5) {
     if(/^1|2|4|5$/.test(ctype)) {
-      pShowRender.setId(id).rende().then(doc => writeDoc(doc, res))
+      pShowRender.setId(id).rende().then(doc => writeDoc(doc, res, 'article'))
     } else if (ctype === 3){ // 专刊
-      pZKRender.setId(id).rende().then(doc => writeDoc(doc, res))
+      pZKRender.setId(id).rende().then(doc => writeDoc(doc, res, 'pc_zk'))
     } else {
       pageNotFound(res)
     }
@@ -256,7 +258,7 @@ const mSkuReg = /\/sku\/(?:\d+\/)?(\d+)\.html/
 router.get(mSkuReg, (req, res) => {
   let match = req.originalUrl.match(mSkuReg)
   let sid = match[1]
-  mSkuRender.setSid(sid).rende().then(doc => writeDoc(doc, res))
+  mSkuRender.setSid(sid).rende().then(doc => writeDoc(doc, res, 'sku'))
 })
 
 const pcEditorReg = /\/editor\/(.+)\.html/
@@ -264,7 +266,7 @@ router.get(pcEditorReg, (req, res) => {
   let match = req.originalUrl.match(pcEditorReg)
   let src = match[1]
   console.log(src)
-  pAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res))
+  pAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res, 'editor'))
 })
 
 const pcCategoryReg = /\/category\/(\d+)\.html/
@@ -272,7 +274,7 @@ router.get(pcCategoryReg, (req, res) => {
   let match = req.originalUrl.match(pcCategoryReg)
   let tid = match[1]
   console.log(tid)
-  pTagRender.setTid(tid).rende().then(doc => writeDoc(doc, res))
+  pTagRender.setTid(tid).rende().then(doc => writeDoc(doc, res, 'category'))
 })
 
 
@@ -287,12 +289,12 @@ router.post('/', async (req, res) => {
   if(m && (m = m.trim().toLowerCase())){
     if (/genpub/i.test(m)) {
       console.log('命中genpub接口 ....')
-      genpub(postData).then(data => writeJSON(data, res))
+      genpub(postData).then(data => writeJSON(data, res, 'genpub'))
     } else if (/meta/i.test(m)) {
       console.log('命中meta POST接口 ...., postData为：', postData)
       let cids = postData.cids
       if(Utils.isValidArray(cids)) {
-        getMetas(cids).then(meta => writeJSON(meta, res))
+        getMetas(cids).then(meta => writeJSON(meta, res, 'meta_post'))
       } else {
         // TODO:返回参数错误信息
       }
@@ -300,7 +302,7 @@ router.post('/', async (req, res) => {
     } else if (/TS/i.test(m)) {
       console.log('命中TS POST接口 ....')
       console.log(postData)
-      search.byTitle(postData).then(meta => writeJSON(meta, res))
+      search.byTitle(postData).then(meta => writeJSON(meta, res, 'TS'))
     }
   }
 })
@@ -315,8 +317,43 @@ function pageNotFound (res) {
   res.writeHead(404)
   res.end('无此页面 ...')
 }
+/**
+ * header('Cache-Control:max-age=' . $max_age);
+   header("Date: ".gmdate("D, d M Y H:i:s", time())." GMT");
+   header("Last-Modified: ".gmdate("D, d M Y H:i:s", time())." GMT");
+   header("Expires: ".gmdate("D, d M Y H:i:s", time() + $max_age)." GMT");
 
-function writeDoc (doc, res) {
+   Cache-Control:max-age=86400
+   Date:Thu, 11 May 2017 06:09:43 GMT
+   Last-Modified:Thu, 11 May 2017 06:09:43 GMT
+   Expires:Fri, 12 May 2017 06:09:43 GMT
+
+   GMT的小时数 + 8 = UTC时间
+   8是我们的时区
+ */
+function addCacheControlHeader (res, type) {
+  if(!type) return
+  // 从配置中拿到这个路由的缓存配置
+  let cacheOfType = cache[type]
+  let maxAge = -1
+  if (cacheOfType) {
+    maxAge = cacheOfType.maxAge
+  }
+  if (maxAge == -1) return
+  let GMT = 'GMT'
+  let pattern = 'ddd, D MMM YYYY HH:mm:ss'
+  // -8:00 小时数减去时区
+  let now = moment().utcOffset(0)
+  let date = now.format(pattern)
+  let expires = now.add(maxAge, 's').format(pattern)
+  res.append('Cache-Control', `max-age=${maxAge}`)
+  res.append('Date', `${date} ${GMT}`)
+  res.append('Last-Modified', `${date} ${GMT}`)
+  res.append('Expires', expires)
+}
+
+function writeDoc (doc, res, type) {
+  addCacheControlHeader(res, type)
   res.writeHead(200, {'Content-Type': 'text/html'})
   res.write(doc)
   res.end()
