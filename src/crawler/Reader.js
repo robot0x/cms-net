@@ -26,7 +26,7 @@ const Promise = require('bluebird')
  *
  */
 class Reader {
-  constructor (file = './data/ajson') {
+  constructor (file = './data/ajson.2') {
     this.file = path.normalize(file)
   }
   read (file = this.file) {
