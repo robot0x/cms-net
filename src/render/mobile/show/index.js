@@ -70,7 +70,6 @@ class ShowRender extends Render {
      let { content, meta, author, images } = await new MetaService().getRenderData(id, true)
      let {title, ctype, timetopublish, price, has_buylink, buylink} = meta
      let relwords = await this.getRelsearchWords()
-     console.log('relwords', relwords)
      // 在此处进行ctype判断
      parser.markdown = content // markdown is a setter like method `setMarkdown`
      let body = parser.getHTML()
@@ -87,19 +86,6 @@ class ShowRender extends Render {
      })
      thumb = Utils.getFirst(thumb)
      cover = Utils.getFirst(cover)
-     let date = ''
-     if(timetopublish){
-       date = moment(timetopublish, 'YYYYMMDD').format('YYYY-MM-DD')
-      //  timetopublish = new Date(moment(timetopublish, 'YYYYMMDD'))
-      //  let month = timetopublish.getMonth() + 1
-      //  if(month < 10){
-      //    month = '0' + month
-      //  }
-      //  date += timetopublish.getFullYear() + '-'
-      //  date += month + '-'
-      //  date += timetopublish.getDate()
-     }
-
      let shouldUsedSku = null
      if(ctype == 2) {
        const skus = await this._getSkus()
@@ -122,7 +108,7 @@ class ShowRender extends Render {
          thumb,
          cover,
          price,
-         date,
+         date: timetopublish ? moment(timetopublish, 'YYYYMMDD').format('YYYY-MM-DD'): '',
          relwords,
          shouldUsedSku,
          type: Utils.ctypeToType(ctype),
