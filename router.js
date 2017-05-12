@@ -59,7 +59,8 @@ router.get('/', async (req, res) => {
     type, // m=rss
     start, // m=TR
     end, // m=TR
-    gid // m=jfitem
+    gid, // m=jfitem
+    title // m=TS
   } = req.body
   // 有m说明是渲染器
   if (m && (m = m.trim().toLowerCase())) {
@@ -157,11 +158,15 @@ router.get('/', async (req, res) => {
     } else if (/TR/i.test(m)) {
       console.log(`文章搜索按照date的接口的路由被命中，start = ${start}, end = ${end}` )
       search.byDate(start, end).then(meta => writeJSON(meta, res, 'TR'))
+    } else if (/TS/i.test(m)) {
+      // console.log('命中TS POST接口 ....')
+      // console.log(postData)
+      // res.json('noting')
+      search.byTitle(title).then(meta => writeJSON(meta, res, 'TS'))
     } else {
       pageNotFound(res)
     }
   } else {
-
   }
 })
 
@@ -311,10 +316,10 @@ router.post('/', async (req, res) => {
       }
       search.byDate(start, end).then(meta => writeJSON(meta, res, 'TR'))
     } else if (/TS/i.test(m)) {
-      console.log('命中TS POST接口 ....')
-      console.log(postData)
-      res.json('noting')
-      // search.byTitle(postData).then(meta => writeJSON(meta, res, 'TS'))
+      // console.log('命中TS POST接口 ....')
+      // console.log(postData)
+      // res.json('noting')
+      search.byTitle(postData).then(meta => writeJSON(meta, res, 'TS'))
     }
   }
 })
