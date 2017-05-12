@@ -19,9 +19,12 @@ const moment = require('moment')
 // Last-Modified:Thu, 11 May 2017 06:06:47 GMT
 // Expires:Fri, 12 May 2017 06:06:47 GMT
 
-let pattern = 'ddd, D MMM YYYY HH:mm:ss GMT'
-let now = moment().utcOffset(0)
-let date = now.format(pattern)
-let expires = now.add(86400, 's').format(pattern)
-console.log('date   :', date)
-console.log('expires:', expires)
+// let pattern = 'ddd, D MMM YYYY HH:mm:ss GMT'
+// let now = moment().utcOffset(0)
+// let date = now.format(pattern)
+// let expires = now.add(86400, 's').format(pattern)
+// console.log('date   :', date)
+// console.log('expires:', expires)
+
+let timetopublish = moment('20141108', 'YYYYMMDD')
+console.log('timetopublish string:', timetopublish.format('YYYY-MM-DD'))

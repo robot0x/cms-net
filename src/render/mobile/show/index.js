@@ -89,15 +89,15 @@ class ShowRender extends Render {
      cover = Utils.getFirst(cover)
      let date = ''
      if(timetopublish){
-       console.log(timetopublish)
-       timetopublish = new Date(moment(timetopublish, 'YYYYMMDD'))
-       let month = timetopublish.getMonth() + 1
-       if(month < 10){
-         month = '0' + month
-       }
-       date += timetopublish.getFullYear() + '-'
-       date += month + '-'
-       date += timetopublish.getDate()
+       date = moment(timetopublish, 'YYYYMMDD').format('YYYY-MM-DD')
+      //  timetopublish = new Date(moment(timetopublish, 'YYYYMMDD'))
+      //  let month = timetopublish.getMonth() + 1
+      //  if(month < 10){
+      //    month = '0' + month
+      //  }
+      //  date += timetopublish.getFullYear() + '-'
+      //  date += month + '-'
+      //  date += timetopublish.getDate()
      }
 
      let shouldUsedSku = null
