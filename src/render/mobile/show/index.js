@@ -6,6 +6,7 @@ const MetaService = require('../../../service/MetaService')
 const moment = require('moment')
 const request = require('request')
 const Promise = require('bluebird')
+const relsearch = require('../../../api/relsearch')
 /**
  * 渲染：
  *  1. 首页 goodthing (ctype = 1)    http://c.diaox2.com/view/app/?m=show&id=9669
@@ -17,7 +18,7 @@ class ShowRender extends Render {
   constructor (id) {
     super()
     this.setId(id)
-    this.template = this.readTemplate(__dirname + '/show.ejs')
+
     this.parser = new Parser
   }
   /**
@@ -38,7 +39,21 @@ class ShowRender extends Render {
    */
   setPageType (pageType) {
     this.pageType = pageType
+    let tempFile = __dirname + '/show.ejs'
+    if(/share/i.test(this.pageType)) {
+      tempFile = __dirname + '/share.ejs'
+    }
+    this.template = this.readTemplate(tempFile)
     return this
+  }
+  async getRelsearchWords (id = this.id) {
+    let searchWords = await relsearch(id)
+    if(!Utils.isValidArray(searchWords)) return null
+    let words = []
+    for(let word of searchWords) {
+      words.push(`'${word}'`)
+    }
+    return words.join(',')
   }
   async _getSkus (id = this.id) {
     let skus = null
@@ -54,6 +69,8 @@ class ShowRender extends Render {
    try {
      let { content, meta, author, images } = await new MetaService().getRenderData(id, true)
      let {title, ctype, timetopublish, price, has_buylink, buylink} = meta
+     let relwords = await this.getRelsearchWords()
+     console.log('relwords', relwords)
      // 在此处进行ctype判断
      parser.markdown = content // markdown is a setter like method `setMarkdown`
      let body = parser.getHTML()
@@ -106,6 +123,7 @@ class ShowRender extends Render {
          cover,
          price,
          date,
+         relwords,
          shouldUsedSku,
          type: Utils.ctypeToType(ctype),
          has_buylink,

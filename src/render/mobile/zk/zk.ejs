@@ -63,7 +63,11 @@
 	<div class="bottomspace"></div>
 	<div class="bottomspace"></div>
 </body>
-<script src="<%-prefix%>/cms/diaodiao/assets/ddios201.js"></script>
+<% if( pageType === 'share') {%>
+	<script src="<%-prefix%>/cms/diaodiao/assets/adapt.js"></script>
+<% } else {%>
+	<script src="<%-prefix%>/cms/diaodiao/assets/ddios201.js"></script>
+<% } %>
 <script src="<%-prefix%>/cms/diaodiao/assets/wx.js"></script>
 <script src="<%-prefix%>/cms/diaodiao/assets/zk330.js"></script>
 </html>

@@ -38,9 +38,9 @@
   </section>
 </body>
 <script>
-  var data = [<%-data %>]
+  var data = <%-data %>
   var gid = -1;
-  var share = <%-pageType === 'share'? 1 : 0%>
+  var share = <%-pageType === 'share'? 1:0%>
   var uid = -1;
   <% if( pageType === 'share') {%>
     jQuery(document).ready(function (){

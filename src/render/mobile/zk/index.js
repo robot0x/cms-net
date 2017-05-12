@@ -59,6 +59,7 @@ class ZKRender extends Render {
       //  对于专刊，我们要先取出所引用的所有文章id
       let cids = this.getCidByMarkdown(content)
       let buylinks = []
+      // 先读diaodiao_buyinfo表
       // 根据文章id获取其buylink
       for(let cid of cids) {
         let buylink = await metaService.getBuylink(cid)

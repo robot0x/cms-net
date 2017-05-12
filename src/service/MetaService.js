@@ -15,7 +15,6 @@ const request = require('request')
 const Promise = require('bluebird')
 const moment = require('moment')
 
-
 class MetaService {
   constructor (id) {
     this.metaTable = new MetaTable
@@ -114,13 +113,13 @@ class MetaService {
     // console.log('ids:', ids)
     // const metaAndAuthors = await DB.exec(`SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM diaodiao_article_meta AS meta ,diaodiao_author AS au where meta.author = au.source AND meta.id in (${ids.join(',')})`)
     // 取meta需要加上时间限制，timetopublish必须处在20141108和今天之间
-    const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.timetopublish, au.pic_uri, au.title AS author_name FROM diaodiao_article_meta AS meta ,diaodiao_author AS au WHERE meta.id in (${ids.join(',')}) AND meta.author = au.source AND meta.timetopublish BETWEEN 20141108 AND ${Number(moment().add(1, 'days').format('YYYYMMDD'))}`
+    const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.timetopublish, au.pic_uri, au.title AS author_name FROM diaodiao_article_meta AS meta ,diaodiao_author AS au WHERE meta.id in (${ids.join(',')}) AND meta.author = au.source AND ${Utils.genTimetopublishInterval('meta.timetopublish')}`
     // const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM diaodiao_article_meta AS meta LEFT JOIN author AS au ON meta.author = au.source`
     // const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM diaodiao.article_meta AS meta LEFT JOIN diaodiao_author AS au ON meta.id in (${ids.join(',')}) and meta.author = au.source`
     // console.log(sql)
     try {
       const metaAndAuthors = await DB.exec(sql)
-      console.log('metaAndAuthors:', metaAndAuthors);
+      // console.log('metaAndAuthors:', metaAndAuthors);
       // console.log('[MetaService.getRawMetas]:', metaAndAuthors)
       // type = 2为cover图，type = 8 为thumb图, type = 4 coverex图
       let imageCols = ['aid', "CONCAT('//', url) AS url", 'type']
@@ -262,13 +261,13 @@ class MetaService {
       // 由于author表目前的数据很少，所以写死
       // let author = await authorTable.getBySource(meta.author)
       let author = await authorTable.getBySource(meta.author)
-      if(author){
+      if (author) {
         author.pic_uri = Utils.addUrlPrefix(author.pic_uri)
       }
       // 根据规则拿购买链接，把meta表中的购买链接作为第二个参数，这样在条件命中时，我们就能少访问一次数据库
-      if (useBuylink){
+      if (useBuylink) {
         let buylink = await this.getBuylink(id, meta.buylink)
-        if(buylink){
+        if (buylink) {
           meta.has_buylink = true
           meta.buylink = buylink
         } else {
@@ -286,6 +285,9 @@ class MetaService {
    * 如果文章仅有1个sku，那么将这个sku的链接http://c.diaox2.com/view/app/sku/cid/sid.html，作为购买链接，has_buy_link = true，处理结束
      如果文章有0个或者多个sku，那么看文章有没有老的传统购买页，如果有，将http://c.diaox2.com/view/app/?m=buy&aid=nid，作为购买链接，has_buy_link = true，处理结束
      否则看看文章有没有填写cms.buylink字段，如果填写了，用这个。has_buy_link = true，处理结束
+
+     sku的status字段：0/1/2/4, 编辑/在线/失效/...
+     目前业务上只用了0和1，0未发布，1代表发布
    */
   getBuylink (id, cms_buy_link = '') {
     if(!id) return;
@@ -299,8 +301,8 @@ class MetaService {
         try {
           const {state, data}  = JSON.parse(body.body)
           const skus = data[Utils.toLongId(id)]
-          // 如果只有1个sku，则把SKU页作为购买页
-          if(Utils.isValidArray(skus) && skus.length === 1){
+          // 如果只有1个sku且这个sku的status为1（即已经发布了），则把SKU页作为购买页
+          if(Utils.isValidArray(skus) && skus.length === 1 && skus[0].status === 1){
             resolve(`http://c.diaox2.com/view/app/sku/${id}/${skus[0].sid}.html`)
           } else {
             // 若SKU有0个或多个，则从diaodiao_buyinfo取购买页

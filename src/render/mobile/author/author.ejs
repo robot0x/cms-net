@@ -35,7 +35,7 @@
 					</div>
 					<hr class="authorhr">
 					<div id="author2">
-						<p><%=author.intro%></p>
+						<p>简介：<%=author.intro%></p>
 					</div>
 				</div>
 			</div>
@@ -53,8 +53,8 @@
 		</div>
 	</body>
 <script>
-allarticles = [<%=allarticles %>];
-infos = {<%-infos %>};
+allarticles = <%-allarticles %>;
+infos = <%-infos %>;
 //注意这个和TAG的不能混用，页面dom层次问题.content -> .related
 //另：这个页面不是只由articlcard组成的，所以计算格子位置的时候，需要想修正，不能通用
 /*! diaodiao 李彦峰 2016-12-14 10:04:36 */

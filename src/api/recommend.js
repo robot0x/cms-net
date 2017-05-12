@@ -42,24 +42,28 @@ async function recommend (id) {
   if( rel_articles ) {
     rel_articles = rel_articles.rel_article.split(/,/)
   } else {
-    let results = await DB.exec(`SELECT hot_goodthing_list FROM diaodiao_hot_goodthing WHERE hot_goodthing_list LIKE '%${id}%' ORDER BY DESC`)
-    let ids = null
-    if (Utils.isValidArray(results)){
-      ids = []
-      for (let result of results) {
-        ids.concat(result.hot_goodthing_list.split(/,/))
-      }
-      ids = _.drop(_.union(ids), item => item == id)// 去重并去掉本id
-      if( ids.length > 0 ){
-        rel_articles = ids
+    // 从热门里拿时，不用 like，直接拿最新一条的热门（timestamp最大的）
+    let sql = `SELECT hot_goodthing_list FROM diaodiao_hot_goodthing ORDER BY timestamp DESC LIMIT 1`
+    // console.log('sql:', sql);
+    let results = await DB.exec(sql)
+    // console.log(results)
+    // let results = await DB.exec(`SELECT hot_goodthing_list FROM diaodiao_hot_goodthing WHERE hot_goodthing_list LIKE '%${id}%' ORDER  BY timestamp DESC`)
+    // let ids = null
+    let result = null
+    if (Utils.isValidArray(results)) {
+      result = Utils.getFirst(results)
+      if(result){
+        rel_articles = _.union(result.hot_goodthing_list.split(',')) // 去重并去掉本id
       }
     }
   }
-  if(!Utils.isValidArray(rel_articles)) return null
 
-  if(rel_articles.length > LIMIT){
+  if (!Utils.isValidArray(rel_articles)) return null
+
+  if (rel_articles.length > LIMIT) {
     rel_articles = rel_articles.slice(0, LIMIT)
   }
+
   const metas = await metaService.getRawMetas(rel_articles, false, true)
   let simpleMetas = null
   if(metas) {

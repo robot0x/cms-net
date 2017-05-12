@@ -45,13 +45,13 @@ class JfMallRender extends Render {
       if(!result) return
       let items = result.data
       if(!Utils.isValidArray(items)) return
-      let s = []
-      for(let item of items){
-        s.push(JSON.stringify(item))
-      }
+      // let s = []
+      // for(let item of items){
+      //   s.push(JSON.stringify(item))
+      // }
       return this.getDoc(this.template, {
-        data: s.join(','),
-        pageType: this.type,
+        data: JSON.stringify(items),
+        pageType: this.pageType,
         prefix: this.prefix,
         version: this.version
       })

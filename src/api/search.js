@@ -14,10 +14,11 @@ class Search {
     const metas = await metaService.getRawMetas(aids, true, true, true, true, true)
     if(!Utils.isValidArray(metas)) return null
     const ret = []
+    metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
     for (let meta of metas) {
       ret.push(this._handleMeta(meta))
     }
-    return ret.length > 1? ret : null
+    return ret.length > 1? {metas: ret} : null
   }
 
   byTitle (title) {
@@ -26,8 +27,6 @@ class Search {
 
   byDate (start, end) {
     let pattern = 'YYYYMMDD'
-    let stimestamp = 0
-    let etimestamp = 0
     if(!start || !/\d{8}/.test(start)){
       // 如果没有起始日期，则定为 昨天
       start = moment().subtract(1, 'days').format(pattern)
@@ -41,9 +40,9 @@ class Search {
     if(start > end) {
       [start, end] = [end, start] // 交换位置
     }
-    stimestamp = moment(start, pattern).valueOf()
-    etimestamp = moment(end, pattern).valueOf()
-    return this.doQuery(` timetopublish BETWEEN ${stimestamp} AND ${etimestamp} `)
+    // stimestamp = moment(start, pattern).valueOf()
+    // etimestamp = moment(end, pattern).valueOf()
+    return this.doQuery(` timetopublish BETWEEN ${start} AND ${end} `)
     // return this.doQuery(` create_time BETWEEN ${DB.escape(new Date(stimestamp))} AND ${DB.escape(new Date(etimestamp))} `)
   }
   /**
@@ -101,6 +100,7 @@ class Search {
     delete meta.ctype
     delete meta.has_buylink
     delete meta.is_external
+    delete meta.timetopublish
 
     return meta
   }

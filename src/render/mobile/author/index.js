@@ -29,15 +29,14 @@ class AuthorRender extends Render {
    if(!source) return
    try {
      let { metas, author } = await new AuthorService(this.source).getRenderData()
-     let allarticles = metas.map(meta => meta.nid * 4294967297)
-     let len = allarticles.length
-     let infos = ''
+     let allarticles = metas.map(meta => Utils.toLongId(meta.nid))
+     let infos = Object.create(null)
      allarticles.forEach((id, index) => {
-       infos += `${id}:'${metas[index].title.join('')}'${index === len - 1? '' : ','}`
+       infos[id] = metas[index].title.join('')
      })
      return this.getDoc(this.template, {
-        allarticles,
-        infos: infos,
+        allarticles: JSON.stringify(allarticles),
+        infos: JSON.stringify(infos),
         author,
         body: parser.setMetas(metas).getHTML(20),
         prefix: this.prefix,

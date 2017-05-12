@@ -50,16 +50,16 @@ class JfitemRender extends Render {
     if(!gid) return
     try {
       const result = await this.getRenderData(gid)
-      if(!result) return
+      if (!result) return
       let item = result.data
-      let keys = Object.keys(item)
-      let ret = []
-      for (let key of keys) {
-        ret.push(`${key}:'${item[key]}'`)
-      }
+      // let keys = Object.keys(item)
+      // let ret = []
+      // for (let key of keys) {
+      //   ret.push(`${key}:'${item[key]}'`)
+      // }
       return this.getDoc(this.template, {
-        data: ret.join(','),
-        pageType: this.type,
+        data: JSON.stringify(item),
+        pageType: this.pageType,
         prefix: this.prefix,
         version: this.version
       })

@@ -94,29 +94,32 @@ class TagService {
       }
       // 拿到所有aids，通过aids拿出所有meta，这个需要写自己写sql
       const aids = tags.map(tag => tag.aid)
-      const metas = await DB.exec(`SELECT id, CONCAT(title,titleex) AS title FROM diaodiao_article_meta where id in (${aids.join(',')}) ORDER BY timetopublish DESC`)
+      const metaSql = `SELECT id, CONCAT(title,titleex) AS title FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
+      // 此数组已经有顺序，顺序是按照timetopublish从大到小排列
+      const metas = await DB.exec(metaSql)
       let slice_aids = null
-
+      // 这儿有逻辑错误，不应该截断aids，应该阶段有顺序的metas
       if(limit !== -1) {
-        slice_aids = aids.slice(0, limit)
+        slice_aids = metas.slice(0, limit).map(meta => meta.id)
       } else {
-        slice_aids = aids
+        slice_aids = metas.map(meta => meta.id)
       }
 
       let type = 8
       if(!useThumb) {
         type = 2
       }
-      let images = await DB.exec(`SELECT url,aid FROM diaodiao_article_image where aid in (${slice_aids.join(',')}) AND type & ${type} = ${type}`)
-      return {metas, images, limit: this.limit, name}
-
+      let sql = `SELECT url,aid FROM diaodiao_article_image where aid in (${slice_aids.join(',')}) AND type & ${type} = ${type}`
+      let images = await DB.exec(sql)
+      // limit没必要传，因为这个值就是调用的地方set进去的
+      return { metas, images, name }
+      // return {metas, images, limit: this.limit, name}
       // console.log(metas)
       // console.log(thumbs);
       // console.log('aids.length:', aids.length)
       // console.log('metas:', metas)
       // console.log(aids.length)
       // return  { metas:  await metaTable.getMetas(aids)}
-      return  { metas }
     } catch (e) {
       console.log(e)
       run.error(e)

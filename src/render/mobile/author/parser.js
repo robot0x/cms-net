@@ -10,7 +10,7 @@ class AuthorParser{
   getHTML (len) {
     let html = ''
     let { metas } = this
-    console.log('14:', metas)
+    // console.log('14:', metas)
     let metaslen = metas.length
     if(metaslen > len){
       metas = metas.slice(0, len)

@@ -1,6 +1,6 @@
 const Render = require('../../')
-const Utils = require('../../../utils/Utils')
 const Parser = require('./parser')
+const Utils = require('../../../utils/Utils')
 const DB = require('../../../db/DB')
 /**
  * 渲染：
@@ -25,24 +25,31 @@ class RssRender extends Render {
   async getRenderData (type = this.type) {
     if (!type) return
     let ctype = -1
-    let name = null
-    if (/firstpage/i.test(type)) {
-      ctype = 1
-      name = '首页'
-    } else if (/goodthing/i.test(type)) {
-      ctype = 2
-      name = '好物'
-    } else if (/zhuankan/i.test(type)) {
-      ctype = 3
-      name = '专刊'
+    let ctypes = []
+    let types = type.split(/\s/)
+    if(!Utils.isValidArray(types)) return
+    let name = ''
+    for(let t of types) {
+      let c = -1
+      if (/firstpage/i.test(t)) {
+        c = 1
+        name += '热门文章'
+      } else if (/goodthing/i.test(t)) {
+        c = 2
+        name += '好物'
+      } else if (/zhuankan/i.test(t)) {
+        c = 3
+        name += '专刊'
+      }
+      if(c !== -1) {
+        ctypes.push(c)
+      }
     }
-    if(ctype === -1) return
-    const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, CONCAT('//',image.url) AS thumb_image_url FROM diaodiao_article_meta as meta, diaodiao_article_image AS image WHERE meta.id = image.aid AND meta.ctype = ${ctype} AND image.type & 8 = 8`
+    if(!Utils.isValidArray(ctypes)) return
+    const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, meta.ctype, meta.timetopublish, CONCAT('//',image.url) AS thumb_image_url FROM diaodiao_article_meta as meta, diaodiao_article_image AS image WHERE meta.id = image.aid AND meta.ctype IN (${ctypes.join(',')}) AND image.type & 8 = 8 AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
     console.log('[RssRender.getRenderData] sql:', sql);
-    return {
-      name,
-      metas: await DB.exec(sql)
-    }
+    const metas = await DB.exec(sql)
+    return { name, metas }
   }
 
   async rende () {
@@ -51,9 +58,9 @@ class RssRender extends Render {
    try {
      let limit = 20
      let data = await this.getRenderData(type)
-     console.log('[RssRender.rende] data', data)
+    //  console.log('[RssRender.rende] data', data)
      let { metas, name } = data
-     console.log('[RssRender.rende] metas', metas)
+    //  console.log('[RssRender.rende] metas', metas)
      let allarticles = metas.map(meta => meta.longid)
      return this.getDoc(this.template, {
         name,
@@ -67,10 +74,10 @@ class RssRender extends Render {
    }
   }
 }
+
 // var rss = new RssRender('firstpage')
 // rss.rende().then(data => {
 //   console.log(data)
 // })
-
 
 module.exports = RssRender

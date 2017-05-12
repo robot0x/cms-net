@@ -48,43 +48,49 @@
     </div>
   </div>
   <script>
-    var uid = $.cookie('DDuid');
-    if (uid == undefined)
-      uid = -1;
-    var isIOS = Boolean(navigator.userAgent.match(/iphone|ipod|ios|ipad/i));
-    var idlist = []
-    var p3s = $('.p3').each(function(i, p){ idlist.push(Number(p.dataset.id))})
-    function updateread(idlist) {
+  var uid = $.cookie('DDuid');
+  if (uid == undefined)
+    uid = -1;
+  var isIOS = Boolean(navigator.userAgent.match(/iphone|ipod|ios|ipad/i));
+  var idlist = []
+  var p3s = $('.p3').each(function(i, p){ idlist.push(Number(p.dataset.id))})
+  function updateread(idlist){
       $.ajax({
-          url: "//api.diaox2.com/v1/stat/all",
-          data: {
-            data: JSON.stringify({
-              aids: idlist
-            })
-          },
-          dataType: "jsonp",
-          type: "GET",
-          jsonp: "cb",
-          jsonpCallback: "cb99",
-          cache: !0,
-          timeout: 2e4
-        })
-        .done(function(data) {
-          var c, d, e = data.res;
-          for (var c in e) {
-            d = document.querySelector('.p3[data-id="' + c + '"]');
-            if (d) {
-              d.innerHTML = "阅读 " + e[c].click;
-              d.className = d.className.replace(/unknown|known/gi, "") + " known";
-            }
+          url:"http://api.diaox2.com/v1/stat/all",
+          data:{data:JSON.stringify({aids:idlist})},
+          dataType:"jsonp",
+          type:"GET",
+          jsonp:"cb",
+          jsonpCallback:"cb99",
+          cache:!0,
+          timeout:2e4
+      })
+      .done(function(data){
+          var c,d,e=data.res;
+          for(var c in e) {
+              d=document.querySelector('.p3[data-id="'+c+'"]');
+              if(d) {
+                  d.innerHTML="阅读 "+e[c].click;
+                  d.className=d.className.replace(/unknown|known/gi,"")+" known";
+              }
           }
           return console.log("get stat success !!");
-        })
-        .fail(function(a, b, c) {
-          console.log("update failed, with error " + c);
-        })
-    }
-
+          })
+      .fail(function(a,b,c){
+          console.log("update failed, with error "+c);
+      })
+  }
+  <% if( pageType === 'share') {%>
+    $(document).ready(function(){
+      add_access({"action": "navigate", "value": "Zhuanti", "user": uid, "isIOS": isIOS}, "log");	//log this
+      bind_log_click(".articlecard", "data-href", "zhuantiarticlecard");
+      updateread(idlist);
+              //调整大小
+      $(".botmenu").width($("body").width());
+      bind_log_click('.banner', 'data-href', "bannerclick");  //banner点击下载
+      bind_log_click('.downlink', 'data-href', "downlink");   //底部菜单下载
+    });
+  <% } else {%>
     function connectWebViewJavascriptBridge(callback) {
       if (window.WebViewJavascriptBridge) {
         callback(WebViewJavascriptBridge);
@@ -174,6 +180,7 @@
       bind_log_click(".articlecard", "data-href", "zhuantiarticlecard");
       updateread(idlist);
     });
+  <% } %>
   </script>
 </body>
 </html>

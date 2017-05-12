@@ -42,7 +42,9 @@ class MetaTable extends Table {
   }
 
   async getRecordsByCond (col, cond) {
-    const list = await this.exec(`SELECT ${col} FROM ${this.table} WHERE ${cond}`)
+    const sql = `SELECT ${col} FROM ${this.table} WHERE ${cond}`
+    console.log('sql:', sql);
+    const list = await this.exec(sql)
     const records = []
     for(let item of list){
       records.push(item[col])
@@ -59,7 +61,8 @@ class MetaTable extends Table {
   }
 
   getAidsBySource (source) {
-    return this.getAidsByCond('id', `author = ${super.escape(source)}`)
+    console.log('source:', source)
+    return this.getAidsByCond(` author = ${super.escape(source)} `)
     // return this.getRecordsByCond('id' ,`author = ${super.escape(source)}`)
   }
 

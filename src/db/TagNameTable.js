@@ -5,7 +5,7 @@ const Utils = require('../utils/Utils')
  */
 class TagNameTable extends Table {
   constructor () {
-    super('article_tag_name', ['tid','name','level', 'parent'], null, null)
+    super('diaodiao_article_tag_name', ['tid','name','level', 'parent'], null, null)
   }
   // article_content的主键为aid
   async getByTid (tid) {

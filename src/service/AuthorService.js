@@ -30,6 +30,8 @@ class AuthorService {
       // let source = '+0'
       let author = await authorTable.getBySource(source)
       let aids = await metaTable.getAidsBySource(source)
+      console.log(author);
+      // console.log(aids);
       let metas = await metaService.getRawMetas(aids, false, true)
       metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
       author.pic_uri = Utils.addUrlPrefix(author.pic_uri)

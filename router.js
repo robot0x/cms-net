@@ -118,13 +118,13 @@ router.get('/', async (req, res) => {
       }
     } else if (/jfitem/i.test(m)) {
       if(gid && /\d+/.test(gid)) {
-        mJfitemRender.setGid(gid).rende().then(doc => writeDoc(doc, res, 'jfitem'))
+        mJfitemRender.setPageType('inapp').setGid(gid).rende().then(doc => writeDoc(doc, res, 'jfitem'))
       } else {
         pageNotFound(res)
       }
     } else if (/jfmall/i.test(m)) {
         console.log('积分商城页路由命中 ....')
-        mJfMallRender.rende().then(doc => writeDoc(doc, res, 'jfmall'))
+        mJfMallRender.setPageType('inapp').rende().then(doc => writeDoc(doc, res, 'jfmall'))
     } else if (/metaband/i.test(m)) {
         console.log('文章列表条html路由命中 ....')
         if(id && /\d+/.test(id)){
@@ -281,12 +281,14 @@ router.get(pcCategoryReg, (req, res) => {
 router.post('/', async (req, res) => {
   console.log('post/ 执行 ...');
   // console.log(req.body);
-  console.log(req.query)
   let { query } = req
   let { m } = query
   let postData = req.body
+  console.log('postData:', postData)
   // 有m说明是渲染器
-  if(m && (m = m.trim().toLowerCase())){
+  if(m && (m = m.trim())){
+    console.log('m：', m)
+    console.log('/TR/i.test(m)：', /TR/i.test(m))
     if (/genpub/i.test(m)) {
       console.log('命中genpub接口 ....')
       genpub(postData).then(data => writeJSON(data, res, 'genpub'))
@@ -299,10 +301,20 @@ router.post('/', async (req, res) => {
         // TODO:返回参数错误信息
       }
       // metaService.getRawMetas(postData).then(meta => writeJSON(meta, res))
+    } else if (/TR/i.test(m)) {
+      // console.log(`文章搜索按照date的接口的路由被命中，start = ${start}, end = ${end}` )
+      let start = null
+      let end = null
+      if(postData) {
+        start = postData.start
+        end = postData.end
+      }
+      search.byDate(start, end).then(meta => writeJSON(meta, res, 'TR'))
     } else if (/TS/i.test(m)) {
       console.log('命中TS POST接口 ....')
       console.log(postData)
-      search.byTitle(postData).then(meta => writeJSON(meta, res, 'TS'))
+      res.json('noting')
+      // search.byTitle(postData).then(meta => writeJSON(meta, res, 'TS'))
     }
   }
 })

@@ -26,7 +26,7 @@ class TagRender extends Render {
 
   _findImageByAid (images, aid) {
     for (let image of images) {
-      if(image.aid === aid) {
+      if(image.aid == aid) {
         return image
       }
     }
@@ -37,17 +37,20 @@ class TagRender extends Render {
    const { parser, tid } = this
    if(!tid) return
    try {
+     //  只有前20条数据是服务端渲染出来的，后面的数据由前端js拿
      let limit = 20
      let { metas, images, name } = await new TagService(tid).setLimit(limit).getRenderData()
      let allarticles = []
-     let infos = ''
+     let infos = Object.create(null)
      let len = allarticles.length
      // console.log(metas)
      for (let meta of metas) {
        let {id, title} = meta
+
        let longid = Utils.toLongId(id)
        allarticles.push(longid)
-       infos += `"${longid}":"${escape(title).replace(/%u/g,'\\u').replace(/%20/g,' ')}",`
+       infos[longid] = title
+       //  需要把取出来的前 limit 条 缩略图 attach 到具有相同aid的meta上
        let thumb = this._findImageByAid(images, id)
        if(thumb) {
          meta.thumb_image_url = `//${thumb.url}`
@@ -59,8 +62,8 @@ class TagRender extends Render {
      }
      return this.getDoc(this.template, {
         name,
-        allarticles,
-        infos: infos,
+        allarticles: JSON.stringify(allarticles),
+        infos: JSON.stringify(infos),
         body: parser.setMetas(metas).getHTML(limit),
         prefix: this.prefix,
         version: this.version
