@@ -4,7 +4,7 @@ test/
 npm-debug.log
 selenium-debug.log
 .vscode/
-logs/
+logs/*
 src/**/logs
 *.log.*
 src/crawler/data
