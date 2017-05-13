@@ -1,6 +1,8 @@
+const Log = require('./src/utils/Log')
+
 module.exports = {
 
-  allowCors (req, res, next) {
+  allowCors(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*')
     res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
     // 如果前端fetch或ajax带cookie的话，必须设置 credentials 头为true
@@ -14,7 +16,7 @@ module.exports = {
   },
 
   // 处理request请求数据
-  bodyParse (req, res, next) {
+  bodyParse(req, res, next) {
     let data = ''
     // 取出请求数据
     req.on('data', chunk => data += chunk) // eslint-disable-line
@@ -31,7 +33,7 @@ module.exports = {
   },
 
   // 请求数据parse
-  bodyJSON (req, res, next) {
+  bodyJSON(req, res, next) {
     const method = req.method
     if (['POST', 'PUT'].indexOf(method) !== -1) {
       try {
@@ -45,7 +47,25 @@ module.exports = {
       req.body = req.query
     }
     next() // 没有这一行，所有接口都会hang住
-  }
+  },
 
+  // 错误处理中间件
+  errorHandler(err, req, res, next) {
+    // 服务端错误
+    return res.json({
+      status: 500,
+      server_timestamp: server_timestamp,
+      message: `后端报错：${err.message}`
+    })
+  },
+
+  // http日志中间件
+  log() {
+    return Log.getLog4js().connectLogger(Log.getHttpLogger(), {
+      level: 'auto', // https://github.com/nomiddlename/log4js-node/wiki/Connect-Logger
+      format: ':remote-addr - ":method :url HTTP/:http-version" :status:referrer ":user-agent" :response-time ms', // http://www.senchalabs.org/connect/logger.htm
+      nolog: /\.(gif|jpe?g|png|css|js)$/i // 不打印静态资源
+    })
+  }
 
 }
