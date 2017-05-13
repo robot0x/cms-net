@@ -27,10 +27,11 @@ const theAbsolutePathDirOfLogfiles = path.resolve(__dirname, '../', 'logs')
 const pattern = "[%d] [%p] - %m"
 const log4jsConfig = {
   appenders: [
+    // {
+    //   type: "console",
+    //   category: "console"
+    // }, 
     {
-      type: "console",
-      category: "console"
-    }, {
       //
       category: "http",
       type: "file",
@@ -63,12 +64,12 @@ const log4jsConfig = {
       }
     }
   ],
-  replaceConsole: true,
+  // replaceConsole: true,
   levels: {
     business: "info",
     exception: "ALL",
-    http: "ALL",
-    console: "ALL"
+    http: "ALL"
+    // , console: "ALL"
   }
 }
 
