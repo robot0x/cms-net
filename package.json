@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "pm2 start cms-net.js -i max",
+    "start": "pm2 start cms-net.js",
     "nstart": "node cms-net.js",
     "dev": "NODE_ENV=dev nodemon cms-net.js"
   },
