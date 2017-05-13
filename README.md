@@ -8,7 +8,11 @@
 # 安装依赖
 npm install
 
-# 启动server 相当于执行：pm2 start cms-net.js -i max
+# 创建日志目录
+mkdir logs
+
+# 启动server 相当于执行：pm2 start cms-net.js 先使用fork模式，若使用集群模式的话（ -i max）和log4js有冲突
+# https://github.com/nomiddlename/log4js-node/issues/265
 npm start
 
 # 跑单元测试
