@@ -26,12 +26,12 @@ class Search {
   }
 
   byTitle (title) {
-    Log.bussiness(`[API SearchByTitle] 输入参数为：${title}`)
+    Log.business(`[API SearchByTitle] 输入参数为：${title}`)
     return this.doQuery(` title like '%${title}%' `)
   }
 
   byDate (start, end) {
-    Log.bussiness(`[API SearchByDate] 输入参数为：start = ${start}, end = ${end}`)
+    Log.business(`[API SearchByDate] 输入参数为：start = ${start}, end = ${end}`)
     let pattern = 'YYYYMMDD'
     if(!start || !/\d{8}/.test(start)){
       // 如果没有起始日期，则定为 昨天
