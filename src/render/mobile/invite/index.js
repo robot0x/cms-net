@@ -1,6 +1,7 @@
 const Render = require('../../')
 const Utils = require('../../../utils/Utils')
 const request = require('request')
+const Log = require('../../../utils/Log')
 /**
  * 渲染：
  *  1. 邀请页 http://c..diaox2.com/view/app/invite/42.html
@@ -53,7 +54,8 @@ class InviteRender extends Render {
         version: this.version
       })
     } catch (e) {
-      console.log(e)
+      Log.exception(e)
+      return null
     }
   }
 }

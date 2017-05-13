@@ -3,7 +3,7 @@ const Utils = require('../../../utils/Utils')
 const imageHandler = require('./imageHandler')
 const Parser = require('./parser')
 const MetaService = require('../../../service/MetaService')
-
+const Log = require('../../../utils/Log')
 /**
  * 渲染：
  *  1. 专题 zhuanti (ctype = 9)    http://c.diaox2.com/view/app/?m=zt&id=7080
@@ -72,7 +72,8 @@ class ZTRender extends Render {
         version: this.version,
       })
     } catch (e) {
-      console.log(e)
+      Log.exception(e)
+      return null
     }
   }
 }

@@ -42,6 +42,7 @@ class AuthorRender extends Render {
       })
     } catch (e) {
       Log.exception(e)
+      return null
     }
   }
 }

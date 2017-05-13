@@ -2,6 +2,7 @@ const Render = require('../../')
 const Parser = require('./parser')
 const Utils = require('../../../utils/Utils')
 const DB = require('../../../db/DB')
+const Log = require('../../../utils/Log')
 /**
  * 渲染：
  *  1. RSS聚合页 http://c.diaox2.com/view/app/?m=rss&type=firstpage
@@ -70,7 +71,8 @@ class RssRender extends Render {
         version: this.version
       })
    } catch (e) {
-     console.log(e)
+     Log.exception(e)
+     return null
    }
   }
 }

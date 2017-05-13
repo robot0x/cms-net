@@ -2,6 +2,7 @@ const Render = require('../../')
 const Utils = require('../../../utils/Utils')
 const MetaService = require('../../../service/MetaService')
 const metaService = new MetaService()
+const Log = require('../../../utils/Log')
 /**
  * 渲染：
  *  1. http://c.diaox2.com/view/app/?m=metaband&id=1234
@@ -31,7 +32,8 @@ class MetabandRender extends Render{
       <div class="clearfix"></div>
       <hr class="sep">`
     } catch (e) {
-      console.log(e)
+      Log.exception(e)
+      return null
     }
   }
 }

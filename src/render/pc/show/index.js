@@ -7,7 +7,7 @@
  const imageHandler = require('./imageHandler')
  const Parser = require('./parser')
  const MetaService = require('../../../service/MetaService')
-
+ const Log = require('../../../utils/Log')
  class ShowRender extends Render {
    constructor (id) {
      super()
@@ -73,7 +73,8 @@
           date
         })
     } catch (e) {
-       console.log(e)
+       Log.exception(e)
+       return null
     }
    }
  }

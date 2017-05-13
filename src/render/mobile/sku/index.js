@@ -4,6 +4,7 @@ const Parser = require('./parser')
 const MetaService = require('../../../service/MetaService')
 const request = require('request')
 const Promise = require('bluebird')
+const Log = require('../../../utils/Log')
 /**
  * 渲染：
  *  1. SKU页
@@ -51,8 +52,8 @@ class SkuRender extends Render {
           version
         })
      } catch (e) {
-       console.log(e)
-      throw Error('调用getfullsku接口失败')
+       Log.exception(e)
+       return null
      }
     }
 }

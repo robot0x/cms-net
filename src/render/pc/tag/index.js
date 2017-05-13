@@ -2,6 +2,7 @@ const Render = require('../../')
 const Utils = require('../../../utils/Utils')
 const Parser = require('./parser')
 const TagService = require('../../../service/TagService')
+const Log = require('../../../utils/Log')
 /**
  * 渲染：
  *  1. 作者页 http://c.diaox2.com/view/app/?m=author&src=ZRJ
@@ -54,7 +55,6 @@ class TagRender extends Render {
        }
        meta.longid = longid
      }
-     console.log('ptag:', ptag)
     //  tags = [{
     //    name: xxx,
     //    tid: 100000,
@@ -75,7 +75,8 @@ class TagRender extends Render {
         version: this.version
       })
    } catch (e) {
-     console.log(e)
+     Log.exception(e)
+     return null
    }
   }
 }

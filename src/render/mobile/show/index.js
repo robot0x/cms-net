@@ -7,6 +7,8 @@ const moment = require('moment')
 const request = require('request')
 const Promise = require('bluebird')
 const relsearch = require('../../../api/relsearch')
+const Log = require('../../../utils/Log')
+
 /**
  * 渲染：
  *  1. 首页 goodthing (ctype = 1)    http://c.diaox2.com/view/app/?m=show&id=9669
@@ -121,9 +123,8 @@ class ShowRender extends Render {
          version: this.version,
        })
    } catch (e) {
-      console.log(e)
-   } finally {
-
+      Log.exception(e)
+      return null
    }
   }
 }

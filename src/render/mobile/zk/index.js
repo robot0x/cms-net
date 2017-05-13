@@ -3,6 +3,7 @@ const Utils = require('../../../utils/Utils')
 const imageHandler = require('./imageHandler')
 const Parser = require('./parser')
 const MetaService = require('../../../service/MetaService')
+const Log = require('../../../utils/Log')
 /**
  * 渲染：
  *  1. 专刊 zhuankan (ctype = 4)    http://c.diaox2.com/view/app/?m=zk&id=3053
@@ -93,7 +94,8 @@ class ZKRender extends Render {
         version: this.version
       })
     } catch (e) {
-      console.log(e)
+      Log.exception(e)
+      return null
     }
   }
 }

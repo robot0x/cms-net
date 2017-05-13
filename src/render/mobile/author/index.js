@@ -2,6 +2,7 @@ const Render = require('../../')
 const Utils = require('../../../utils/Utils')
 const Parser = require('./parser')
 const AuthorService = require('../../../service/AuthorService')
+const Log = require('../../../utils/Log')
 /**
  * 渲染：
  *  1. 作者页
@@ -43,8 +44,7 @@ class AuthorRender extends Render {
         version: this.version
       })
    } catch (e) {
-     console.log(e)
-     
+     Log.exception(e)
      return null
    }
   }
