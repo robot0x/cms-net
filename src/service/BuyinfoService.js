@@ -7,6 +7,7 @@
 const BuyinfoTable = require('../db/BuyinfoTable')
 const MetaService = require('./MetaService')
 const Utils = require('../utils/Utils')
+const Log = require('../utils/Log')
 const request = require('request')
 
 class BuyinfoService {
@@ -29,8 +30,8 @@ class BuyinfoService {
         buyinfos: await this.buyinfoTable.getByAid(aid)
       }
     } catch (e) {
-      console.log(e)
-      throw new Error(e)
+      Log.exception(e)
+      return null
     }
   }
 }

@@ -7,38 +7,46 @@
 const AuthorTable = require('../db/AuthorTable')
 const MetaTable = require('../db/MetaTable')
 const Utils = require('../utils/Utils')
+const Log = require('../utils/Log')
 const MetaService = require('./MetaService')
 
 class AuthorService {
 
-  constructor (source) {
+  constructor(source) {
     this.metaTable = new MetaTable
     this.authorTable = new AuthorTable
     this.metaService = new MetaService
     this.setSource(source)
   }
 
-  setSource (source) {
+  setSource(source) {
     this.source = source
   }
 
   // 渲染数据接口
-  async getRenderData () {
-    const { authorTable, metaTable, metaService } = this
+  async getRenderData() {
+    const {
+      authorTable,
+      metaTable,
+      metaService
+    } = this
     try {
       let source = this.source
       // let source = '+0'
       let author = await authorTable.getBySource(source)
       let aids = await metaTable.getAidsBySource(source)
-      console.log(author);
+      // console.log(author);
       // console.log(aids);
       let metas = await metaService.getRawMetas(aids, false, true)
       metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
       author.pic_uri = Utils.addUrlPrefix(author.pic_uri)
-      return { author, metas }
+      return {
+        author,
+        metas
+      }
     } catch (e) {
-      console.log(e)
-      throw new Error(e)
+      Log.exception(e)
+      return null
     }
   }
 
@@ -52,7 +60,5 @@ class AuthorService {
 // .catch(e => {
 //   console.log(e)
 // })
-
-
 
 module.exports = AuthorService

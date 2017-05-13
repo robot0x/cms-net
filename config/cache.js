@@ -25,7 +25,8 @@ const cache = {
    * tag页
    */
   tag: {
-    maxAge: 86400
+    // maxAge: 86400
+    maxAge: 43200 // 12小时
   },
   /**
    * /?m=author&src=ZRJ 缓存时间为一天
@@ -148,7 +149,7 @@ const cache = {
    * PC站tag页
    */
   category: {
-    maxAge: 86400
+    maxAge: 172800 // 2天
   },
 
   /**

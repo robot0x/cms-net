@@ -1,5 +1,6 @@
 const Render = require('../../')
 const Utils = require('../../../utils/Utils')
+const Log = require('../../../utils/Log')
 const Parser = require('./parser')
 const AuthorService = require('../../../service/AuthorService')
 /**
@@ -8,7 +9,7 @@ const AuthorService = require('../../../service/AuthorService')
  */
 class AuthorRender extends Render {
 
-  constructor (src) {
+  constructor(src) {
     super()
     this.setSource(src)
     this.template = this.readTemplate(__dirname + '/author.ejs')
@@ -17,34 +18,31 @@ class AuthorRender extends Render {
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
-  setSource (src) {
+  setSource(src) {
     this.source = src
     return this
   }
 
-  async rende () {
-   const { parser, source } = this
-   if(!source) return
-   try {
-     let { metas, author } = await new AuthorService(source).getRenderData()
-     let allarticles = metas.map(meta => meta.nid * 4294967297)
-     let len = allarticles.length
-     let infos = ''
-     allarticles.forEach((id, index) => {
-       infos += `${id}:'${metas[index].title.join('')}'${index === len - 1? '' : ','}`
-     })
-     return this.getDoc(this.template, {
-        allarticles,
-        infos: infos,
+  async rende() {
+    const {
+      parser,
+      source
+    } = this
+    if (!source) return
+    try {
+      //  相当于then
+      let {
+        metas,
+        author
+      } = await new AuthorService(source).getRenderData()
+      return this.getDoc(this.template, {
         author,
         body: parser.setMetas(metas).getHTML(20),
         version: this.version
       })
-   } catch (e) {
-     console.log(e)
-   } finally {
-
-   }
+    } catch (e) {
+      Log.exception(e)
+    }
   }
 }
 //

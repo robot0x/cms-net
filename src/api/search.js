@@ -5,27 +5,33 @@ const MetaService = require('../service/MetaService')
 const metaService = new MetaService
 const MetaTable = require('../db/MetaTable')
 const metaTable = new MetaTable
+const Log = require('../utils/Log')
 
 class Search {
-
   async doQuery (cond) {
-    const aids = await metaTable.getAidsByCond(cond)
-    if(!Utils.isValidArray(aids)) return null
-    const metas = await metaService.getRawMetas(aids, true, true, true, true, true)
-    if(!Utils.isValidArray(metas)) return null
     const ret = []
-    metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
-    for (let meta of metas) {
-      ret.push(this._handleMeta(meta))
+    try {
+      const aids = await metaTable.getAidsByCond(cond)
+      if(!Utils.isValidArray(aids)) return null
+      const metas = await metaService.getRawMetas(aids, true, true, true, true, true)
+      if(!Utils.isValidArray(metas)) return null
+      metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
+      for (let meta of metas) {
+        ret.push(this._handleMeta(meta))
+      }
+    } catch (error) {
+      Log.exception(error)
     }
     return ret.length > 1? {metas: ret} : null
   }
 
   byTitle (title) {
+    Log.bussiness(`[API SearchByTitle] 输入参数为：${title}`)
     return this.doQuery(` title like '%${title}%' `)
   }
 
   byDate (start, end) {
+    Log.bussiness(`[API SearchByDate] 输入参数为：start = ${start}, end = ${end}`)
     let pattern = 'YYYYMMDD'
     if(!start || !/\d{8}/.test(start)){
       // 如果没有起始日期，则定为 昨天

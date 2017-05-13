@@ -1,8 +1,6 @@
 const Table = require('./Table')
 const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
-const runLogger = Log.getLogger('cms_run')
-const varLogger = Log.getLogger('cms_var')
 
 class MetaTable extends Table {
   constructor () {
@@ -89,8 +87,7 @@ class MetaTable extends Table {
         data = await this.getById(ids)
       }
     } catch (e) {
-      console.log(e)
-      runLogger.error(e)
+      Log.exception(e)
     }
     return data
   }

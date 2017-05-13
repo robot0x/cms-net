@@ -11,6 +11,7 @@ const AuthorTable = require('../db/AuthorTable')
 const BuyinfoTable = require('../db/BuyinfoTable')
 const DB = require('../db/DB')
 const Utils = require('../utils/Utils')
+const Log = require('../utils/Log')
 const request = require('request')
 const Promise = require('bluebird')
 const moment = require('moment')
@@ -234,7 +235,7 @@ class MetaService {
         return metas.length > 0 ? metas : null
       }
     } catch (e) {
-      console.log(e)
+      Log.exception(e)
       return null
     }
   }
@@ -276,8 +277,8 @@ class MetaService {
       }
       return { meta, images, content, author }
     } catch (e) {
-      console.log(e)
-      throw new Error(e)
+      Log.exception(e)
+      return null
     }
   }
 
@@ -318,7 +319,7 @@ class MetaService {
             }
           }
         } catch (e) {
-          console.log(e)
+          Log.exception(e)
           resolve(null)
         }
       })

@@ -1,10 +1,7 @@
 const dbConfig = require('../../config/db')
-// const mysql = require('promise-mysql')
 const mysql = require('mysql')
 const _ = require('lodash')
 const Log = require('../utils/Log')
-const runLogger = Log.getLogger('cms_run')
-const varLogger = Log.getLogger('cms_var')
 const CMS = 'cms'
 const DIAODIAO = 'diaodiao'
 
@@ -95,18 +92,15 @@ class DB {
        DB.poolCluster.getConnection(CMS, function(err, connection) {
       //  DB.poolCluster.getConnection(CMS, DIAODIAO, function(err, connection) {
          if(err) {
-           console.log(err)
-           runLogger.error(err)
+           Log.exception(err)
            reject(err)
          }
-        //  if (!connection) return;
-        //  console.log("[DB.exec] got connetion")
-        //  console.log(`[DB.exe] prepare to run ${sql} ${data? `with ${data}` : ''}`)
          connection.query(sql, data, (error, rows) => {
+           Log.business(`[DB.exe] ${sql} ${data? `with ${data}` : ''}\nfetch rows\'s length is ${rows.length} `)
            connection.release()
            if(error){
-             console.log(err)
-             runLogger.error(err)
+             console.log(error)
+             Log.exception(error)
              reject(error)
            }
            resolve(rows)

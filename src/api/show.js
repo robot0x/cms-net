@@ -8,6 +8,7 @@ const MetaTable = require('../db/MetaTable')
 const metaTable = new MetaTable
 const Parser = require('../parser')
 const parser = new Parser
+const Log = require('../utils/Log')
 
 async function show (id) {
   const trueM = Utils.ctypeToM(await metaTable.getCtypeById(id))
@@ -29,6 +30,7 @@ async function show (id) {
 }
 
 async function showArticle (id) {
+  Log.bussiness('[API show showArticle] 输入参数为：', id)
   try {
     let content = await contentTable.getById(id)
     // (useBuylink = true, isShortId = false, useCoverex = false, useBanner = false, useSwipe = false , useImageSize = false)
@@ -45,16 +47,17 @@ async function showArticle (id) {
       contents: parser.getData()
     }
   } catch (e) {
-    console.log(e)
+    Log.exception(e)
+    return null
   }
 }
 
 async function showZK (id) {
-
+  Log.bussiness('[API show showZK] 输入参数为：', id)
 }
 
 async function showZT (id) {
-
+  Log.bussiness('[API show showZT] 输入参数为：', id)
 }
 
 module.exports = show

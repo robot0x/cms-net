@@ -4,7 +4,6 @@ const DB = require('../db/DB')
 const MetaService = require('./MetaService')
 const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
-const run = Log.getLogger('cms_run')
 
 class TagService {
 
@@ -69,7 +68,8 @@ class TagService {
       })
       return tree
     } catch (e) {
-      console.log(e);
+      Log.exception(e)
+      return null
     }
   }
 
@@ -121,8 +121,8 @@ class TagService {
       // console.log(aids.length)
       // return  { metas:  await metaTable.getMetas(aids)}
     } catch (e) {
-      console.log(e)
-      run.error(e)
+      Log.exception(e)
+      return null
     }
   }
 

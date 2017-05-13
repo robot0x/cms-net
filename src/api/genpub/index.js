@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const metaService = new MetaService()
 const Utils = require('../../utils/Utils')
+const Log = require('../../utils/Log')
 
 // 20170503170435
 function genFilename () {
@@ -33,6 +34,7 @@ async function genpub (postData) {
       if(!postData) {
         return reject(fail)
       }
+      Log.bussiness('[API genpub] 输入参数为：', postData)
       let {iddict, version, tool, tool2, carousel} = postData
       let cids = Object.keys(iddict)
       let metas = await metaService.getRawMetas(cids)
@@ -56,7 +58,7 @@ async function genpub (postData) {
         })
       })
     } catch (e) {
-      console.log(e)
+      Log.exception(e)
       reject(fail)
     }
   })

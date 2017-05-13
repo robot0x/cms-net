@@ -4,10 +4,12 @@ const router = require('./router')
 const middleware = require('./middleware')
 const config = require('./package').config
 const Log = require('./src/utils/Log')
-const run = Log.getLogger('cms_run')
 const app = express()
-
-app.use(Log.getLog4js().connectLogger(Log.getLogger('cms_http'), {format: ':method :url'}))
+app.use(Log.getLog4js().connectLogger(Log.getHttpLogger(), {
+  level: 'auto', // https://github.com/nomiddlename/log4js-node/wiki/Connect-Logger
+  format:':remote-addr - ":method :url HTTP/:http-version" :status:referrer ":user-agent" :response-time ms',// http://www.senchalabs.org/connect/logger.htm
+  nolog: /\.(gif|jpe?g|png|css|js)$/i // 不打印静态资源
+}))
 // 启动压缩 -- 系统级中间件
 app.use(require('compression')())
 // 处理options请求。设置response对象的可允许跨域的header信息

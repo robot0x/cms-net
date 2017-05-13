@@ -3,8 +3,6 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
-const runLogger = Log.getLogger('cms_run')
-const varLogger = Log.getLogger('cms_var')
 /**
  * 所有业务表要继承的基类
  * 提供了一些常用的数据库操作
@@ -78,7 +76,7 @@ class Table {
         })
         .catch(e => {
           reject(e)
-          runLogger.error(e)
+          Log.exception(e)
         })
     })
   }

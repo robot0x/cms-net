@@ -10,7 +10,7 @@
  const isDebug =  process.env.NODE_ENV === 'dev' ? true : false
  const dbConfig = isDebug ? {
    'cms': {
-     'host': '172.16.1.121',
+     'host': 'localhost',
      'user': 'root',
      'password': 'sqltest',
      'database': 'cms',
@@ -32,7 +32,7 @@
      'connectionLimit': 50
    }
  }
- console.log(`isDebug:${isDebug}, use: ${JSON.stringify(dbConfig)}`)
+ console.log(`isDebug:${isDebug}\nuse: ${JSON.stringify(dbConfig)}`)
  module.exports = dbConfig
 
 //  module.exports = {

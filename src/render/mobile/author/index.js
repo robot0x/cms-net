@@ -44,8 +44,8 @@ class AuthorRender extends Render {
       })
    } catch (e) {
      console.log(e)
-   } finally {
-
+     
+     return null
    }
   }
 }
