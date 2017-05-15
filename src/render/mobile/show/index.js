@@ -57,12 +57,12 @@ class ShowRender extends Render {
     }
     return words.join(',')
   }
+  // 拿出文章关联的所有sku
   async _getSkus (id = this.id) {
     let skus = null
     const result = await Promise.promisify(request)('http://s5.a.dx2rd.com:3000/v1/articlesku/' + id)
     let { data } = JSON.parse(result.body)
     skus = data[Utils.toLongId(id)]
-    console.log('skus:', skus)
     return skus
   }
   async rende () {
@@ -74,7 +74,8 @@ class ShowRender extends Render {
      let relwords = await this.getRelsearchWords()
      // 在此处进行ctype判断
      parser.markdown = content // markdown is a setter like method `setMarkdown`
-     let body = parser.getHTML()
+     let body = await parser.getHTML()
+     console.log(body)
      body = imageHandler(body, images)
      //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
      let cover = images.filter(img => {
@@ -89,6 +90,8 @@ class ShowRender extends Render {
      thumb = Utils.getFirst(thumb)
      cover = Utils.getFirst(cover)
      let shouldUsedSku = null
+
+     // 如果是好物页，拿出所有的sku，并取出第一个，赋值给页面的 g_ab 变量，由前端js在页面底部插入这条sku
      if(ctype == 2) {
        const skus = await this._getSkus()
        if(Utils.isValidArray(skus)){

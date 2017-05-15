@@ -2,6 +2,7 @@ const marked = require('marked')
 // const _ = require('lodash')
 const cheerio = require('cheerio')
 const Log = require('../utils/Log')
+const Promise = require('bluebird')
 /**
  * CMS markdown 解析器
  * 读取文章原始markdown文本
@@ -20,7 +21,7 @@ class Parser {
    */
   constructor(markdown, options = {}) {
     this._markdown = markdown
-    const defaultOptions = {
+    this.defaultOptions = {
       // gfm default: false github flavored markdown github风格的markdown
       gfm: true,
       // tables default: true 使用 gfm 风格的表格，想要这个生效，需要设置 gfm 为 true
@@ -37,11 +38,15 @@ class Parser {
       // smartypants default: false 与标点符号有关
       smartypants: false,
       // 提取行内标签内的文本
-      ignoreTag: false
+      ignoreTag: false,
+      promise: false
     }
-    this.options = Object.assign(defaultOptions, options)
-    this.options.renderer = new marked.Renderer()
+    this.setOptions(options)
+    this.renderer = this.options.renderer = new marked.Renderer()
     this.marked = marked
+  }
+  setOptions (options = {}) {
+    this.options = Object.assign(this.defaultOptions, options)
   }
   /**
    * [htmlToData 输入一段html文本，输出一段对应的数据片段]
@@ -179,7 +184,17 @@ class Parser {
 
   getHTML() {
     this.marked.setOptions(this.options)
-    return this.marked(this.markdown)
+    // let isPromise = !!this.options.promise
+    // if(isPromise) {
+    //   console.log('isPromise：', isPromise)
+    //   return Promise.promisify(this.marked)(this.markdown)
+    //   // return this.marked(this.markdown, function (err, content) {
+    //   //   console.log(content)
+    //   // })
+    // } else {
+      // console.log('isPromise：', isPromise)
+      return this.marked(this.markdown)
+    // }
   }
 
   getAll() {

@@ -39,7 +39,14 @@ class SkuRender extends Render {
        data = Utils.getFirst(data)
        console.log(JSON.stringify(data))
        let {title, brand, sales, images, revarticles} = data
-       images = images.map(image => image.url)
+       images = images.map(image => {
+         let {url} = image
+        //  //  如果是阿里云图，则加上后缀，否则不用处理
+        //  if(/content\.image\.alimmdn\.com/i.test(url)){
+        //    url += '@200w_200h_1e%7C200x200-5rc'
+        //  }
+         return Utils.addAliImageSuffix(image.url)
+       })
        const metas = await metaService.getRawMetas(revarticles, false)
        return this.getDoc(this.template, {
           sid,

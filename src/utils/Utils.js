@@ -4,6 +4,14 @@ const moment = require('moment')
 
 class Utils {
 
+  // 如果是阿里云图，则加上后缀，否则不用处理
+  static addAliImageSuffix (url, suffix = '@200w_200h_1e%7C200x200-5rc') {
+    if(/content\.image\.alimmdn\.com/i.test(url)){
+        url += '@200w_200h_1e%7C200x200-5rc'
+    }
+    return url
+  }
+
   /*
    取meta时，要给所有的where条件加上时间限制
    */

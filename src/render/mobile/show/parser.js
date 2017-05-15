@@ -1,4 +1,7 @@
 const Parser = require('../../../parser')
+const request = require('request')
+const Promise = require('bluebird')
+const Utils = require('../../../utils/Utils')
 /**
  * CMS markdown 解析器
  * 读取文章原始markdown文本
@@ -41,6 +44,44 @@ class ShowParser extends Parser {
       }
       return `<a target="_blank" href="${href}">${text || href}</a>`
     }
+
+    // renderer.code = (text, type) => {
+    //   if(/sku/i.test(type) && text && (text = text.trim()) && /\d+/.test(text)){
+    //     // console.log('这是一篇sku, sid为:', text)
+    //     // return `这是一篇sku, sid为:${text}`
+    //     return new Promise((resolve, reject) => {
+    //       resolve(`这是一篇sid为${text}的sku`)
+    //     })
+    //   }
+    // }
+    // super.setOptions({ promise: true })
+    // super.setOptions({
+    //   promise: true,
+    //   async highlight (sid, type, callback) {
+    //      if(/sku/i.test(type) && sid && (sid = sid.trim()) && /\d+/.test(sid)){
+    //       //  return callback(null, '<p id="hello">你好</p>')
+    //       const result = await Promise.promisify(request)(`http://s5.a.dx2rd.com:3000/v1/getsimplesku/${sid}`)
+    //       let {state, data} = JSON.parse(result.body)
+    //       if(state !== 'SUCCESS') {
+    //         return ''
+    //         // throw Error('调用getfullsku接口失败')
+    //       }
+    //       console.log('data:', data);
+    //       let {title, price_str, images} = data
+    //       let image = Utils.getFirst(images)
+    //       if(!image) return ''
+    //       return callback(null, `
+    //         <div class="articlecard bottomshadow revarticlecard" data-href="//c.diaox2.com/view/app/sku/${sid}.html">
+    //           <img class="articleimg" src="${Utils.addAliImageSuffix(image.url)}">
+    //           <span class="articletitle">${title}</span>
+    //           <span class="brand">${price_str}</span>
+    //           <div class="buy-button-area">
+    //             <button class="buy-button"><span>立即购买</span></button>
+    //           </div>
+    //         </div>`)
+    //     }
+    //   }
+    // })
     super.setRenderer(renderer)
   }
 }
