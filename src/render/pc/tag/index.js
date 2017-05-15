@@ -38,7 +38,7 @@ class TagRender extends Render {
    try {
     //  let { metas, thumbs, name } = await new TagService(this.tid).getRenderData()
      let tagService = new TagService(tid)
-     let { metas, images, name } = await tagService.getRenderData(false)
+     let { metas, images, name } = await tagService.getRenderData(true, false)
      let ptag =  await tagService.getParentTagByTid(tid)
      // 从数据库中读数据然后生成tree的方式与线上的排序不一致且显示的条目也不一致（比如，线上没有显示“有调专栏”这个tag）
      // 所以改为写死在模板里，响应速度由 139.7MS 降到了 60.4MS，响应速度提高了2.3+倍
