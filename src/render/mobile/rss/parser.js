@@ -17,7 +17,7 @@ class RssParser{
     }
     for(let meta of metas) {
       let {id, title, longid, thumb_image_url, ctype } = meta
-      console.log(id);
+      // console.log(id);
       html += `
       <div class="articlecard" data-href="//c.diaox2.com/view/app/?m=${Utils.ctypeToM(ctype)}&id=${id}">
 				<img class="articleimg" src="${thumb_image_url}" />

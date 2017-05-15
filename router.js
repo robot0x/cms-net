@@ -11,14 +11,20 @@ const recommend = require(`${SRC}/api/recommend`) // 推荐结果接口
 const search = require(`${SRC}/api/search`) // 文章搜索。按照title搜索，按照date搜索
 const show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，按照date搜索
 const getMetas = require(`${SRC}/api/meta`) // meta接口
+const apimode = require(`${SRC}/api/apimode`) // m=tag&tid=100081&apimode 接口
 const MetaTable = require(`${SRC}/db/MetaTable`)
 const metaTable = new MetaTable
 const moment = require('moment')
 const cache = require('./config/cache')
 
 const {
-  mShowRender, mZKRender, mZTRender, mAuthorRender, mTagRender, // 移动端渲染器
-  mBuyRender, mSkuRender,
+  mShowRender,
+  mZKRender,
+  mZTRender,
+  mAuthorRender,
+  mTagRender, // 移动端渲染器
+  mBuyRender,
+  mSkuRender,
   mRssRender, //RSS聚合页
   mInviteRender, // 个人邀请页
   mJfitemRender, // 积分单品页
@@ -26,7 +32,10 @@ const {
   mZDMRender, // 值得买活动页
   mMetabandRender, // 值得买活动页
 
-  pShowRender, pZKRender, pAuthorRender, pTagRender,  // PC端渲染器
+  pShowRender,
+  pZKRender,
+  pAuthorRender,
+  pTagRender, // PC端渲染器
 
   jkRender, // 即刻渲染接口
   wxAppRender, // 小程序渲染接口
@@ -34,19 +43,19 @@ const {
   // fbRender, // flipborad渲染接口
 } = renders
 
-async function showAndZKAndZTRouter (m, id, pageType, req, res) {
+async function showAndZKAndZTRouter(m, id, pageType, req, res) {
   if (/show/.test(m)) {
-    mShowRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share'? 'showShare' : 'show')).catch(e => {
+    mShowRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share' ? 'showShare' : 'show')).catch(e => {
       Log.exception(e)
       res.end()
     })
   } else if (/zk/.test(m)) {
-    mZKRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share'? 'zkShare' : 'zk')).catch(e => {
+    mZKRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share' ? 'zkShare' : 'zk')).catch(e => {
       Log.exception(e)
       res.end()
     })
   } else if (/zt/.test(m)) {
-    mZTRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share'? 'ztShare' : 'zt')).catch(e => {
+    mZTRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share' ? 'ztShare' : 'zt')).catch(e => {
       Log.exception(e)
       res.end()
     })
@@ -57,14 +66,14 @@ async function showAndZKAndZTRouter (m, id, pageType, req, res) {
 
 // 只执行一次，所以应该在这儿实例化所有渲染器，而不是在路由回调中实例化
 // 否则，每次路由回调执行都会实例化一个对象，可能会导致内存占用过多GC压力过大
-router.get('/', async (req, res) => {
+router.get('/', async(req, res) => {
   let {
     m,
     id, // m=show OR m=relsearch OR m=recommend OR m=metaband
     src, // m=author
     tid, // m=tag
     sid, // m=sku
-    aid,  // m=buy
+    aid, // m=buy
     type, // m=rss
     start, // m=TR
     end, // m=TR
@@ -79,8 +88,8 @@ router.get('/', async (req, res) => {
         // showAndZKAndZTRouter(id, 'inapp', req, res)
         const ctype = await metaTable.getCtypeById(id)
         const trueM = Utils.ctypeToM(ctype)
-        if( trueM ) {
-          if( m !== trueM ) {
+        if (trueM) {
+          if (m !== trueM) {
             console.log('redirect ....');
             redirect(res, `//${req.headers.host}/?m=${trueM}&id=${id}`)
           } else {
@@ -105,16 +114,24 @@ router.get('/', async (req, res) => {
         pageNotFound(res)
       }
     } else if (/tag/i.test(m)) {
-      if(tid && /\d+/.test(tid)){
-        mTagRender.setTid(tid).rende().then(doc => writeDoc(doc, res, 'tag')).catch(e => {
-          Log.exception(e)
-          res.end()
-        })
+      if (tid && /\d+/.test(tid)) {
+        if ('apimode' in req.body) {
+          apimode(tid).then(result => writeJSON(result, res, 'apimode')).catch(e => {
+            Log.exception(e)
+            res.end()
+          })
+        } else {
+          mTagRender.setTid(tid).rende().then(doc => writeDoc(doc, res, 'tag')).catch(e => {
+            Log.exception(e)
+            res.end()
+          })
+        }
+
       } else {
         pageNotFound(res)
       }
     } else if (/buy/i.test(m)) {
-      if(aid && /\d+/.test(aid)){
+      if (aid && /\d+/.test(aid)) {
         console.log('购买页路由被命中，aid为', aid)
         mBuyRender.setAid(aid).rende().then(doc => writeDoc(doc, res, 'buy')).catch(e => {
           Log.exception(e)
@@ -124,7 +141,7 @@ router.get('/', async (req, res) => {
         pageNotFound(res)
       }
     } else if (/sku/i.test(m)) {
-      if(sid && /\d+/.test(sid)) {
+      if (sid && /\d+/.test(sid)) {
         mSkuRender.setSid(sid).rende().then(doc => writeDoc(doc, res, 'sku')).catch(e => {
           Log.exception(e)
           res.end()
@@ -133,7 +150,7 @@ router.get('/', async (req, res) => {
         pageNotFound(res)
       }
     } else if (/rss/i.test(m)) {
-      if(type) {
+      if (type) {
         mRssRender.setType(type).rende().then(doc => writeDoc(doc, res, 'rss')).catch(e => {
           Log.exception(e)
           res.end()
@@ -142,7 +159,7 @@ router.get('/', async (req, res) => {
         pageNotFound(res)
       }
     } else if (/jfitem/i.test(m)) {
-      if(gid && /\d+/.test(gid)) {
+      if (gid && /\d+/.test(gid)) {
         mJfitemRender.setPageType('inapp').setGid(gid).rende().then(doc => writeDoc(doc, res, 'jfitem')).catch(e => {
           Log.exception(e)
           res.end()
@@ -151,24 +168,24 @@ router.get('/', async (req, res) => {
         pageNotFound(res)
       }
     } else if (/jfmall/i.test(m)) {
-        console.log('积分商城页路由命中 ....')
-        mJfMallRender.setPageType('inapp').rende().then(doc => writeDoc(doc, res, 'jfmall')).catch(e => {
+      console.log('积分商城页路由命中 ....')
+      mJfMallRender.setPageType('inapp').rende().then(doc => writeDoc(doc, res, 'jfmall')).catch(e => {
+        Log.exception(e)
+        res.end()
+      })
+    } else if (/metaband/i.test(m)) {
+      console.log('文章列表条html路由命中 ....')
+      if (id && /\d+/.test(id)) {
+        mMetabandRender.setId(id).rende().then(doc => writeDoc(doc, res, 'metaband')).catch(e => {
           Log.exception(e)
           res.end()
         })
-    } else if (/metaband/i.test(m)) {
-        console.log('文章列表条html路由命中 ....')
-        if(id && /\d+/.test(id)){
-          mMetabandRender.setId(id).rende().then(doc => writeDoc(doc, res, 'metaband')).catch(e => {
-            Log.exception(e)
-            res.end()
-          })
-        } else {
-          pageNotFound(res)
-        }
+      } else {
+        pageNotFound(res)
+      }
     } else if (/meta/i.test(m)) {
       console.log('meta接口的路由被命中：', id)
-      if(id && /\d+/.test(id)){
+      if (id && /\d+/.test(id)) {
         getMetas(id).then(meta => writeJSON(meta, res, 'meta_get')).catch(e => {
           Log.exception(e)
           res.end()
@@ -179,7 +196,7 @@ router.get('/', async (req, res) => {
       }
     } else if (/relsearch/i.test(m)) {
       console.log('相关搜索接口的路由被命中：', id)
-      if(id && /\d+/.test(id)){
+      if (id && /\d+/.test(id)) {
         relsearch(id).then(result => writeJSON(result, res, 'relsearch')).catch(e => {
           Log.exception(e)
           res.end()
@@ -189,7 +206,7 @@ router.get('/', async (req, res) => {
       }
     } else if (/recommend/i.test(m)) {
       console.log('推荐结果接口的路由被命中ID为', id)
-      if(id && /\d+/.test(id)){
+      if (id && /\d+/.test(id)) {
         recommend(id).then(result => writeJSON(result, res, 'recommend')).catch(e => {
           Log.exception(e)
           res.end()
@@ -198,7 +215,7 @@ router.get('/', async (req, res) => {
         pageNotFound(res)
       }
     } else if (/TR/i.test(m)) {
-      console.log(`文章搜索按照date的接口的路由被命中，start = ${start}, end = ${end}` )
+      console.log(`文章搜索按照date的接口的路由被命中，start = ${start}, end = ${end}`)
       search.byDate(start, end).then(meta => writeJSON(meta, res, 'TR')).catch(e => {
         Log.exception(e)
         res.end()
@@ -211,13 +228,12 @@ router.get('/', async (req, res) => {
     } else {
       pageNotFound(res)
     }
-  } else {
-  }
+  } else {}
 })
 
 // APP内正文页、专刊页渲染接口
 const showReg = /\/show\/(\d+)/
-router.get(showReg, async (req, res) => {
+router.get(showReg, async(req, res) => {
   let match = req.originalUrl.match(showReg)
   let id = Utils.toShortId(match[1])
   console.log('APP内渲染接口被命中 ....', id)
@@ -233,7 +249,7 @@ router.get(showReg, async (req, res) => {
 
 // m=show OR m=zk OR m=zt的share页
 const longidReg = /\/share\/(\d+)\.html/
-router.get(longidReg, async (req, res) => {
+router.get(longidReg, async(req, res) => {
   let match = req.originalUrl.match(longidReg)
   let id = Utils.toShortId(match[1])
   console.log('share页路由被命中 ....', id);
@@ -297,21 +313,21 @@ router.get(uidReg, (req, res) => {
 })
 
 const pcShowReg = /\/article\/(\d+)\.html/
-router.get(pcShowReg, async (req, res) => {
+router.get(pcShowReg, async(req, res) => {
   console.log(`PC article 路由被激活，此文章url为${req.originalUrl} ...`)
   let match = req.originalUrl.match(pcShowReg)
   let id = match[1]
   // 需要判断这篇文章是专刊还是article还是专刊
   const ctype = await metaTable.getCtypeById(id)
-  if(ctype) {
+  if (ctype) {
     // 好物/首页/经验/活动
     // if(ctype === 1 || ctype === 2 || ctype === 4 || ctype === 5) {
-    if(/^1|2|4|5$/.test(ctype)) {
+    if (/^1|2|4|5$/.test(ctype)) {
       pShowRender.setId(id).rende().then(doc => writeDoc(doc, res, 'article')).catch(e => {
         Log.exception(e)
         res.end()
       })
-    } else if (ctype === 3){ // 专刊
+    } else if (ctype === 3) { // 专刊
       pZKRender.setId(id).rende().then(doc => writeDoc(doc, res, 'pc_zk')).catch(e => {
         Log.exception(e)
         res.end()
@@ -360,14 +376,18 @@ router.get(pcCategoryReg, (req, res) => {
 })
 
 
-router.post('/', async (req, res) => {
+router.post('/', async(req, res) => {
   // console.log(req.body);
-  let { query } = req
-  let { m } = query
+  let {
+    query
+  } = req
+  let {
+    m
+  } = query
   let postData = req.body
   console.log('postData:', postData)
   // 有m说明是渲染器
-  if(m && (m = m.trim())){
+  if (m && (m = m.trim())) {
     console.log('m：', m)
     console.log('/TR/i.test(m)：', /TR/i.test(m))
     if (/genpub/i.test(m)) {
@@ -379,7 +399,7 @@ router.post('/', async (req, res) => {
     } else if (/meta/i.test(m)) {
       console.log('命中meta POST接口 ...., postData为：', postData)
       let cids = postData.cids
-      if(Utils.isValidArray(cids)) {
+      if (Utils.isValidArray(cids)) {
         getMetas(cids).then(meta => writeJSON(meta, res, 'meta_post')).catch(e => {
           Log.exception(e)
           res.end()
@@ -392,7 +412,7 @@ router.post('/', async (req, res) => {
       // console.log(`文章搜索按照date的接口的路由被命中，start = ${start}, end = ${end}` )
       let start = null
       let end = null
-      if(postData) {
+      if (postData) {
         start = postData.start
         end = postData.end
       }
@@ -413,12 +433,14 @@ router.post('/', async (req, res) => {
 })
 
 
-function redirect (res, Location) {
-  res.writeHead(302, { Location })
+function redirect(res, Location) {
+  res.writeHead(302, {
+    Location
+  })
   res.end()
 }
 
-function pageNotFound (res) {
+function pageNotFound(res) {
   res.writeHead(404)
   res.end('无此页面 ...')
 }
@@ -436,8 +458,8 @@ function pageNotFound (res) {
    GMT的小时数 + 8 = UTC时间
    8是我们的时区
  */
-function addCacheControlHeader (res, type) {
-  if(!type) return
+function addCacheControlHeader(res, type) {
+  if (!type) return
   // 从配置中拿到这个路由的缓存配置
   let cacheOfType = cache[type]
   let maxAge = -1
@@ -457,15 +479,17 @@ function addCacheControlHeader (res, type) {
   res.append('Expires', expires)
 }
 
-function writeDoc (doc, res, type) {
-  if(!doc) res.end()
+function writeDoc(doc, res, type) {
+  if (!doc) res.end()
   addCacheControlHeader(res, type)
-  res.writeHead(200, {'Content-Type': 'text/html'})
+  res.writeHead(200, {
+    'Content-Type': 'text/html'
+  })
   res.write(doc)
   res.end()
 }
 
-function writeJSON (json, res) {
+function writeJSON(json, res) {
   res.json(json)
   res.end()
 }
@@ -516,46 +540,46 @@ module.exports = router
 //
 //     }
 
-    // const {m, id, src} = req.body
-    // if(m){
-    //   if(/show|zk|zt/i.test(m)){
-    //
-    //   } else if (/author/i.test(m)) {
-    //
-    //   } else if (/tag/i.test(m)){
-    //
-    //   }
-    // } else {
-    //
-    // }
-    // render
-    //   .set(m, id, src)
-    //   .getData()
-    //   .then(data => {
-    //     try {
-    //       // 如果
-    //       let mtype = Utils.ctypeToM(data.meta.ctype)
-    //       // 如果过来的url形如：m=zk&id=1，但确是show的模板，则重定向为 m=show&id=1
-    //       if (mtype == m) {
-    //         res.writeHead(200, {'Content-Type': 'text/html'})
-    //         const doc = renderRouter.setRenderType(m).getRender().setData(data).rende()
-    //         res.write(doc)
-    //       } else {
-    //         if(id) {
-    //           res.writeHead(302, {'Location': `//${req.headers.host}/?m=${mtype}&id=${id}`})
-    //         } else if (src) {
-    //           res.writeHead(302, {'Location': `//${req.headers.host}/?m=${mtype}&src=${id}`})
-    //         }
-    //       }
-    //     } catch (e) {
-    //       console.log(e)
-    //       runLogger.error(e)
-    //     } finally {
-    //       res.end()
-    //     }
-    // }).catch(e => {
-    //   console.log(e)
-    //   // 若发生错误，则跳转到一个特定的模板
-    //   runLogger.error(e)
-    // })
+// const {m, id, src} = req.body
+// if(m){
+//   if(/show|zk|zt/i.test(m)){
+//
+//   } else if (/author/i.test(m)) {
+//
+//   } else if (/tag/i.test(m)){
+//
+//   }
+// } else {
+//
+// }
+// render
+//   .set(m, id, src)
+//   .getData()
+//   .then(data => {
+//     try {
+//       // 如果
+//       let mtype = Utils.ctypeToM(data.meta.ctype)
+//       // 如果过来的url形如：m=zk&id=1，但确是show的模板，则重定向为 m=show&id=1
+//       if (mtype == m) {
+//         res.writeHead(200, {'Content-Type': 'text/html'})
+//         const doc = renderRouter.setRenderType(m).getRender().setData(data).rende()
+//         res.write(doc)
+//       } else {
+//         if(id) {
+//           res.writeHead(302, {'Location': `//${req.headers.host}/?m=${mtype}&id=${id}`})
+//         } else if (src) {
+//           res.writeHead(302, {'Location': `//${req.headers.host}/?m=${mtype}&src=${id}`})
+//         }
+//       }
+//     } catch (e) {
+//       console.log(e)
+//       runLogger.error(e)
+//     } finally {
+//       res.end()
+//     }
+// }).catch(e => {
+//   console.log(e)
+//   // 若发生错误，则跳转到一个特定的模板
+//   runLogger.error(e)
+// })
 // })

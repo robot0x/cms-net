@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title><%-name%>-所有文章-有调</title>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="renderer" content="webkit|ie-stand">
+<link rel="icon" href="//a.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon">
+<meta name="keywords" content="礼物，送礼，礼品，父亲节，母亲节，情人节，七夕节，圣诞节，新年，感恩节，生日礼物，新婚，新生儿，老婆女友，老公男友，基友，闺蜜，妈妈，爸爸，同事，老板，纪念日，告白，过年回家，乔迁">
+<meta name=description content="有调App礼物清单栏目是由有调App专业资深编辑为你精心打造的一档专栏，包括礼物，送礼，礼品，父亲节，母亲节，情人节，七夕节，圣诞节，新年，感恩节，生日礼物，新婚，新生儿，老婆女友，老公男友，基友，闺蜜，妈妈，爸爸，同事，老板，纪念日，告白，过年回家，乔迁">
+<link rel="stylesheet" type="text/css" href="//www.diaox2.com/css/category.css">
+<script>
+	function adjust(img) {
+		var imgContainer = img.parentNode,
+			width = imgContainer.offsetWidth,
+			height = imgContainer.offsetHeight,
+			scale = (width / height).toFixed(2),
+			ratio = (img.width / img.height).toFixed(2);
+		if (Math.abs(scale - ratio) < 0.02) {
+			img.width = width;
+			img.height = height;
+		} else if (scale > ratio) {
+			img.width = width;
+			img.height = img.width / ratio;
+			// 图片上移
+			img.style.marginTop = -(img.height - height) / 2 + "px";
+		} else {
+			img.height = height;
+			img.width = img.height * ratio;
+			// 图片右移
+			img.style.marginLeft = -(img.width - width) / 2 + "px";
+		}
+	}
+</script>
+</head>
+<body data-type="tag" data-render="<%-version%>">
+	<div class="wrapper">
+		<div class="header">
+			<div class="header-box">
+				<ul class="f-l">
+					<li class="logo f-l">
+						<a href="//www.diaox2.com/index.html">
+							<img src="//www.diaox2.com/images/logo-top.png" alt="" width="70" height="40">
+						</a>
+					</li>
+					<li class="index f-l" style="margin-left:30px;"><a href="//www.diaox2.com/index.html">首页</a></li>
+					<li class="category f-l"><a href="//www.diaox2.com/zdm.html">值得买</a></li>
+					<li class="category f-l current-page"><a href="100003.html">分类</a></li>
+					<li class="category f-l"><a href="//www.diaox2.com/s-result.html?q=礼物">礼物</a></li>
+					<li class="down-app f-l">
+						<i class="header-app-icon"></i>
+						<a target="_blank" href="//www.diaox2.com/download.html">下载APP</a></li>
+				</ul>
+				<ul class="login f-r" style="visibility: hidden;">
+					<li class="login-title f-l"><a href="#">登录</a></li>
+					<li class="face f-l">
+						<a href="#"></a>
+					</li>
+					<div class="person-state-list-container">
+						<!-- <span class="triangle"></span> -->
+						<ul class="person-state-list">
+							<li><a href="//www.diaox2.com/collect.html">我的收藏</a></li>
+							<li><a href="javascript:;">退出</a></li>
+							<!-- <li><a href="#">主页</a></li> -->
+						</ul>
+					</div>
+				</ul>
+				<form action="//www.diaox2.com/s-result.html" class="search-form f-r" name="search">
+					<input type="text" id="search-input" class="search-input" name="q" maxlength="100" autocomplete="off">
+					<input type="submit" id="sub" class="btn" value="">
+				</form>
+			</div>
+		</div>
+		<!-- 顶部导航 -->
+		<div class="main clearfix">
+			<div class="menu f-l">
+				<!--TODO: a href=url -->
+				<ul id="menu-list">
+					<%#
+						[{
+						 	name: xxx,
+							tid: 100000,
+							children: [{
+								name: yyy,
+								tid: 100001
+							},{
+								name: zzz,
+								tid: 100002
+							}]
+					 	 }]
+					%>
+					<% tags.forEach(tag1 => { %>
+						<li class="menu-list-item">
+				   		<a class="item-title" data-tid="<%-tag1.tid%>" href="//www.diaox2.com/category/<%-tag1.tid%>.html"><%-tag1.name%></a>
+							<ul class="submenu-list">
+							  <% tag1.children.forEach(tag2 => { %>
+									<li class="submenu-list-item" data-tid="<%-tag1.tid%>"><a href="//www.diaox2.com/category/<%-tag1.tid%>.html"><%-tag1.name%></a></li>
+							  <% }); %>
+							</ul>
+							<a href="javascript:;" class="icon-arrow" title="查看全部"></a>
+					<% }); %>
+				</ul>
+			</div>
+			<div class="content f-l clearfix">
+				<div class="breadcrumb">
+					<a href="javascript:void(0);">全部文章</a>
+					<span>&gt;</span>
+					<% if(pid) {%>
+						<a href="<%-pid%>.html"><%-pname%></a>
+						<span>&gt;</span>
+					<% } %>
+					<a href="javascript:void(0);"><%-name%></a>
+				</div>
+				<ul class="content-list clearfix">
+					<!-- only 20 , but 3 at 1 line, render 18 -->
+					<%-body %>
+					<div id="cardlast"></div>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="mask disnone"></div>
+	<div class="login-box disnone">
+		<p class="login-title-p">登录<i class="login-close"></i></p>
+		<div class="login-method-container">
+			<ul class="login-method-list">
+				<li class="login-method left">
+					<a href="#"><img src="//www.diaox2.com/images/wb.png"></a>
+					<p>微博账号登录</p>
+				</li>
+				<li class="login-method right">
+					<a href="#"><img src="//www.diaox2.com/images/wx.png"></a>
+					<p>微信登录</p>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<script src="//www.diaox2.com/js/jquery.js"></script>
+	<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cookie.min.js"></script>
+	<script src="//www.diaox2.com/js/category.js" defer='defer'></script>
+	<script src="//www.diaox2.com/js/login.js" defer='defer'></script>
+	<script>
+		var _hmt = _hmt || [];
+		(function() {
+			var hm = document.createElement("script");
+			hm.src = "//hm.baidu.com/hm.js?a3e886fbe5e5db18814a35ef70f81457";
+			var s = document.getElementsByTagName("script")[0];
+			s.parentNode.insertBefore(hm, s);
+		})();
+	</script>
+</body>
+
+</html>

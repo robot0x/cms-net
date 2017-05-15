@@ -63,7 +63,8 @@ module.exports = {
   log() {
     return Log.getLog4js().connectLogger(Log.getHttpLogger(), {
       level: 'auto', // https://github.com/nomiddlename/log4js-node/wiki/Connect-Logger
-      format: ':remote-addr - ":method :url HTTP/:http-version" :status:referrer ":user-agent" :response-time ms', // http://www.senchalabs.org/connect/logger.htm
+      // format: ':remote-addr - ":method :url HTTP/:http-version" :status:referrer ":user-agent" :response-time ms', // http://www.senchalabs.org/connect/logger.htm
+      format: ':remote-addr - ":method :url HTTP/:http-version" :status ":user-agent" :response-time ms', // http://www.senchalabs.org/connect/logger.htm
       nolog: /\.(gif|jpe?g|png|css|js)$/i // 不打印静态资源
     })
   }

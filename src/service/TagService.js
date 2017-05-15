@@ -10,7 +10,7 @@ class TagService {
   constructor (tid) {
     this.tagNameTable = new TagNameTable
     this.tagIndexTable = new TagIndexTable
-    console.log('[TagService initial ....]')
+    // console.log('[TagService initial ....]')
     // this.metaTable = new MetaTable
     this.metaService = new MetaService
     this.setTid(tid)
@@ -25,6 +25,7 @@ class TagService {
 
   setTid (tid) {
     this.tid = tid
+    return this
   }
 
   async getParentTagByTid (tid, columns = ['tid', 'name']) {
@@ -55,8 +56,9 @@ class TagService {
   async getTagTree () {
     const {tagNameTable} = this
     try {
-      tagNameTable.setColumns(['tid','name','parent', 'level'])
+      tagNameTable.setColumns(['tid', 'name', 'parent', 'level'])
       const alltags = await tagNameTable.getAll()
+      console.log(alltags);
       const tree = []
       const res = [...alltags]
       alltags.filter(tag => tag.level === 1).map(tag => {
@@ -74,7 +76,7 @@ class TagService {
   }
 
   // 渲染数据接口
-  async getRenderData (useThumb = true) {
+  async getRenderData (useImage = true, useThumb = true, useTimetopublish = false) {
     // const { tagNameTable, tagIndexTable, metaTable } = this
     const { tagNameTable, tagIndexTable, limit } = this
     try {
@@ -94,7 +96,14 @@ class TagService {
       }
       // 拿到所有aids，通过aids拿出所有meta，这个需要写自己写sql
       const aids = tags.map(tag => tag.aid)
-      const metaSql = `SELECT id, CONCAT(title,titleex) AS title FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
+      let metaSql = ''
+      // apimode接口使用
+      if(useTimetopublish) {
+        metaSql = `SELECT id AS aid, timetopublish AS pubtime FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
+      } else {
+        metaSql = `SELECT id, CONCAT(title,titleex) AS title FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
+      }
+      Log.business(`[TagService.getRenderData] metaSql: ${metaSql}`)
       // 此数组已经有顺序，顺序是按照timetopublish从大到小排列
       const metas = await DB.exec(metaSql)
       let slice_aids = null
@@ -104,15 +113,23 @@ class TagService {
       } else {
         slice_aids = metas.map(meta => meta.id)
       }
-
-      let type = 8
-      if(!useThumb) {
-        type = 2
+      let ret = Object.create(null)
+      let images = null
+      if (useImage) {
+        let type = 8
+        if(!useThumb) {
+          type = 2
+        }
+        let sql = `SELECT url,aid FROM diaodiao_article_image where aid in (${slice_aids.join(',')}) AND type & ${type} = ${type}`
+        Log.business(`[TagService.getRenderData] imagesSql: ${sql}`)
+        images = await DB.exec(sql)
+        ret.images = images
       }
-      let sql = `SELECT url,aid FROM diaodiao_article_image where aid in (${slice_aids.join(',')}) AND type & ${type} = ${type}`
-      let images = await DB.exec(sql)
+      ret.metas = metas
+      ret.name = name
       // limit没必要传，因为这个值就是调用的地方set进去的
-      return { metas, images, name }
+      return ret
+      // return { metas, images, name }
       // return {metas, images, limit: this.limit, name}
       // console.log(metas)
       // console.log(thumbs);

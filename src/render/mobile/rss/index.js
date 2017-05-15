@@ -41,14 +41,24 @@ class RssRender extends Render {
       } else if (/zhuankan/i.test(t)) {
         c = 3
         name += '专刊'
-      }
+      } else if (/activity/i.test(t)) {
+        c = 4
+        name += '活动'
+      } else if (/experience/i.test(t)) {
+        c = 5
+        name += '经验'
+      } else if (/zhuanti/i.test(t)) {
+        c = 9
+        name += '专题'
+      } 
+
       if(c !== -1) {
         ctypes.push(c)
       }
     }
     if(!Utils.isValidArray(ctypes)) return
     const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, meta.ctype, meta.timetopublish, CONCAT('//',image.url) AS thumb_image_url FROM diaodiao_article_meta as meta, diaodiao_article_image AS image WHERE meta.id = image.aid AND meta.ctype IN (${ctypes.join(',')}) AND image.type & 8 = 8 AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
-    console.log('[RssRender.getRenderData] sql:', sql);
+    // console.log('[RssRender.getRenderData] sql:', sql);
     const metas = await DB.exec(sql)
     return { name, metas }
   }

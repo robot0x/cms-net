@@ -92,8 +92,8 @@ class DB {
        DB.poolCluster.getConnection(CMS, function(err, connection) {
       //  DB.poolCluster.getConnection(CMS, DIAODIAO, function(err, connection) {
          if(err) {
-           Log.exception(err)
            reject(err)
+           Log.exception(err)
          }
          connection.query(sql, data, (error, rows) => {
            Log.business(`[DB.exe] ${sql} ${data? `with ${data}` : ''}\nfetch rows\'s length is ${rows.length} `)

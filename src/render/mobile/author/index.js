@@ -10,7 +10,7 @@ const Log = require('../../../utils/Log')
  *   http://www.diaox2.com/editor/ZRJ.html
  */
 class AuthorRender extends Render {
-
+  
   constructor (src) {
     super()
     this.setSource(src)
@@ -49,10 +49,8 @@ class AuthorRender extends Render {
    }
   }
 }
-//
 // var author = new AuthorRender(1)
 // show.rende()
-
 // console.log(parser.getHTML())
 
 module.exports = AuthorRender

@@ -47,7 +47,6 @@ class TagRender extends Render {
      // console.log(metas)
      for (let meta of metas) {
        let {id, title} = meta
-
        let longid = Utils.toLongId(id)
        allarticles.push(longid)
        infos[longid] = title

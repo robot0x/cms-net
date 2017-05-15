@@ -1,156 +1,255 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title><%-name%>-所有文章-有调</title>
-<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<meta name="renderer" content="webkit|ie-stand">
-<link rel="icon" href="//a.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon">
-<meta name="keywords" content="礼物，送礼，礼品，父亲节，母亲节，情人节，七夕节，圣诞节，新年，感恩节，生日礼物，新婚，新生儿，老婆女友，老公男友，基友，闺蜜，妈妈，爸爸，同事，老板，纪念日，告白，过年回家，乔迁">
-<meta name=description content="有调App礼物清单栏目是由有调App专业资深编辑为你精心打造的一档专栏，包括礼物，送礼，礼品，父亲节，母亲节，情人节，七夕节，圣诞节，新年，感恩节，生日礼物，新婚，新生儿，老婆女友，老公男友，基友，闺蜜，妈妈，爸爸，同事，老板，纪念日，告白，过年回家，乔迁">
-<link rel="stylesheet" type="text/css" href="//www.diaox2.com/css/category.css">
-<script>
-	function adjust(img) {
-		var imgContainer = img.parentNode,
-			width = imgContainer.offsetWidth,
-			height = imgContainer.offsetHeight,
-			scale = (width / height).toFixed(2),
-			ratio = (img.width / img.height).toFixed(2);
-		if (Math.abs(scale - ratio) < 0.02) {
-			img.width = width;
-			img.height = height;
-		} else if (scale > ratio) {
-			img.width = width;
-			img.height = img.width / ratio;
-			// 图片上移
-			img.style.marginTop = -(img.height - height) / 2 + "px";
-		} else {
-			img.height = height;
-			img.width = img.height * ratio;
-			// 图片右移
-			img.style.marginLeft = -(img.width - width) / 2 + "px";
-		}
-	}
-</script>
-</head>
-<body data-type="tag" data-render="<%-version%>">
-	<div class="wrapper">
-		<div class="header">
-			<div class="header-box">
-				<ul class="f-l">
-					<li class="logo f-l">
-						<a href="//www.diaox2.com/index.html">
-							<img src="//www.diaox2.com/images/logo-top.png" alt="" width="70" height="40">
-						</a>
-					</li>
-					<li class="index f-l" style="margin-left:30px;"><a href="//www.diaox2.com/index.html">首页</a></li>
-					<li class="category f-l"><a href="//www.diaox2.com/zdm.html">值得买</a></li>
-					<li class="category f-l current-page"><a href="100003.html">分类</a></li>
-					<li class="category f-l"><a href="//www.diaox2.com/s-result.html?q=礼物">礼物</a></li>
-					<li class="down-app f-l">
-						<i class="header-app-icon"></i>
-						<a target="_blank" href="//www.diaox2.com/download.html">下载APP</a></li>
-				</ul>
-				<ul class="login f-r" style="visibility: hidden;">
-					<li class="login-title f-l"><a href="#">登录</a></li>
-					<li class="face f-l">
-						<a href="#"></a>
-					</li>
-					<div class="person-state-list-container">
-						<!-- <span class="triangle"></span> -->
-						<ul class="person-state-list">
-							<li><a href="//www.diaox2.com/collect.html">我的收藏</a></li>
-							<li><a href="javascript:;">退出</a></li>
-							<!-- <li><a href="#">主页</a></li> -->
-						</ul>
-					</div>
-				</ul>
-				<form action="//www.diaox2.com/s-result.html" class="search-form f-r" name="search">
-					<input type="text" id="search-input" class="search-input" name="q" maxlength="100" autocomplete="off">
-					<input type="submit" id="sub" class="btn" value="">
-				</form>
-			</div>
-		</div>
-		<!-- 顶部导航 -->
-		<div class="main clearfix">
-			<div class="menu f-l">
-				<!--TODO: a href=url -->
-				<ul id="menu-list">
-					<%#
-						[{
-						 	name: xxx,
-							tid: 100000,
-							children: [{
-								name: yyy,
-								tid: 100001
-							},{
-								name: zzz,
-								tid: 100002
-							}]
-					 	 }]
-					%>
-					<% tags.forEach(tag1 => { %>
-						<li class="menu-list-item">
-				   		<a class="item-title" data-tid="<%-tag1.tid%>" href="//www.diaox2.com/category/<%-tag1.tid%>.html"><%-tag1.name%></a>
-							<ul class="submenu-list">
-							  <% tag1.children.forEach(tag2 => { %>
-									<li class="submenu-list-item" data-tid="<%-tag1.tid%>"><a href="//www.diaox2.com/category/<%-tag1.tid%>.html"><%-tag1.name%></a></li>
-							  <% }); %>
-							</ul>
-							<a href="javascript:;" class="icon-arrow" title="查看全部"></a>
-					<% }); %>
-				</ul>
-			</div>
-			<div class="content f-l clearfix">
-				<div class="breadcrumb">
-					<a href="javascript:void(0);">全部文章</a>
-					<span>&gt;</span>
-					<% if(pid) {%>
-						<a href="<%-pid%>.html"><%-pname%></a>
-						<span>&gt;</span>
-					<% } %>
-					<a href="javascript:void(0);"><%-name%></a>
-				</div>
-				<ul class="content-list clearfix">
-					<!-- only 20 , but 3 at 1 line, render 18 -->
-					<%-body %>
-					<div id="cardlast"></div>
-				</ul>
-			</div>
-		</div>
-	</div>
-	<div class="mask disnone"></div>
-	<div class="login-box disnone">
-		<p class="login-title-p">登录<i class="login-close"></i></p>
-		<div class="login-method-container">
-			<ul class="login-method-list">
-				<li class="login-method left">
-					<a href="#"><img src="//www.diaox2.com/images/wb.png"></a>
-					<p>微博账号登录</p>
-				</li>
-				<li class="login-method right">
-					<a href="#"><img src="//www.diaox2.com/images/wx.png"></a>
-					<p>微信登录</p>
-				</li>
-			</ul>
-		</div>
-	</div>
 
-	<script src="//www.diaox2.com/js/jquery.js"></script>
-	<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cookie.min.js"></script>
-	<script src="//www.diaox2.com/js/category.js" defer='defer'></script>
-	<script src="//www.diaox2.com/js/login.js" defer='defer'></script>
-	<script>
-		var _hmt = _hmt || [];
-		(function() {
-			var hm = document.createElement("script");
-			hm.src = "//hm.baidu.com/hm.js?a3e886fbe5e5db18814a35ef70f81457";
-			var s = document.getElementsByTagName("script")[0];
-			s.parentNode.insertBefore(hm, s);
-		})();
-	</script>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>
+    <%-name%>-所有文章-有调</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <meta name="renderer" content="webkit|ie-stand">
+  <link rel="icon" href="//a.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon">
+  <meta name="keywords" content="礼物，送礼，礼品，父亲节，母亲节，情人节，七夕节，圣诞节，新年，感恩节，生日礼物，新婚，新生儿，老婆女友，老公男友，基友，闺蜜，妈妈，爸爸，同事，老板，纪念日，告白，过年回家，乔迁">
+  <meta name=description content="有调App礼物清单栏目是由有调App专业资深编辑为你精心打造的一档专栏，包括礼物，送礼，礼品，父亲节，母亲节，情人节，七夕节，圣诞节，新年，感恩节，生日礼物，新婚，新生儿，老婆女友，老公男友，基友，闺蜜，妈妈，爸爸，同事，老板，纪念日，告白，过年回家，乔迁">
+  <link rel="stylesheet" type="text/css" href="//www.diaox2.com/css/category.css">
+  <script>
+    function adjust(img) {
+      var imgContainer = img.parentNode,
+        width = imgContainer.offsetWidth,
+        height = imgContainer.offsetHeight,
+        scale = (width / height).toFixed(2),
+        ratio = (img.width / img.height).toFixed(2);
+      if (Math.abs(scale - ratio) < 0.02) {
+        img.width = width;
+        img.height = height;
+      } else if (scale > ratio) {
+        img.width = width;
+        img.height = img.width / ratio;
+        // 图片上移
+        img.style.marginTop = -(img.height - height) / 2 + "px";
+      } else {
+        img.height = height;
+        img.width = img.height * ratio;
+        // 图片右移
+        img.style.marginLeft = -(img.width - width) / 2 + "px";
+      }
+    }
+
+  </script>
+</head>
+
+<body data-type="tag" data-render="<%-version%>">
+  <div class="wrapper">
+    <div class="header">
+      <div class="header-box">
+        <ul class="f-l">
+          <li class="logo f-l">
+            <a href="//www.diaox2.com/index.html">
+              <img src="//www.diaox2.com/images/logo-top.png" alt="" width="70" height="40">
+            </a>
+          </li>
+          <li class="index f-l" style="margin-left:30px;"><a href="//www.diaox2.com/index.html">首页</a></li>
+          <li class="category f-l"><a href="//www.diaox2.com/zdm.html">值得买</a></li>
+          <li class="category f-l current-page"><a href="100003.html">分类</a></li>
+          <li class="category f-l"><a href="//www.diaox2.com/s-result.html?q=礼物">礼物</a></li>
+          <li class="down-app f-l">
+            <i class="header-app-icon"></i>
+            <a target="_blank" href="//www.diaox2.com/download.html">下载APP</a></li>
+        </ul>
+        <ul class="login f-r" style="visibility: hidden;">
+          <li class="login-title f-l"><a href="#">登录</a></li>
+          <li class="face f-l">
+            <a href="#"></a>
+          </li>
+          <div class="person-state-list-container">
+            <!-- <span class="triangle"></span> -->
+            <ul class="person-state-list">
+              <li><a href="//www.diaox2.com/collect.html">我的收藏</a></li>
+              <li><a href="javascript:;">退出</a></li>
+              <!-- <li><a href="#">主页</a></li> -->
+            </ul>
+          </div>
+        </ul>
+        <form action="//www.diaox2.com/s-result.html" class="search-form f-r" name="search">
+          <input type="text" id="search-input" class="search-input" name="q" maxlength="100" autocomplete="off">
+          <input type="submit" id="sub" class="btn" value="">
+        </form>
+      </div>
+    </div>
+    <!-- 顶部导航 -->
+    <div class="main clearfix">
+      <div class="menu f-l">
+        <!--TODO: a href=url -->
+        <ul id="menu-list">
+          <li class="menu-list-item">
+            <a class="item-title" data-tid="100003" href="../category/100003.html">家居家装</a>
+            <ul class="submenu-list">
+              <li class="submenu-list-item" data-tid="100004"><a href="../category/100004.html">家具</a></li>
+              <li class="submenu-list-item" data-tid="100005"><a href="../category/100005.html">家纺布艺</a></li>
+              <li class="submenu-list-item" data-tid="100007"><a href="../category/100007.html">家装软饰</a></li>
+              <li class="submenu-list-item" data-tid="100008"><a href="../category/100008.html">照明灯具</a></li>
+              <li class="submenu-list-item" data-tid="100006"><a href="../category/100006.html">香氛香薰</a></li>
+              <li class="submenu-list-item" data-tid="100063"><a href="../category/100063.html">绿植盆栽</a></li>
+            </ul>
+            <a href="javascript:;" class="icon-arrow" title="查看全部"></a>
+          </li>
+          <li class="menu-list-item">
+            <a class="item-title" data-tid="100033" href="../category/100033.html">生活日用</a>
+            <ul class="submenu-list">
+              <li class="submenu-list-item" data-tid="100035"><a href="../category/100035.html">餐具厨具</a></li>
+              <li class="submenu-list-item" data-tid="100034"><a href="../category/100034.html">清洁用品</a></li>
+              <li class="submenu-list-item" data-tid="100036"><a href="../category/100036.html">收纳整理</a></li>
+              <li class="submenu-list-item" data-tid="100037"><a href="../category/100037.html">卫浴用品</a></li>
+              <li class="submenu-list-item" data-tid="100039"><a href="../category/100039.html">雨伞雨具</a></li>
+              <li class="submenu-list-item" data-tid="100040"><a href="../category/100040.html">钟表</a></li>
+              <li class="submenu-list-item" data-tid="100041"><a href="../category/100041.html">宠物用品</a></li>
+              <li class="submenu-list-item" data-tid="100038"><a href="../category/100038.html">家用工具</a></li>
+            </ul>
+            <a href="javascript:;" class="icon-arrow" title="查看全部"></a>
+          </li>
+          <li class="menu-list-item">
+            <a class="item-title" data-tid="100042" href="../category/100042.html">家用电器</a>
+            <ul class="submenu-list">
+              <li class="submenu-list-item" data-tid="100045"><a href="../category/100045.html">生活电器</a></li>
+              <li class="submenu-list-item" data-tid="100044"><a href="../category/100044.html">厨房电器</a></li>
+              <li class="submenu-list-item" data-tid="100043"><a href="../category/100043.html">大家电</a></li>
+            </ul>
+            <a href="javascript:;" class="icon-arrow" title="查看全部"></a>
+          </li>
+          <li class="menu-list-item">
+            <a class="item-title" data-tid="100016" href="../category/100016.html">办公用品</a>
+            <ul class="submenu-list">
+              <li class="submenu-list-item" data-tid="100018"><a href="../category/100018.html">文具</a></li>
+              <li class="submenu-list-item" data-tid="100019"><a href="../category/100019.html">办公工具</a></li>
+              <li class="submenu-list-item" data-tid="100017"><a href="../category/100017.html">办公设备</a></li>
+            </ul>
+            <a href="javascript:;" class="icon-arrow" title="查看全部"></a>
+          </li>
+          <li class="menu-list-item">
+            <a class="item-title" data-tid="100023" href="../category/100023.html">时尚悦己</a>
+            <ul class="submenu-list">
+              <li class="submenu-list-item" data-tid="100024"><a href="../category/100024.html">女性时尚</a></li>
+              <li class="submenu-list-item" data-tid="100025"><a href="../category/100025.html">男性时尚</a></li>
+              <li class="submenu-list-item" data-tid="100026"><a href="../category/100026.html">箱包配饰</a></li>
+            </ul>
+            <a href="javascript:;" class="icon-arrow" title="查看全部"></a>
+          </li>
+          <li class="menu-list-item">
+            <a class="item-title" data-tid="100009" href="../category/100009.html">个护化妆</a>
+            <ul class="submenu-list">
+              <li class="submenu-list-item" data-tid="100010"><a href="../category/100010.html">口腔护理</a></li>
+              <li class="submenu-list-item" data-tid="100011"><a href="../category/100011.html">头发护理</a></li>
+              <li class="submenu-list-item" data-tid="100012"><a href="../category/100012.html">身体护理</a></li>
+              <li class="submenu-list-item" data-tid="100013"><a href="../category/100013.html">面部护肤</a></li>
+              <li class="submenu-list-item" data-tid="100014"><a href="../category/100014.html">香水彩妆</a></li>
+              <li class="submenu-list-item" data-tid="100015"><a href="/pc/category/100015.html">美容工具</a></li>
+            </ul>
+            <a href="javascript:;" class="icon-arrow" title="查看全部"></a>
+          </li>
+          <li class="menu-list-item">
+            <a class="item-title" data-tid="100051" href="../category/100051.html">科技数码</a>
+            <ul class="submenu-list">
+              <li class="submenu-list-item" data-tid="100052"><a href="../category/100052.html">手机周边</a></li>
+              <li class="submenu-list-item" data-tid="100053"><a href="../category/100053.html">电脑周边</a></li>
+              <li class="submenu-list-item" data-tid="100054"><a href="../category/100054.html">音乐设备</a></li>
+              <li class="submenu-list-item" data-tid="100055"><a href="../category/100055.html">照相摄影</a></li>
+              <li class="submenu-list-item" data-tid="100056"><a href="../category/100056.html">智能设备</a></li>
+            </ul>
+            <a href="javascript:;" class="icon-arrow" title="查看全部"></a>
+          </li>
+          <li class="menu-list-item">
+            <a class="item-title" data-tid="100046" href="../category/100046.html">运动健康</a>
+            <ul class="submenu-list">
+              <li class="submenu-list-item" data-tid="100047"><a href="../category/100047.html">运动装备</a></li>
+              <li class="submenu-list-item" data-tid="100048"><a href="../category/100048.html">健身器材</a></li>
+              <li class="submenu-list-item" data-tid="100049"><a href="../category/100049.html">健身常识</a></li>
+              <li class="submenu-list-item" data-tid="100050"><a href="../category/100050.html">医药保健</a></li>
+            </ul>
+            <a href="javascript:;" class="icon-arrow" title="查看全部"></a>
+          </li>
+          <li class="menu-list-item">
+            <a class="item-title" data-tid="100027" href="../category/100027.html">吃喝旅行</a>
+            <ul class="submenu-list">
+              <li class="submenu-list-item" data-tid="100028"><a href="../category/100028.html">饮食文化</a></li>
+              <li class="submenu-list-item" data-tid="100029"><a href="../category/100029.html">休闲零食</a></li>
+              <li class="submenu-list-item" data-tid="100032"><a href="../category/100032.html">茶酒咖啡</a></li>
+              <li class="submenu-list-item" data-tid="100030"><a href="../category/100030.html">旅行用品</a></li>
+              <li class="submenu-list-item" data-tid="100031"><a href="../category/100031.html">旅游攻略</a></li>
+            </ul>
+            <a href="javascript:;" class="icon-arrow" title="查看全部"></a>
+          </li>
+          <li class="menu-list-item">
+            <a class="item-title" data-tid="100000" href="../category/100000.html">母婴玩具</a>
+            <ul class="submenu-list">
+              <li class="submenu-list-item" data-tid="100001"><a href="../category/100001.html">母婴用品</a></li>
+              <li class="submenu-list-item" data-tid="100002"><a href="../category/100002.html">玩具周边</a></li>
+            </ul>
+            <a href="javascript:;" class="icon-arrow" title="查看全部"></a>
+          </li>
+          <li class="menu-list-item">
+            <a class="item-title" data-tid="100020" href="../category/100020.html">汽车户外</a>
+            <ul class="submenu-list">
+              <li class="submenu-list-item" data-tid="100021"><a href="../category/100021.html">汽车用品</a></li>
+              <li class="submenu-list-item" data-tid="100022"><a href="../category/100022.html">户外用品</a></li>
+            </ul>
+            <a href="javascript:;" class="icon-arrow" title="查看全部"></a>
+          </li>
+        </ul>
+      </div>
+      <div class="content f-l clearfix">
+        <div class="breadcrumb">
+          <a href="javascript:void(0);">全部文章</a>
+          <span>&gt;</span>
+          <% if(pid) {%>
+            <a href="<%-pid%>.html">
+              <%-pname%>
+            </a>
+            <span>&gt;</span>
+            <% } %>
+              <a href="javascript:void(0);">
+                <%-name%>
+              </a>
+        </div>
+        <ul class="content-list clearfix">
+          <!-- only 20 , but 3 at 1 line, render 18 -->
+          <%-body %>
+            <div id="cardlast"></div>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="mask disnone"></div>
+  <div class="login-box disnone">
+    <p class="login-title-p">登录<i class="login-close"></i></p>
+    <div class="login-method-container">
+      <ul class="login-method-list">
+        <li class="login-method left">
+          <a href="#"><img src="//www.diaox2.com/images/wb.png"></a>
+          <p>微博账号登录</p>
+        </li>
+        <li class="login-method right">
+          <a href="#"><img src="//www.diaox2.com/images/wx.png"></a>
+          <p>微信登录</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="//www.diaox2.com/js/jquery.js"></script>
+  <script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cookie.min.js"></script>
+  <script src="//www.diaox2.com/js/category.js" defer='defer'></script>
+  <script src="//www.diaox2.com/js/login.js" defer='defer'></script>
+  <script>
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a3e886fbe5e5db18814a35ef70f81457";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+
+  </script>
 </body>
 
 </html>
