@@ -93,11 +93,11 @@ router.get('/', async(req, res) => {
             console.log('redirect ....');
             redirect(res, `//${req.headers.host}/?m=${trueM}&id=${id}`)
           } else {
-            console.log('not redirect ....');
+            console.log('not redirect ....')
             showAndZKAndZTRouter(m, id, 'inapp', req, res)
           }
         } else {
-          console.log('pageNotFound ....');
+          console.log('pageNotFound ....')
           pageNotFound(res)
         }
       } else {
@@ -105,14 +105,22 @@ router.get('/', async(req, res) => {
       }
     } else if (/author/i.test(m)) {
       // 虽然在querystring中的汉字貌似nodejs自动decode了，但是为了保险，还是要decode
-      if (src = decodeURIComponent(src)) {
-        mAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res, 'author')).catch(e => {
+      const defaultSource = '有调机器人'
+      src = decodeURIComponent(src || defaultSource)
+      console.log('routers.js src is ', src);
+      mAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res, 'author')).catch(e => {
           Log.exception(e)
           res.end()
-        })
-      } else {
-        pageNotFound(res)
-      }
+      })
+      // if (src = decodeURIComponent(src)) {
+      //   console.log('routers.js src ', src);
+      //   mAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res, 'author')).catch(e => {
+      //     Log.exception(e)
+      //     res.end()
+      //   })
+      // } else {
+      //   pageNotFound(res)
+      // }
     } else if (/tag/i.test(m)) {
       if (tid && /\d+/.test(tid)) {
         if ('apimode' in req.body) {

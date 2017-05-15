@@ -11,7 +11,11 @@ const lineReader = require('readline').createInterface({
   output: process.stdout,
   terminal: false
 })
-
+/**
+ * TODO:
+ * 新CMS和老CMS并行运行时，通过新CMS新建的文件，要大于老CMS最大的ID，大500就可以了
+ * 防止新老CMS，一篇文章有同样的ID
+ */
 lineReader.on('line', json => {
   if(!json) return;
   // 这个脚本填充 article_meta 和 image表
@@ -76,8 +80,15 @@ lineReader.on('line', json => {
     type = 8
   } else if (type === 'zhuanti') {
     type = 9
-  } else if (type === 'experience') {
-    type = 1
+  
+  } 
+    // 线上的 ctype = 5 的是coupon，但是从来没有用过，所以，可以用5来表示经验
+    // 原来想的是，经验的渲染模板跟firstpage/goodthing一样，所以ctype都归为1，即和firstpage一致
+    // 这样做是不好的，因为会把以前的类型信息给丢掉，若以前的页面要用经验这种类型的文章，上新CMS之后，就拿不到了
+    else if (type === 'experience') 
+  {
+    // type = 1
+    type = 5
   } else {
     type = 0
   }

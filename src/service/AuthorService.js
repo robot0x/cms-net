@@ -28,17 +28,29 @@ class AuthorService {
     const {
       authorTable,
       metaTable,
-      metaService
+      metaService,
+      source
     } = this
     try {
-      let source = this.source
       // let source = '+0'
       let author = await authorTable.getBySource(source)
       let aids = await metaTable.getAidsBySource(source)
-      // console.log(author);
-      // console.log(aids);
+      let defaultSource = '有调机器人'
+      if (!author || !Utils.isValidArray(aids)) {
+        author = await authorTable.getBySource(defaultSource)
+        aids = await metaTable.getAidsBySource(defaultSource)
+      }
+      // 如果aids的长度为1，则返回的是对象而不是对象数组形式，需要处理一下
       let metas = await metaService.getRawMetas(aids, false, true)
-      metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
+      if(metas && !Utils.isValidArray(metas)) {
+        metas = [metas]
+      }
+      console.log('author:', author)
+      console.log('aids:', aids)
+      console.log('metas:', metas)
+      if(metas) {
+        metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
+      }
       author.pic_uri = Utils.addUrlPrefix(author.pic_uri)
       return {
         author,

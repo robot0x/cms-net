@@ -32,6 +32,7 @@ class RssRender extends Render {
     let name = ''
     for(let t of types) {
       let c = -1
+      // 经验的ctype不是5
       if (/firstpage/i.test(t)) {
         c = 1
         name += '热门文章'

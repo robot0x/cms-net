@@ -75,7 +75,6 @@ class ShowRender extends Render {
      // 在此处进行ctype判断
      parser.markdown = content // markdown is a setter like method `setMarkdown`
      let body = await parser.getHTML()
-     console.log(body)
      body = imageHandler(body, images)
      //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
      let cover = images.filter(img => {
@@ -103,7 +102,11 @@ class ShowRender extends Render {
          }
        }
      }
-
+      // 首页和经验，顶部出的一定是时间
+      // 好物有price出price，否则出时间
+      if(ctype === 1 || ctype === 5) {
+        price = ''
+      }
       return this.getDoc(this.template, {
          id,
          body,
