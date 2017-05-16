@@ -16,7 +16,8 @@ const MetaTable = require(`${SRC}/db/MetaTable`)
 const metaTable = new MetaTable
 const moment = require('moment')
 const cache = require('./config/cache')
-
+// 只执行一次渲染器对象实例化，然后渲染器实例长存于内存中即可，所以应该在这儿实例化所有渲染器，而不是在路由回调中实例化
+// 否则，每次路由回调执行都会实例化一个对象，可能会导致内存占用过多GC压力过大，GC压力过大，也会导致CPU占用过高
 const {
   mShowRender,
   mZKRender,
@@ -64,8 +65,7 @@ async function showAndZKAndZTRouter(m, id, pageType, req, res) {
   }
 }
 
-// 只执行一次，所以应该在这儿实例化所有渲染器，而不是在路由回调中实例化
-// 否则，每次路由回调执行都会实例化一个对象，可能会导致内存占用过多GC压力过大
+
 router.get('/', async(req, res) => {
   let {
     m,
