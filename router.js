@@ -498,7 +498,7 @@ function writeDoc(doc, res, type) {
   res.end()
 }
 
-function writeJSON(json, res) {
+function writeJSON(json, res, type) {
   if(!json) res.end()
   addCacheControlHeader(res, type)
   res.json(json)
