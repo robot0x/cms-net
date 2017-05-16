@@ -469,7 +469,7 @@ function pageNotFound(res) {
 function addCacheControlHeader(res, type) {
   if (!type) return
   // 从配置中拿到这个路由的缓存配置
-  let cacheOfType = cache[type]
+  const cacheOfType = cache[type]
   let maxAge = -1
   if (cacheOfType) {
     maxAge = cacheOfType.maxAge
@@ -478,10 +478,10 @@ function addCacheControlHeader(res, type) {
   const GMT = 'GMT'
   const pattern = 'ddd, D MMM YYYY HH:mm:ss'
   // 获得北京时区的UTC时间
-  let now = moment().utcOffset(0)
-  let date = now.format(pattern)
+  const now = moment().utcOffset(0)
+  const date = now.format(pattern)
   // maxAge的单位是秒（s），所以，expires应该加上maxAge秒
-  let expires = now.add(maxAge, 's').format(pattern)
+  const expires = now.add(maxAge, 's').format(pattern)
   res.append('Cache-Control', `max-age=${maxAge}`)
   res.append('Date', `${date} ${GMT}`)
   res.append('Last-Modified', `${date} ${GMT}`)
