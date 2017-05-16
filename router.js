@@ -475,11 +475,12 @@ function addCacheControlHeader(res, type) {
     maxAge = cacheOfType.maxAge
   }
   if (maxAge == -1) return
-  let GMT = 'GMT'
-  let pattern = 'ddd, D MMM YYYY HH:mm:ss'
-  // -8:00 小时数减去时区
+  const GMT = 'GMT'
+  const pattern = 'ddd, D MMM YYYY HH:mm:ss'
+  // 获得北京时区的UTC时间
   let now = moment().utcOffset(0)
   let date = now.format(pattern)
+  // maxAge的单位是秒（s），所以，expires应该加上maxAge秒
   let expires = now.add(maxAge, 's').format(pattern)
   res.append('Cache-Control', `max-age=${maxAge}`)
   res.append('Date', `${date} ${GMT}`)
@@ -498,6 +499,8 @@ function writeDoc(doc, res, type) {
 }
 
 function writeJSON(json, res) {
+  if(!json) res.end()
+  addCacheControlHeader(res, type)
   res.json(json)
   res.end()
 }
