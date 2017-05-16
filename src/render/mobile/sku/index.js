@@ -13,12 +13,11 @@ const Log = require('../../../utils/Log')
  *     http://c.diaox2.com/view/app/sku/1220/2112.html
  */
 class SkuRender extends Render {
-
   constructor (sid) {
     super()
     this.setSid(sid)
     this.template = this.readTemplate(__dirname + '/sku.ejs')
-    this.parser = new Parser
+    this.parser = new Parser()
   }
 
   setSid (sid) {
@@ -27,42 +26,43 @@ class SkuRender extends Render {
   }
 
   async rende () {
-    let {sid, parser, version} = this
-    if(!sid) return
-     try {
-       let metaService = new MetaService
-       const result = await Promise.promisify(request)(`http://s5.a.dx2rd.com:3000/v1/getfullsku/${sid}`)
-       let {state, data} = JSON.parse(result.body)
-       if(state !== 'SUCCESS') {
-         throw Error('调用getfullsku接口失败')
-       }
-       data = Utils.getFirst(data)
-       console.log(JSON.stringify(data))
-       let {title, brand, sales, images, revarticles} = data
-       images = images.map(image => {
-         let {url} = image
+    let { sid, parser, version } = this
+    if (!sid) return
+    try {
+      let metaService = new MetaService()
+      const result = await Promise.promisify(request)(
+        `http://s5.a.dx2rd.com:3000/v1/getfullsku/${sid}`
+      )
+      let { state, data } = JSON.parse(result.body)
+      if (state !== 'SUCCESS') {
+        throw Error('调用getfullsku接口失败')
+      }
+      data = Utils.getFirst(data)
+      console.log(JSON.stringify(data))
+      let { title, brand, sales, images, revarticles } = data
+      images = images.map(image => {
         //  //  如果是阿里云图，则加上后缀，否则不用处理
         //  if(/content\.image\.alimmdn\.com/i.test(url)){
         //    url += '@200w_200h_1e%7C200x200-5rc'
         //  }
-         return Utils.addAliImageSuffix(image.url)
-       })
-       const metas = await metaService.getRawMetas(revarticles, false)
-       return this.getDoc(this.template, {
-          sid,
-          title,
-          images,
-          brand,
-          body: parser.setSales(sales).getHTML(),
-          revarticles: parser.getRevarticleHTML(metas),
-          prefix: this.prefix,
-          version
-        })
-     } catch (e) {
-       Log.exception(e)
-       return null
-     }
+        return Utils.addAliImageSuffix(image.url)
+      })
+      const metas = await metaService.getRawMetas(revarticles, false)
+      return this.getDoc(this.template, {
+        sid,
+        title,
+        images,
+        brand,
+        body: parser.setSales(sales).getHTML(),
+        revarticles: parser.getRevarticleHTML(metas),
+        prefix: this.prefix,
+        version
+      })
+    } catch (e) {
+      Log.exception(e)
+      return null
     }
+  }
 }
 
 // const render = new SkuRender

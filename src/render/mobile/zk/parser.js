@@ -13,39 +13,39 @@ const Utils = require('../../../utils/Utils')
 class ZKParser extends Parser {
   constructor () {
     super()
-    //*****************************************自定义markdown语法解析*****************************************
+    //* ****************************************自定义markdown语法解析*****************************************
     const renderer = super.getRenderer()
-    this.idReg =  /id[:：]\s*(\d+)\s*title[:：]/
+    this.idReg = /id[:：]\s*(\d+)\s*title[:：]/
     this.titleReg = /title[:：]\s*(.+)\s*desc[:：]/
     this.descReg = /desc[:：]\s*(.+)\s*image[:：]/
     this.imageReg = /image[:：]\s*!\[.*\]\((?:https?)?(?:\/\/)?(.+)\s*\)\s*/
-// ```zk
-//     title: 三百元以下的情趣小厨具
-//     desc: 无论是单身狗还是一对汪，一年之中总有那么几个周末想窝在家中，望望天花板，剥剥手指甲，吃吃小食，看看电视，度过一天。所以啊，小食很重要，样样不能少！怎么做？且听我慢慢道来。
-//     image: ![](//content.image.alimmdn.com/cms/sites/default/files/20150903/zk/okiki.jpg)
-// ```
-// ```card
+    // ```zk
+    //     title: 三百元以下的情趣小厨具
+    //     desc: 无论是单身狗还是一对汪，一年之中总有那么几个周末想窝在家中，望望天花板，剥剥手指甲，吃吃小食，看看电视，度过一天。所以啊，小食很重要，样样不能少！怎么做？且听我慢慢道来。
+    //     image: ![](//content.image.alimmdn.com/cms/sites/default/files/20150903/zk/okiki.jpg)
+    // ```
+    // ```card
     // title: 关爱啤酒，更关爱打泡的你
     // desc: 男生嘛，肯定要来瓶啤酒潇洒一下，尤其是那口感细腻的啤酒花，绝对不能少。别再依靠土掉渣的晃动酒瓶子，来弄点儿少得可怜的啤酒花。试试电动打泡器，分分钟尽情享用爽口的啤酒。
-//     image: ![](//content.image.alimmdn.com/cms/sites/default/files/20150730/goodthing/BeerCover.jpg)
-// ```
+    //     image: ![](//content.image.alimmdn.com/cms/sites/default/files/20150730/goodthing/BeerCover.jpg)
+    // ```
     const delimiter = '<div class="headgrayband"></div>'
     renderer.code = (text, type) => {
-      const {idReg, titleReg, descReg, imageReg} = this
+      const { idReg, titleReg, descReg, imageReg } = this
       let id = text.match(idReg)
       let title = text.match(titleReg)
       let desc = text.match(descReg)
       let image = text.match(imageReg)
-      if(Utils.isValidArray(id)){
+      if (Utils.isValidArray(id)) {
         id = id[1]
       }
-      if(Utils.isValidArray(title)){
+      if (Utils.isValidArray(title)) {
         title = title[1]
       }
-      if(Utils.isValidArray(desc)){
+      if (Utils.isValidArray(desc)) {
         desc = desc[1]
       }
-      if(Utils.isValidArray(image)){
+      if (Utils.isValidArray(image)) {
         image = image[1]
       }
       // console.log('title:', title)
@@ -55,9 +55,10 @@ class ZKParser extends Parser {
        * 有购买链接：
        *  1. 先拿文章的
        */
-      if(/card/i.test(type)) {
+      if (/card/i.test(type)) {
         // 专刊页上的购买链接，如果是sku页，则必须用 /sku/longid/sid.html这种形式
-        let buylink = this.getBuylinkById(id) || `//c.diaox2.com/view/app/?m=buy&aid=${id}`
+        let buylink =
+          this.getBuylinkById(id) || `//c.diaox2.com/view/app/?m=buy&aid=${id}`
         return `<div class="bottomshadow card goodthing" data-href="//c.diaox2.com/view/app/?m=show&id=${id}">
                 <div class="wrapper">
                         <div class="img">
@@ -70,7 +71,7 @@ class ZKParser extends Parser {
                     </div>
                     ${delimiter}
                     `
-      } else if (/zk/i.test(type)){
+      } else if (/zk/i.test(type)) {
         return `<div class="bottomshadow card" id="head">
                   <div>
                       <div class="mask" style="width: 720px; height: 468px;"></div>
@@ -81,7 +82,7 @@ class ZKParser extends Parser {
               </div>
               ${delimiter}
               `
-      }else{
+      } else {
         return ''
       }
     }
@@ -93,16 +94,15 @@ class ZKParser extends Parser {
     return this
   }
 
-  getBuylinkById(id) {
-    let {buylinks} = this
-    for(let buylink of buylinks) {
-      if(buylink.cid == id) {
+  getBuylinkById (id) {
+    let { buylinks } = this
+    for (let buylink of buylinks) {
+      if (buylink.cid == id) {
         return buylink.link
       }
     }
     return null
   }
-
 }
 
 module.exports = ZKParser

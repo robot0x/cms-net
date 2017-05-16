@@ -3,11 +3,12 @@
 // const table = new Table('article_meta', ['aid', 'content'])
 const Log = require('../utils/Log')
 const runLogger = Log.getLogger('cms_run')
-const Promise = require('bluebird')
+// const Promise = require('bluebird')
 const Utils = require('../utils/Utils')
 const DB = require('../db/DB')
+
 const lineReader = require('readline').createInterface({
-  input: require('fs').createReadStream('./data/ajson'),
+  input: require('fs').createReadStream('./data/ajFson'),
   output: process.stdout,
   terminal: false
 })
@@ -17,7 +18,7 @@ const lineReader = require('readline').createInterface({
  * 防止新老CMS，一篇文章有同样的ID
  */
 lineReader.on('line', json => {
-  if(!json) return;
+  if (!json) return
   // 这个脚本填充 article_meta 和 image表
   let article = null
   try {
@@ -41,16 +42,22 @@ lineReader.on('line', json => {
   // `last_update_by` varchar(60) DEFAULT '' COMMENT '最后一次更新的用户',
   // `author` varchar(60) DEFAULT '' COMMENT '文章作者姓名',
   // const batch = []
-  const {node, meta} = article
-  let {nid, type, title, created, changed, status, promote} = node
+  const { node, meta } = article
+  let { nid, type, title, created, changed, status, promote } = node
   let {
-    timetopublish, price, buylink, source, author, titlecolor, titleex,
-    coverimage,  // cover图
-    coverex,     // coverex图
-    thumb,       // thumb图
-    swipeimage,  // 跑马灯图片
-    banner,      // banner图
-    pics         // 文章内容图
+    timetopublish,
+    price,
+    buylink,
+    source,
+    author,
+    titlecolor,
+    titleex,
+    coverimage, // cover图
+    coverex, // coverex图
+    thumb, // thumb图
+    swipeimage, // 跑马灯图片
+    banner, // banner图
+    pics // 文章内容图
   } = meta
   // 关于文章ctype
   // firstpage === 1
@@ -62,14 +69,14 @@ lineReader.on('line', json => {
   // zdm === 7
   // pingce === 8
   // zhuanti === 9
-  if(type === 'firstpage'){
-    if(status == 1) {
+  if (type === 'firstpage') {
+    if (status == 1) {
       type = 4
     } else {
       type = 1
     }
   } else if (type === 'goodthing') {
-    if(promote == 1) {
+    if (promote == 1) {
       type = 7
     } else {
       type = 2
@@ -80,13 +87,10 @@ lineReader.on('line', json => {
     type = 8
   } else if (type === 'zhuanti') {
     type = 9
-  
-  } 
+  } else if (type === 'experience') {
     // 线上的 ctype = 5 的是coupon，但是从来没有用过，所以，可以用5来表示经验
     // 原来想的是，经验的渲染模板跟firstpage/goodthing一样，所以ctype都归为1，即和firstpage一致
     // 这样做是不好的，因为会把以前的类型信息给丢掉，若以前的页面要用经验这种类型的文章，上新CMS之后，就拿不到了
-    else if (type === 'experience') 
-  {
     // type = 1
     type = 5
   } else {
@@ -110,9 +114,9 @@ lineReader.on('line', json => {
     buylink = DB.escape('')
   }
 
-  if(isValidArray(source)) {
+  if (isValidArray(source)) {
     author = DB.escape(source[0].value || '')
-  } else if(isValidArray(author)) {
+  } else if (isValidArray(author)) {
     author = DB.escape(author[0].value || '')
   } else {
     author = DB.escape('')
@@ -120,15 +124,15 @@ lineReader.on('line', json => {
 
   title = DB.escape(title || '')
 
-  if(isValidArray(titleex)) {
+  if (isValidArray(titleex)) {
     titleex = DB.escape(titleex[0].value || '')
   } else {
     titleex = DB.escape('')
   }
 
-  if(isValidArray(titlecolor)) {
+  if (isValidArray(titlecolor)) {
     titlecolor = titlecolor[0].value
-    if(!/\d+/.test(titlecolor)) {
+    if (!/\d+/.test(titlecolor)) {
       titlecolor = 0
     }
   } else {
@@ -139,14 +143,17 @@ lineReader.on('line', json => {
   // 目前的问题，timetopublish有将近100篇为0
   // 所有的buylink字段为空
   // batch.push(
-    DB
-    .exec(sql)
+  DB.exec(sql)
     .then(data => {
       console.log(`ID为 ${nid} 的文章入库成功 ....`)
-    }).catch(err => {runLogger.error(`ID为${nid}的META更新失败， SQL:${sql} 出错信息：`, err.message)})
+    })
+    .catch(err => {
+      runLogger.error(`ID为${nid}的META更新失败， SQL:${sql} 出错信息：`, err.message)
+    })
   // )
 
-  const images = [].concat(setImage(1, pics))
+  const images = []
+    .concat(setImage(1, pics))
     .concat(setImage(2, coverimage))
     .concat(setImage(4, coverex))
     .concat(setImage(8, thumb))
@@ -155,7 +162,8 @@ lineReader.on('line', json => {
 
   for (let image of images) {
     // batch.push(
-      DB.exec(`
+    DB.exec(
+      `
       INSERT INTO
         diaodiao_article_image
       SET
@@ -170,13 +178,16 @@ lineReader.on('line', json => {
         alt=${DB.escape(image.alt)},
         title=${DB.escape(image.title)},
         create_time=${DB.escape(new Date(image.create_time * 1000))}
-    `).then(data => {
-      console.log(`ID为 ${nid} 的image更新成功 ....`)
-    }).catch(err => {
-      console.log(err)
-      runLogger.error(`D为 ${nid} 的image更新成功，出错信息：`, err.message)
-    })
-  // )
+    `
+    )
+      .then(data => {
+        console.log(`ID为 ${nid} 的image更新成功 ....`)
+      })
+      .catch(err => {
+        console.log(err)
+        runLogger.error(`D为 ${nid} 的image更新成功，出错信息：`, err.message)
+      })
+    // )
   }
 
   // Promise.all(batch).then(() => {
@@ -355,12 +366,12 @@ lineReader.on('line', json => {
 //   }
 // })
 
-function isValidArray( array ){
+function isValidArray (array) {
   return Array.isArray(array) && array.length > 0
 }
 
 function setImage (type, images) {
-  if(!isValidArray(images)) {
+  if (!isValidArray(images)) {
     return []
   }
   // `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
@@ -382,7 +393,16 @@ function setImage (type, images) {
   // 有些是 /sites 开头
   // 有些是 /files 开头
   return images.map(image => {
-    const {filename, relaURL, alt, title, width, height, filesize, timestamp} = image
+    const {
+      filename,
+      relaURL,
+      alt,
+      title,
+      width,
+      height,
+      filesize,
+      timestamp
+    } = image
     return {
       url: 'content.image.alimmdn.com' + relaURL,
       used: 1,

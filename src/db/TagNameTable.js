@@ -5,7 +5,12 @@ const Utils = require('../utils/Utils')
  */
 class TagNameTable extends Table {
   constructor () {
-    super('diaodiao_article_tag_name', ['tid','name','level', 'parent'], null, null)
+    super(
+      'diaodiao_article_tag_name',
+      ['tid', 'name', 'level', 'parent'],
+      null,
+      null
+    )
   }
   // article_content的主键为aid
   async getByTid (tid) {
@@ -14,9 +19,13 @@ class TagNameTable extends Table {
 
   // 根据一个tid，拿到父的tid和tagname
   async getParentTagByTid (tid, columns = ['tid', 'name']) {
-    return Utils.getFirst(await this.exec(`
+    return Utils.getFirst(
+      await this.exec(
+        `
       SELECT ${columns.join(',')} FROM ${this.table} WHERE tid IN (SELECT parent FROM ${this.table} WHERE tid = ${tid})
-    `))
+    `
+      )
+    )
   }
 
   getAll (columns = this.columns) {
@@ -26,6 +35,5 @@ class TagNameTable extends Table {
 
 // const tnt = new TagNameTable
 // tnt.getByTid(100000).then(data => console.log(data))
-
 
 module.exports = TagNameTable

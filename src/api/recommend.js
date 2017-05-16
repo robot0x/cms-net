@@ -1,18 +1,15 @@
 const DB = require('../db/DB')
 const Utils = require('../utils/Utils')
 const MetaService = require('../service/MetaService')
-const metaService = new MetaService
+const metaService = new MetaService()
 const _ = require('lodash')
 const Log = require('../utils/Log')
 const LIMIT = 15 // 限制15条
-function genSimpleMeta(meta) {
+
+function genSimpleMeta (meta) {
   if (meta) {
-    let {
-      nid,
-      title,
-      type,
-      ctype
-    } = meta
+    // let { nid, title, type, ctype } = meta
+    let { nid, title, ctype } = meta
     let titleex = ''
     if (title.length > 1) {
       [title, titleex] = title
@@ -40,7 +37,7 @@ function genSimpleMeta(meta) {
 //   "serverid":197568495662,
 //   "url":"\/\/c.diaox2.com\/cms\/diaodiao\/articles\/firstpage\/46_46.html"
 // }]
-async function recommend(id) {
+async function recommend (id) {
   if (!id) return null
   Log.business('[API recommend] 输入参数为：', id)
   // diaodiao_article_recommend, diaodiao_hot_goodthing
@@ -49,7 +46,9 @@ async function recommend(id) {
   try {
     let rel_articlesSQL = `SELECT rel_article FROM diaodiao_article_recommend WHERE ori_article = ${id}`
     rel_articles = Utils.getFirst(await DB.exec(rel_articlesSQL))
-    Log.business(`[API recommend] ${rel_articlesSQL}\nfetch data is ${rel_articles} `)
+    Log.business(
+      `[API recommend] ${rel_articlesSQL}\nfetch data is ${rel_articles} `
+    )
     if (rel_articles) {
       rel_articles = rel_articles.rel_article.split(/,/)
     } else {

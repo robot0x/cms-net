@@ -7,7 +7,7 @@ const Log = require('../../../utils/Log')
  * 渲染：
  *  1. http://c.diaox2.com/view/app/?m=metaband&id=1234
  */
-class MetabandRender extends Render{
+class MetabandRender extends Render {
   setId (id) {
     this.id = id
     return this
@@ -15,7 +15,7 @@ class MetabandRender extends Render{
   async rende (id = this.id) {
     try {
       const meta = await metaService.getRawMetas(id, false, true)
-      const { nid , thumb_image_url, title} = meta
+      const { nid, thumb_image_url, title } = meta
       const url = `${this.prefix}/view/app/?m=show&id=${nid}`
       return `
       <div class="relcard" data-href="${url}" data-render="${this.version}" data-action="" data-fn="">
@@ -37,6 +37,5 @@ class MetabandRender extends Render{
     }
   }
 }
-
 
 module.exports = MetabandRender

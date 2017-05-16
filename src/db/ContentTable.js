@@ -8,7 +8,7 @@ class ContentTable extends Table {
   }
   // article_content的主键为aid
   async getById (id) {
-    const data =  Utils.getFirst(await super.getByAid(id))
+    const data = Utils.getFirst(await super.getByAid(id))
     let content = null
     if (data) {
       content = data.content

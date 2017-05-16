@@ -2,7 +2,7 @@
  * @Author: liyanfeng
  * @Date: 2017-04-18 14:44:46
  * @Last Modified by: liyanfeng
- * @Last Modified time: 2017-05-10 21:59:27
+ * @Last Modified time: 2017-05-16 18:37:25
  *  为了减轻服务器的压力，要使异步任务顺序化，而不是近1W个url一次性地请求完
  *  请求完一个url，并成功返回结果，才接着请求下一个url
  */
@@ -14,7 +14,7 @@ const runLogger = Log.getLogger('cms_run')
 class Downloader {
   // max为连接池的长度
   constructor (urls, max = 1) {
-    this.set (urls, max)
+    this.set(urls, max)
   }
 
   set (urls, max = 1) {
@@ -48,7 +48,6 @@ class Downloader {
   }
 
   async download (handler) {
-
     let currentIndex = this.index
     if (currentIndex >= this.urls.length) {
       return
@@ -69,6 +68,5 @@ class Downloader {
     this.download(handler)
   }
 }
-
 
 module.exports = Downloader

@@ -1,19 +1,18 @@
-const Parser = require('../../../parser')
+// const Parser = require('../../../parser')
 const Utils = require('../../../utils/Utils')
 class SkuParser {
-
-  setSales(sales) {
+  setSales (sales) {
     this.sales = sales
     return this
   }
   getRevarticleHTML (metas) {
     console.log('[SkuParser.getRevarticleHTML] metas:', metas)
-    if(!Array.isArray(metas)) {
+    if (!Array.isArray(metas)) {
       metas = [metas]
     }
     let html = ''
     for (let meta of metas) {
-      let {nid, thumb_image_url, title} = meta
+      let { nid, thumb_image_url, title } = meta
       html += `
       <div class="articlecard bottomshadow revarticlecard" data-href="//c.diaox2.com/view/app/?m=show&id=${nid}">
         <img class="articleimg" src="${thumb_image_url}">
@@ -24,10 +23,10 @@ class SkuParser {
     }
     return html
   }
-  getHTML(sales = this.sales) {
+  getHTML (sales = this.sales) {
     let html = ''
     for (let sale of sales) {
-      let {mart, price, intro, link_m_cps} = sale
+      let { mart, price, intro, link_m_cps } = sale
       let icon = 'default.png'
       if (/tmall|天猫/.test(mart) || link_m_cps.indexOf('tmall.com') !== -1) {
         icon = 'tmall.png'

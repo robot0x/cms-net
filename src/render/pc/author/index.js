@@ -1,5 +1,5 @@
 const Render = require('../../')
-const Utils = require('../../../utils/Utils')
+// const Utils = require('../../../utils/Utils')
 const Log = require('../../../utils/Log')
 const Parser = require('./parser')
 const AuthorService = require('../../../service/AuthorService')
@@ -8,33 +8,26 @@ const AuthorService = require('../../../service/AuthorService')
  *  1. 作者页 http://www.diaox2.com/editor/ZRJ.html
  */
 class AuthorRender extends Render {
-
-  constructor(src) {
+  constructor (src) {
     super()
     this.setSource(src)
     this.template = this.readTemplate(__dirname + '/author.ejs')
-    this.parser = new Parser
+    this.parser = new Parser()
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
-  setSource(src) {
+  setSource (src) {
     this.source = src
     return this
   }
 
-  async rende() {
-    const {
-      parser,
-      source
-    } = this
+  async rende () {
+    const { parser, source } = this
     if (!source) return
     try {
       //  相当于then
-      let {
-        metas,
-        author
-      } = await new AuthorService(source).getRenderData()
+      let { metas, author } = await new AuthorService(source).getRenderData()
       return this.getDoc(this.template, {
         author,
         body: parser.setMetas(metas).getHTML(20),

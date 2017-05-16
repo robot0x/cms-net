@@ -1,24 +1,25 @@
 const Render = require('../../')
 const Utils = require('../../../utils/Utils')
-const imageHandler = require('./imageHandler')
+// const imageHandler = require('./imageHandler')
 const Parser = require('./parser')
 const MetaService = require('../../../service/MetaService')
 const Log = require('../../../utils/Log')
+
 /**
  * 渲染：
  *  1. 专题 zhuanti (ctype = 9)    http://c.diaox2.com/view/app/?m=zt&id=7080
  */
 class ZTRender extends Render {
-  constructor(id) {
+  constructor (id) {
     super()
     this.setId(id)
     this.template = this.readTemplate(__dirname + '/zt.ejs')
-    this.parser = new Parser
+    this.parser = new Parser()
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
-  setId(id) {
+  setId (id) {
     this.id = id
     return this
   }
@@ -36,11 +37,11 @@ class ZTRender extends Render {
     return this
   }
 
-  async rende() {
-    const { parser,id } = this
-    if(!id) return
+  async rende () {
+    const { parser, id } = this
+    if (!id) return
     try {
-      let {content, meta, images} = await new MetaService().getRenderData(id)
+      let { content, meta, images } = await new MetaService().getRenderData(id)
       // console.log('zt markdown 37:', content)
       parser.markdown = content // markdown is a setter like method `setMarkdown`
       let body = parser.getHTML()
@@ -69,7 +70,7 @@ class ZTRender extends Render {
         pageType: this.pageType,
         downloadAddr: this.downloadAddr,
         prefix: this.prefix,
-        version: this.version,
+        version: this.version
       })
     } catch (e) {
       Log.exception(e)

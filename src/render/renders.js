@@ -24,22 +24,22 @@ const PTagRender = require(`${pcRenderDir}/tag`)
 // 导出所有渲染器的实例，在 /router.js中引用
 module.exports = {
   // 移动端渲染器组
-  mShowRender: new MShowRender,
-  mZKRender: new MZKRender,
-  mZTRender: new MZTRender,
-  mAuthorRender: new MAuthorRender,
-  mTagRender: new MTagRender,
-  mBuyRender: new MBuyRender,
-  mSkuRender: new MSkuRender,
-  mRssRender: new MRssRender,
-  mInviteRender: new MInviteRender,
-  mJfitemRender: new MJfitemRender,
-  mJfMallRender: new MJfMallRender,
-  mZDMRender: new MZDMRender,
-  mMetabandRender: new MMetabandRender,
+  mShowRender: new MShowRender(),
+  mZKRender: new MZKRender(),
+  mZTRender: new MZTRender(),
+  mAuthorRender: new MAuthorRender(),
+  mTagRender: new MTagRender(),
+  mBuyRender: new MBuyRender(),
+  mSkuRender: new MSkuRender(),
+  mRssRender: new MRssRender(),
+  mInviteRender: new MInviteRender(),
+  mJfitemRender: new MJfitemRender(),
+  mJfMallRender: new MJfMallRender(),
+  mZDMRender: new MZDMRender(),
+  mMetabandRender: new MMetabandRender(),
   // PC端渲染器组
-  pShowRender: new PShowRender,
-  pZKRender: new PZKRender,
-  pAuthorRender: new PAuthorRender,
-  pTagRender: new PTagRender
+  pShowRender: new PShowRender(),
+  pZKRender: new PZKRender(),
+  pAuthorRender: new PAuthorRender(),
+  pTagRender: new PTagRender()
 }

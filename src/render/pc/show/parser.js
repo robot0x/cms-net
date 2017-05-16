@@ -12,9 +12,10 @@ const Parser = require('../../../parser')
 class ShowParser extends Parser {
   constructor () {
     super()
-    //*****************************************自定义markdown语法解析*****************************************
+    //* ****************************************自定义markdown语法解析*****************************************
     const renderer = super.getRenderer()
-    renderer.blockquote = text => `
+    renderer.blockquote = text =>
+      `
       <div class="quotebox">
       <i class="box-top"></i>
       <div class="box-inner">

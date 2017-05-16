@@ -1,7 +1,5 @@
-const Parser = require('../../../parser')
-
-class AuthorParser{
-
+// const Parser = require('../../../parser')
+class AuthorParser {
   setMetas (metas) {
     this.metas = metas
     return this
@@ -12,10 +10,10 @@ class AuthorParser{
     let { metas } = this
     // console.log('14:', metas)
     let metaslen = metas.length
-    if(metaslen > len){
+    if (metaslen > len) {
       metas = metas.slice(0, len)
     }
-    for(let meta of metas) {
+    for (let meta of metas) {
       html += `
         <div class="articlecard" data-href="//c.diax2.com/view/app/?m=show&id=${meta.nid}">
           <img class="articleimg" src="${meta.thumb_image_url}"/>

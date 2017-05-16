@@ -6,15 +6,14 @@
  */
 const BuyinfoTable = require('../db/BuyinfoTable')
 const MetaService = require('./MetaService')
-const Utils = require('../utils/Utils')
+// const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
-const request = require('request')
+// const request = require('request')
 
 class BuyinfoService {
-
   constructor (aid) {
-    this.buyinfoTable = new BuyinfoTable
-    this.metaService = new MetaService
+    this.buyinfoTable = new BuyinfoTable()
+    this.metaService = new MetaService()
     this.setAid(aid)
   }
 
@@ -26,7 +25,7 @@ class BuyinfoService {
     try {
       // 根据规则拿购买链接，把meta表中的购买链接作为第二个参数，这样在条件命中时，我们就能少访问一次数据库
       return {
-        meta:  await this.metaService.getRawMetas(aid),
+        meta: await this.metaService.getRawMetas(aid),
         buyinfos: await this.buyinfoTable.getByAid(aid)
       }
     } catch (e) {

@@ -1,5 +1,5 @@
 const Render = require('../../')
-const Utils = require('../../../utils/Utils')
+// const Utils = require('../../../utils/Utils')
 const request = require('request')
 const Log = require('../../../utils/Log')
 /**
@@ -8,7 +8,6 @@ const Log = require('../../../utils/Log')
  *  1. 积分商品页share页 c.diaox2.com/view/app/jfitem/102.html
  */
 class JfitemRender extends Render {
-
   constructor (gid) {
     super()
     this.setGid(gid)
@@ -27,28 +26,31 @@ class JfitemRender extends Render {
 
   getRenderData (gid = this.gid) {
     return new Promise((resolve, reject) => {
-      request({
-        url: 'http://bj2.a.dx2rd.com:3000/jf/goods',
-        method: "POST",
-        json: true,
-        headers: {
-          "content-type": "application/json"
+      request(
+        {
+          url: 'http://bj2.a.dx2rd.com:3000/jf/goods',
+          method: 'POST',
+          json: true,
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: { gid }
         },
-        body: { gid }
-      }, (error, response, body) => {
-        if(error) reject(error)
-        if(response.statusCode == 200) {
-          resolve(body)
-        } else {
-          reject('接口返回错误的状态吗', response.statusCode)
+        (error, response, body) => {
+          if (error) reject(error)
+          if (response.statusCode == 200) {
+            resolve(body)
+          } else {
+            reject('接口返回错误的状态吗', response.statusCode)
+          }
         }
-      })
+      )
     })
   }
 
   async rende () {
-    const {gid} = this
-    if(!gid) return
+    const { gid } = this
+    if (!gid) return
     try {
       const result = await this.getRenderData(gid)
       if (!result) return
@@ -71,7 +73,7 @@ class JfitemRender extends Render {
   }
 }
 
-const jfitem = new JfitemRender
+const jfitem = new JfitemRender()
 jfitem.setGid(102).rende().then(data => {
   // console.log(data)
 })

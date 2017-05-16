@@ -2,7 +2,7 @@ const marked = require('marked')
 // const _ = require('lodash')
 const cheerio = require('cheerio')
 const Log = require('../utils/Log')
-const Promise = require('bluebird')
+// const Promise = require('bluebird')
 /**
  * CMS markdown 解析器
  * 读取文章原始markdown文本
@@ -19,7 +19,7 @@ class Parser {
    * type = html parse成html
    * type = all  parse成数据片段和html
    */
-  constructor(markdown, options = {}) {
+  constructor (markdown, options = {}) {
     this._markdown = markdown
     this.defaultOptions = {
       // gfm default: false github flavored markdown github风格的markdown
@@ -54,7 +54,7 @@ class Parser {
    * @param  {Boolean} [root=true] [第一次调用 root 为true]
    * @return {[Array]} [返回container下所有字节点的数据片段]
    */
-  htmlToData(container, root = true) {
+  htmlToData (container, root = true) {
     const contents = []
     try {
       let children = null
@@ -69,12 +69,7 @@ class Parser {
       children = Array.from(children)
       for (let child of children) {
         let item = {}
-        let {
-          type,
-          name,
-          data,
-          attribs
-        } = child
+        let { type, name, data, attribs } = child
         // 只处理tag和text节点
         if (type === 'tag') {
           item.type = name
@@ -159,30 +154,30 @@ class Parser {
     // return contents
   }
 
-  set markdown(markdown) {
+  set markdown (markdown) {
     this._markdown = markdown
   }
 
-  getRenderer() {
+  getRenderer () {
     return this.options.renderer
   }
 
-  setRenderer(renderer) {
+  setRenderer (renderer) {
     this.renderer = renderer
   }
 
-  get markdown() {
+  get markdown () {
     return this._markdown
   }
 
-  getData() {
+  getData () {
     this.$ = cheerio.load(`<div id="container">${this.getHTML()}<div>`, {
       decodeEntities: false
     })
     return this.htmlToData(this.$('#container'))
   }
 
-  getHTML() {
+  getHTML () {
     this.marked.setOptions(this.options)
     // let isPromise = !!this.options.promise
     // if(isPromise) {
@@ -192,12 +187,12 @@ class Parser {
     //   //   console.log(content)
     //   // })
     // } else {
-      // console.log('isPromise：', isPromise)
-      return this.marked(this.markdown)
+    // console.log('isPromise：', isPromise)
+    return this.marked(this.markdown)
     // }
   }
 
-  getAll() {
+  getAll () {
     return {
       html: this.getHTML(),
       data: this.getData()
@@ -206,7 +201,7 @@ class Parser {
   /*
       解析传进来的带标签的字符串，返回去掉标签之后的纯文本
   */
-  extractText(summary) {
+  extractText (summary) {
     if (!summary) {
       return ''
     }
@@ -214,7 +209,8 @@ class Parser {
     if (!summary.startsWith('<') && !summary.endsWith('>')) {
       return summary
     } else {
-      return summary.replace(/</g, '\n<')
+      return summary
+        .replace(/</g, '\n<')
         .replace(/>/g, '>\n')
         .replace(/\n\n/g, '\n')
         .replace(/^\n/g, '')

@@ -9,7 +9,6 @@ const Log = require('../utils/Log')
  * 所有继承该类的类在相应的Service中调用
  */
 class Table {
-
   /**
    * table: 操作的表名
    * columns: 要操作的表的列
@@ -42,8 +41,10 @@ class Table {
 
   setFormat (format) {
     if (format) {
-      const {columns, pattern} = format
-      this.columns = this.columns.concat(columns.map(col => `DATE_FORMAT(${col},'${pattern}') AS ${col}`))
+      const { columns, pattern } = format
+      this.columns = this.columns.concat(
+        columns.map(col => `DATE_FORMAT(${col},'${pattern}') AS ${col}`)
+      )
     }
     return this
   }
@@ -57,7 +58,7 @@ class Table {
    * 往表中插入一条数据
    */
   create (data) {
-    return DB.exec(`INSERT INTO ${this.table} SET ?`,  data)
+    return DB.exec(`INSERT INTO ${this.table} SET ?`, data)
   }
 
   /**
@@ -66,9 +67,11 @@ class Table {
    */
   total (cond) {
     return new Promise((resolve, reject) => {
-      DB.exec(`SELECT count(1) AS count FROM ${this.table} ${DB.addWhere(cond)}`)
+      DB.exec(
+        `SELECT count(1) AS count FROM ${this.table} ${DB.addWhere(cond)}`
+      )
         .then(data => {
-          if(data.length > 0){
+          if (data.length > 0) {
             resolve(data[0].count)
           } else {
             resolve(0)
@@ -81,12 +84,12 @@ class Table {
     })
   }
 
-/**
+  /**
  * 根据主键id获取一条数据
  */
   async getById (id) {
-    let data =  await this.getByCond(`id = ${id}`)
-    if(Utils.isValidArray(data) && data.length === 1){
+    let data = await this.getByCond(`id = ${id}`)
+    if (Utils.isValidArray(data) && data.length === 1) {
       [data] = data
     }
     return data
@@ -103,7 +106,9 @@ class Table {
    * 根据传入的条件获取数据
    */
   getByCond (cond) {
-    return DB.exec(`SELECT ${this.columnsStr} FROM ${this.table} ${DB.addWhere(cond)}`)
+    return DB.exec(
+      `SELECT ${this.columnsStr} FROM ${this.table} ${DB.addWhere(cond)}`
+    )
   }
 
   /**
@@ -145,7 +150,7 @@ class Table {
   /**
    * 转码，防止sql注入
    */
- escape (str) {
+  escape (str) {
     return DB.escape(str)
   }
 }

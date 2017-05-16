@@ -8,7 +8,6 @@ const Log = require('../../../utils/Log')
  *  1. 积分商城页share页 c.diaox2.com/view/app/mall.html
  */
 class JfMallRender extends Render {
-
   constructor () {
     super()
     this.template = this.readTemplate(__dirname + '/jfmall.ejs')
@@ -21,31 +20,34 @@ class JfMallRender extends Render {
 
   getRenderData () {
     return new Promise((resolve, reject) => {
-      request({
-        url: 'http://bj2.a.dx2rd.com:3000/jf/mall',
-        method: "POST",
-        json: true,
-        headers: {
-          "content-type": "application/json"
+      request(
+        {
+          url: 'http://bj2.a.dx2rd.com:3000/jf/mall',
+          method: 'POST',
+          json: true,
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: { data: 'nothing' }
         },
-        body: { data: 'nothing' }
-      }, (error, response, body) => {
-        if(error) reject(error)
-        if(response.statusCode == 200) {
-          resolve(body)
-        } else {
-          reject('接口返回错误的状态吗', response.statusCode)
+        (error, response, body) => {
+          if (error) reject(error)
+          if (response.statusCode === 200) {
+            resolve(body)
+          } else {
+            reject('接口返回错误的状态吗', response.statusCode)
+          }
         }
-      })
+      )
     })
   }
 
   async rende () {
     try {
       const result = await this.getRenderData()
-      if(!result) return
+      if (!result) return
       let items = result.data
-      if(!Utils.isValidArray(items)) return
+      if (!Utils.isValidArray(items)) return
       // let s = []
       // for(let item of items){
       //   s.push(JSON.stringify(item))

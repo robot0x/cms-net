@@ -4,11 +4,13 @@ const Table = require('./Table')
  */
 class TagIndexTable extends Table {
   constructor () {
-    super('diaodiao_article_tag_index', ['aid','tag1','tag2'], null, null)
+    super('diaodiao_article_tag_index', ['aid', 'tag1', 'tag2'], null, null)
   }
   // article_content的主键为aid
   async getByAId (id) {
-    return await super.exec(`SELECT ${this.columnsStr} FROM ${this.table} WHERE aid = ${id} AND tag1 <> 'page_type'`)
+    return await super.exec(
+      `SELECT ${this.columnsStr} FROM ${this.table} WHERE aid = ${id} AND tag1 <> 'page_type'`
+    )
   }
 
   async getByTag1 (tag1) {
@@ -18,7 +20,6 @@ class TagIndexTable extends Table {
   async getByTag2 (tag2) {
     return await super.getByCond({ tag2 })
   }
-
 }
 // var tit = new TagIndexTable()
 // tit.getByAid(8090).then(data => {

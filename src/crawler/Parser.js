@@ -2,9 +2,7 @@ const cheerio = require('cheerio')
 const html = require('../test/htmlString')
 const _ = require('lodash')
 const Utils = require('../utils/Utils')
-
-const Log = require('../utils/Log')
-const runLogger = Log.getLogger('cms_run')
+// const Log = require('../utils/Log')
 /**
  * 段落与段落之间 用 \n\n 隔开，若一个 \n 则还是在一个p标签里
  *  1. goodthing (type = show)                                http://c.diaox2.com/view/app/?m=show&id=9669
@@ -28,21 +26,20 @@ const runLogger = Log.getLogger('cms_run')
  *
  */
 class Parser {
-
   constructor (content) {
     this.set(content)
   }
 
   set (content) {
     // console.log('32:', content)
-    if(!_.isEmpty(content)){
+    if (!_.isEmpty(content)) {
       this.content = content
-      const {html, type, id, m} = content
+      const { html, type, id, m } = content
       this.html = html
       this.type = type
       this.id = Number(id)
       this.m = m // 根据不同的m来选择相应的解析markdown的方法
-      this.$ = cheerio.load(this.html, {decodeEntities: false})
+      this.$ = cheerio.load(this.html, { decodeEntities: false })
     }
   }
 
@@ -53,8 +50,8 @@ class Parser {
     let title = header.find('#headtitle p').text()
     let eds = header.find('.headdesc').text()
     let img = header.find('.direct').get(0)
-    const zkImages = this.zkImages = []
-    this.zkMeta = {id: this.id, title, ctype: 4}
+    const zkImages = (this.zkImages = [])
+    this.zkMeta = { id: this.id, title, ctype: 4 }
     zkImages.push(this.setImage(img, 1))
     // markdown += `# ${title}\n\n`
     markdown += `\`\`\`zk
@@ -63,12 +60,12 @@ class Parser {
         image: ![](${img.attribs.src})
       \`\`\`\n`
     let zkcards = Array.from($('.card'))
-    for(let card of zkcards) {
+    for (let card of zkcards) {
       const $card = $(card)
       const title = $card.find('.title').text()
       const img = $card.find('img')[0]
 
-      if(!title) continue
+      if (!title) continue
       markdown += `\`\`\`card
         id: ${Utils.normalize(card.attribs['data-href'])}
         title: ${title}
@@ -87,23 +84,23 @@ class Parser {
     let header = $('.headdesc')
     let title = header.find('h2').text()
     let title2 = header.find('p').text()
-    const ztImages = this.ztImages = []
-    this.ztMeta = {id: this.id, title, ctype: 5}
+    const ztImages = (this.ztImages = [])
+    this.ztMeta = { id: this.id, title, ctype: 5 }
     // markdown += `# ${title} \n\n`
     // if(title2){
     //   markdown += `## ${title2} \n\n`
     // }
-  markdown += `\`\`\`zt
+    markdown += `\`\`\`zt
       title: ${title}
       desc: ${title2}
     \`\`\`\n`
     let ztcards = Array.from($('.ztcard'))
-    for(let card of ztcards) {
+    for (let card of ztcards) {
       const $card = $(card)
       const title = $card.find('.p1').text()
       const img = $card.find('.ztleft img')[0]
       const longId = $card.find('.ztright .p3')[0].attribs['data-id']
-      if(!title) continue
+      if (!title) continue
       // `\`\`\` 必须在一行，否则会出错
       markdown += `\`\`\`card
         id: ${longId & 0xffffff}
@@ -117,13 +114,15 @@ class Parser {
   }
 
   getShowMeta () {
-    const {$, type} = this
+    const { $, type } = this
     let title = $('.goodsheading h1').text()
     let author_info = $('#author_info')
     let source = ''
-    if(author_info.length){
+    if (author_info.length) {
       author_info = author_info[0]
-      if(author_info && author_info.attribs && author_info.attribs['data-href']){
+      if (
+        author_info && author_info.attribs && author_info.attribs['data-href']
+      ) {
         [, source] = author_info.attribs['data-href'].split('src=')
       }
     }
@@ -131,13 +130,13 @@ class Parser {
     switch (type) {
       case 'goodthing':
         ctype = 1
-        break;
-        case 'firstpage':
+        break
+      case 'firstpage':
         ctype = 2
-        break;
-        case 'experience':
+        break
+      case 'experience':
         ctype = 3
-        break;
+        break
     }
     return {
       id: this.id,
@@ -166,39 +165,40 @@ class Parser {
   setImage (img, type = 4) {
     // INSERT INTO image set aid=4925, url='//content.image.alimmdn.com/cms/sites/default/files/20160107/zk/qqq2.jpg', used=1, type=4, extension_name='jpg', width=640, height=416;
     let ret = null
-    if(img) {
-      let {attribs} = img
+    if (img) {
+      let { attribs } = img
       // 优先取不带参数的data-big，并且当文档还没有ready时，取道的有可能是占位图
       let src = attribs['data-big'] || attribs['src']
       let width = +(attribs['data-w'] || attribs['width']) || 0
       let height = +(attribs['data-h'] || attribs['height']) || 0
       // 经过昨晚的测试发现：有些width和height为-1
       // 所以硬编码成 width 和 height
-      if(width < 0) {
+      if (width < 0) {
         width = 596
       }
 
-      if(height < 0) {
+      if (height < 0) {
         height = 596
       }
 
       ret = {
-          aid: this.id,
-          url: Utils.removeProtocolHead(src),
-          type,
-          used: 1,
-          extension_name: Utils.getFileExtension(src),
-          // size: '', // 目前我们先不管历史老文章内图片的size，新的文章自会有的
-          width,
-          height
-          // create_time: '' // 目前还无法拿到
+        aid: this.id,
+        url: Utils.removeProtocolHead(src),
+        type,
+        used: 1,
+        extension_name: Utils.getFileExtension(src),
+        // size: '', // 目前我们先不管历史老文章内图片的size，新的文章自会有的
+        width,
+        height
+        // create_time: '' // 目前还无法拿到
       }
     }
     return ret
   }
 
   getShowImages () {
-    let getImgs = (container, type = 4) =>  Array.from(container.find('img')).map(img => this.setImage(img, type))
+    let getImgs = (container, type = 4) =>
+      Array.from(container.find('img')).map(img => this.setImage(img, type))
     return [
       ...getImgs(this.$('.cycle-slideshow'), 1),
       ...getImgs(this.$('.content'))
@@ -253,9 +253,9 @@ class Parser {
       let $child = $(child)
       // type = tag/text/commond ...
       // name = p/a/span/div ... 如果type是text，则name为undefined
-      let {attribs, name} = child
+      let { attribs, name } = child
       name = this.getName(child)
-      if(!name) continue
+      if (!name) continue
       let text = this.onlyHasOneTextChild(child)
       let innerText = ''
       if (text !== null) {
@@ -287,11 +287,11 @@ class Parser {
           md += `### ${this.getShowMarkdown($child, false)}\n\n`
         }
       } else if (name === 'ul') {
-          // 如果ul在blockquote中，则相对于其下的li，其ptype为blockquote，否则才为ul
-          // 因为ul和ol下的li的ptype都为blockquote，所以用第四个参数 isUl 来标识改li处于ul中还是ol中
+        // 如果ul在blockquote中，则相对于其下的li，其ptype为blockquote，否则才为ul
+        // 因为ul和ol下的li的ptype都为blockquote，所以用第四个参数 isUl 来标识改li处于ul中还是ol中
         md += `${this.getShowMarkdown($child, false, inBlockquoto ? 'blockquote' : ptype === 'li' ? 'blockquote' : 'ul', true)}${inBlockquoto ? '\n' : '\n\n'}`
       } else if (name === 'ol') {
-          // 如果ol在blockquote中，则相对于其下的li，其ptype为blockquote，否则才为ol
+        // 如果ol在blockquote中，则相对于其下的li，其ptype为blockquote，否则才为ol
         md += `${this.getShowMarkdown($child, false, inBlockquoto ? 'blockquote' : ptype === 'li' ? 'blockquote' : 'ol', false)}${inBlockquoto ? '\n' : '\n\n'}`
       } else if (name === 'li') {
         if (ptype === 'ul' || isUl) {
@@ -411,17 +411,17 @@ class Parser {
         meta = this.getShowMeta()
         markdown = this.getShowMarkdown(this.$('.content')) // 解析 goodthing\firstpage\experience类型的markdown
         images = this.getShowImages()
-        break;
+        break
       case 'zk':
-        markdown = this.getZKMarkdown()   // 解析 专刊的markdown
+        markdown = this.getZKMarkdown() // 解析 专刊的markdown
         meta = this.getZKMeta()
         images = this.getZKImages()
-        break;
+        break
       case 'zt':
-        markdown = this.getZTMarkdown()   // 解析 专题的markdown
+        markdown = this.getZTMarkdown() // 解析 专题的markdown
         meta = this.getZTMeta()
         images = this.getZTImages()
-        break;
+        break
     }
     ret.markdown = markdown
     ret.meta = meta
@@ -430,21 +430,21 @@ class Parser {
   }
 
   getName (child) {
-    let {name, attribs, type} = child
+    let { name, attribs, type } = child
     if (type === 'text') {
       return 'text'
     } else if (type === 'tag') {
       let className = attribs.class
-      try{
+      try {
         if (name === 'p') {
-        if (_.isEmpty(attribs)) {
-          name = 'p'
-        } else if (className && className.indexOf('lift') !== -1) {
-          name = 'lift'
-        }
-      } else if (name === 'div') {
+          if (_.isEmpty(attribs)) {
+            name = 'p'
+          } else if (className && className.indexOf('lift') !== -1) {
+            name = 'lift'
+          }
+        } else if (name === 'div') {
           const className = attribs.class
-          if(className){
+          if (className) {
             if (className.indexOf('quotebox') !== -1) {
               name = 'blockquote'
             } else if (className.indexOf('articlecard') !== -1) {
@@ -454,7 +454,7 @@ class Parser {
             name = null
           }
         }
-      }catch(e){
+      } catch (e) {
         console.log(e)
         name = null
       }

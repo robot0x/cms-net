@@ -1,16 +1,15 @@
-const Parser = require('../../../parser')
+// const Parser = require('../../../parser')
 
 class BuyParser {
-
-  setBuyinfos(buyinfos) {
+  setBuyinfos (buyinfos) {
     this.buyinfos = buyinfos
     return this
   }
 
-  getHTML(buyinfos = this.buyinfos) {
+  getHTML (buyinfos = this.buyinfos) {
     let html = ''
     for (let buyinfo of buyinfos) {
-      let {mart, price, intro, link} = buyinfo
+      let { mart, price, intro, link } = buyinfo
       let icon = 'default.png'
       if (/tmall|天猫/.test(mart) || link.indexOf('tmall.com') !== -1) {
         icon = 'tmall.png'

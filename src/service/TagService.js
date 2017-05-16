@@ -6,13 +6,12 @@ const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
 
 class TagService {
-
   constructor (tid) {
-    this.tagNameTable = new TagNameTable
-    this.tagIndexTable = new TagIndexTable
+    this.tagNameTable = new TagNameTable()
+    this.tagIndexTable = new TagIndexTable()
     // console.log('[TagService initial ....]')
     // this.metaTable = new MetaTable
-    this.metaService = new MetaService
+    this.metaService = new MetaService()
     this.setTid(tid)
     // 渲染的list只有前20条有图片
     this.setLimit(-1)
@@ -43,22 +42,22 @@ class TagService {
   //      tid: 100002
   //    }]
   //   }]
-  _findByParent (tags, parent){
-      const ret = []
-      for(const tag of tags){
-        if(tag.parent === parent){
-          ret.push({ tid: tag.tid, name: tag.name })
-        }
+  _findByParent (tags, parent) {
+    const ret = []
+    for (const tag of tags) {
+      if (tag.parent === parent) {
+        ret.push({ tid: tag.tid, name: tag.name })
       }
-      return ret
+    }
+    return ret
   }
 
   async getTagTree () {
-    const {tagNameTable} = this
+    const { tagNameTable } = this
     try {
       tagNameTable.setColumns(['tid', 'name', 'parent', 'level'])
       const alltags = await tagNameTable.getAll()
-      console.log(alltags);
+      console.log(alltags)
       const tree = []
       const res = [...alltags]
       alltags.filter(tag => tag.level === 1).map(tag => {
@@ -76,7 +75,11 @@ class TagService {
   }
 
   // 渲染数据接口
-  async getRenderData (useImage = true, useThumb = true, useTimetopublish = false) {
+  async getRenderData (
+    useImage = true,
+    useThumb = true,
+    useTimetopublish = false
+  ) {
     // const { tagNameTable, tagIndexTable, metaTable } = this
     const { tagNameTable, tagIndexTable, limit } = this
     try {
@@ -88,17 +91,17 @@ class TagService {
         // 如果是一级分类
         case 1:
           tags = await tagIndexTable.getByTag1(name)
-          break;
+          break
         // 如果是二级分类
         case 2:
           tags = await tagIndexTable.getByTag2(name)
-          break;
+          break
       }
       // 拿到所有aids，通过aids拿出所有meta，这个需要写自己写sql
       const aids = tags.map(tag => tag.aid)
       let metaSql = ''
       // apimode接口使用
-      if(useTimetopublish) {
+      if (useTimetopublish) {
         metaSql = `SELECT CONCAT('', id) AS aid, CONCAT('', timetopublish) AS pubtime FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
       } else {
         metaSql = `SELECT id, CONCAT(title,titleex) AS title FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
@@ -108,7 +111,7 @@ class TagService {
       const metas = await DB.exec(metaSql)
       let slice_aids = null
       // 这儿有逻辑错误，不应该截断aids，应该阶段有顺序的metas
-      if(limit !== -1) {
+      if (limit !== -1) {
         slice_aids = metas.slice(0, limit).map(meta => meta.id)
       } else {
         slice_aids = metas.map(meta => meta.id)
@@ -117,7 +120,7 @@ class TagService {
       let images = null
       if (useImage) {
         let type = 8
-        if(!useThumb) {
+        if (!useThumb) {
           type = 2
         }
         let sql = `SELECT url,aid FROM diaodiao_article_image where aid in (${slice_aids.join(',')}) AND type & ${type} = ${type}`
@@ -142,7 +145,6 @@ class TagService {
       return null
     }
   }
-
 }
 
 // const ts = new TagService(100000)

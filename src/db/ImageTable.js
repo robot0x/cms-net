@@ -3,21 +3,26 @@ const Utils = require('../utils/Utils')
 
 class ImageTable extends Table {
   constructor () {
-    super('diaodiao_article_image', [
-      'id',
-      'aid',
-      'url',
-      'used',
-      'type',
-      'origin_filename',
-      'extension_name',
-      'size',
-      'width',
-      'height',
-      'alt',
-      'title',
-      'create_time'
-    ], null, null)
+    super(
+      'diaodiao_article_image',
+      [
+        'id',
+        'aid',
+        'url',
+        'used',
+        'type',
+        'origin_filename',
+        'extension_name',
+        'size',
+        'width',
+        'height',
+        'alt',
+        'title',
+        'create_time'
+      ],
+      null,
+      null
+    )
   }
 
   // 第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
@@ -44,12 +49,12 @@ class ImageTable extends Table {
 
   getSpecialImagesUrl (aid, types, columns = ['url', 'type']) {
     let sql = ` SELECT ${columns.join(',')} FROM ${this.table} WHERE `
-    if(Utils.isValidArray(aid)) {
-       sql += ` aid in (${Utils.toShortId(aid).join(',')}) `
+    if (Utils.isValidArray(aid)) {
+      sql += ` aid in (${Utils.toShortId(aid).join(',')}) `
     } else {
       sql += ` aid = ${aid} `
     }
-    if(Utils.isValidArray(types)) {
+    if (Utils.isValidArray(types)) {
       sql += 'AND ('
       types.forEach((type, index) => {
         sql += ` type & ${type} = ${type} ${index === types.length - 1 ? '' : 'OR'} `

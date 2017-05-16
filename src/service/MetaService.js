@@ -18,11 +18,11 @@ const moment = require('moment')
 
 class MetaService {
   constructor (id) {
-    this.metaTable = new MetaTable
-    this.contentTable = new ContentTable
-    this.imageTable = new ImageTable
-    this.authorTable = new AuthorTable
-    this.buyinfoTable = new BuyinfoTable
+    this.metaTable = new MetaTable()
+    this.contentTable = new ContentTable()
+    this.imageTable = new ImageTable()
+    this.authorTable = new AuthorTable()
+    this.buyinfoTable = new BuyinfoTable()
     this.setId(id)
   }
 
@@ -49,20 +49,19 @@ class MetaService {
       "thumb_image_url": "http://a.diaox2.com/cms/sites/default/files/20150520/goodthing/13591067658Cfg3MWV (1).jpg"
    */
 
-
   _findImageByAidAndType (aid, type, images) {
     let isSwipe = type === 16
     let ret = null
-    if(isSwipe) {
+    if (isSwipe) {
       ret = []
-      for(let image of images){
-        if(image.aid == aid && image.type == type){
+      for (let image of images) {
+        if (image.aid == aid && image.type == type) {
           ret.push(image)
         }
       }
     } else {
-      for(let image of images){
-        if(image.aid == aid && image.type == type){
+      for (let image of images) {
+        if (image.aid == aid && image.type == type) {
           ret = image
           break
         }
@@ -95,20 +94,20 @@ class MetaService {
     isShortId = false,
     useCoverex = false,
     useBanner = false,
-    useSwipe = false ,
+    useSwipe = false,
     useImageSize = false
   ) {
     // 参数处理
-    if(!Utils.isValidArray(ids)){
+    if (!Utils.isValidArray(ids)) {
       // 如果只传入一个id，则转化为数组，否则，参数不合法，直接返回
-      if(/^\d+$/.test(ids)){
-         ids = [ids]
+      if (/^\d+$/.test(ids)) {
+        ids = [ids]
       } else {
         return null
       }
     }
     // 内部使用这个参数，稍微提升点儿性能
-    if(!isShortId) {
+    if (!isShortId) {
       ids = Utils.toShortId(ids)
     }
     // console.log('ids:', ids)
@@ -125,7 +124,7 @@ class MetaService {
       // type = 2为cover图，type = 8 为thumb图, type = 4 coverex图
       let imageCols = ['aid', "CONCAT('//', url) AS url", 'type']
 
-      if(useImageSize){
+      if (useImageSize) {
         imageCols.push('width')
         imageCols.push('height')
       }
@@ -144,12 +143,26 @@ class MetaService {
         imageTypes.push(32)
       }
 
-      const images = await this.imageTable.getSpecialImagesUrl(ids, imageTypes, imageCols)
+      const images = await this.imageTable.getSpecialImagesUrl(
+        ids,
+        imageTypes,
+        imageCols
+      )
       const metas = []
       for (let me of metaAndAuthors) {
-        let {nid, title, titleex, titlecolor, ctype, price, pic_uri, author_name, timetopublish} = me
+        let {
+          nid,
+          title,
+          titleex,
+          // titlecolor,
+          ctype,
+          price,
+          pic_uri,
+          author_name,
+          timetopublish
+        } = me
         // console.log('getRawMetas:', me);
-        title = titleex? [title, titleex || ''] : [title || ''] // 防止出现[null]的情况，这种情况应该转换为空数组，即[]
+        title = titleex ? [title, titleex || ''] : [title || ''] // 防止出现[null]的情况，这种情况应该转换为空数组，即[]
         let meta = Object.create(null) // 使用超轻量对象，提升性能
         meta.timetopublish = timetopublish
         // author字段变形
@@ -172,28 +185,28 @@ class MetaService {
         let banner_image = null
         let swipe_images = null // 走马灯图，可能有多个
 
-        if(useCoverex) {
+        if (useCoverex) {
           coverex_image = this._findImageByAidAndType(nid, 4, images) || {}
-          if(coverex_image){
+          if (coverex_image) {
             meta.coverex_image_url = coverex_image.url
           }
         }
 
-        if(useSwipe) {
+        if (useSwipe) {
           swipe_images = this._findImageByAidAndType(nid, 16, images) || {}
-          if ( Utils.isValidArray(swipe_images) ) {
+          if (Utils.isValidArray(swipe_images)) {
             meta.swipe_image_url = swipe_images.map(swipe => swipe.url)
           }
         }
 
-        if(useBanner) {
+        if (useBanner) {
           banner_image = this._findImageByAidAndType(nid, 32, images) || {}
-          if(banner_image){
+          if (banner_image) {
             meta.banner_image_url = banner_image.url
           }
         }
 
-        if(useImageSize){
+        if (useImageSize) {
           meta.coverwidth = cover_image.width || 0
           meta.coverheight = cover_image.height || 0
           meta.thumbwidth = thumb_image.width || 0
@@ -214,12 +227,12 @@ class MetaService {
         // buylink处理
         // 对于tag页、author页等页面渲染，或只需拿到简单的meta（比如只需要title,cover_image_url），
         // 所以我们就没有必要处理buylink，处理buylink很耗费性能。
-        if (useBuylink){
+        if (useBuylink) {
           let buylink = await this.getBuylink(nid, meta.buylink)
-          if(buylink){
+          if (buylink) {
             meta.has_buylink = true
             meta.buylink = buylink
-          }else {
+          } else {
             meta.has_buylink = false
           }
         }
@@ -228,7 +241,7 @@ class MetaService {
 
       // 如果只传一个id，则返回 {}   形式
       // 如果传有多个id，则返回 [{}] 形式
-      if(ids.length === 1 && metas.length === 1) {
+      if (ids.length === 1 && metas.length === 1) {
         return Utils.getFirst(metas)
       } else {
         // console.log('getRawMetas:', metas)
@@ -240,23 +253,37 @@ class MetaService {
     }
   }
 
- /**
+  /**
   * 一次性地通过aid，从article_meta/article_content/image/author 四张表中拿数据
   * 组装成对象，供meta接口和渲染接口使用
   * 渲染专刊时，要用buylink
   */
   // 渲染数据接口
   async getRenderData (id = this.id, useBuylink = false) {
-    const {metaTable, contentTable, imageTable, authorTable} = this
+    const { metaTable, contentTable, imageTable, authorTable } = this
     // async函数返回的就是promise，所以无需再包一promise
     // return new Promise(async (resolve, reject) => {
     let meta, images, content
     try {
-      let meta = await metaTable.setColumns(['title','titleex', 'ctype', 'timetopublish', 'price', 'author']).getById(id)
-      let {timetopublish} = meta
-      if (timetopublish < 20141108 && timetopublish > Number(moment().format('YYYYMMDD'))) return
+      let meta = await metaTable
+        .setColumns([
+          'title',
+          'titleex',
+          'ctype',
+          'timetopublish',
+          'price',
+          'author'
+        ])
+        .getById(id)
+      let { timetopublish } = meta
+      if (
+        timetopublish < 20141108 &&
+        timetopublish > Number(moment().format('YYYYMMDD'))
+      ) { return }
       // let images = await imageTable.getSpecialImagesUrl(id, [2, 8, 16], ['url', 'type', 'alt', 'title'])
-      let images = await imageTable.setColumns(['url', 'type', 'alt', 'width', 'height']).getByAid(id)
+      let images = await imageTable
+        .setColumns(['url', 'type', 'alt', 'width', 'height'])
+        .getByAid(id)
       let content = await contentTable.getById(id)
       // console.log('author:', meta.author)
       // 由于author表目前的数据很少，所以写死
@@ -291,44 +318,52 @@ class MetaService {
      目前业务上只用了0和1，0未发布，1代表发布
    */
   getBuylink (id, cms_buy_link = '') {
-    if(!id) return;
+    if (!id) return
     // console.log('getBuylink:', id)
     // 首先，http://s5.a.dx2rd.com:3000/v1/articlesku/1233 通过这个接口拿sku
     return new Promise((resolve, reject) => {
-      request(`http://s5.a.dx2rd.com:3000/v1/articlesku/${id}`, async (err, body) => {
-        if(err) {
-          resolve(null)
-        }
-        try {
-          const {state, data}  = JSON.parse(body.body)
-          const skus = data[Utils.toLongId(id)]
-          // 如果只有1个sku且这个sku的status为1（即已经发布了），则把SKU页作为购买页
-          if(Utils.isValidArray(skus) && skus.length === 1 && skus[0].status === 1){
-            resolve(`http://c.diaox2.com/view/app/sku/${id}/${skus[0].sid}.html`)
-          } else {
-            // 若SKU有0个或多个，则从diaodiao_buyinfo取购买页
-            // const buy_info = await this.metaTable.exec(`SELECT * FROM diaodiao_buyinfo where aid = ${id}`)
-            const buy_info = await this.buyinfoTable.getByAid(id)
-            // 如果diaodiao_buyinfo表存在购买信息
-            if (buy_info.length > 0 && buy_info[0].link) {
-              resolve(`http://c.diaox2.com/view/app/?m=buy&aid=${id}`)
-            } else if (cms_buy_link) {
-              resolve(cms_buy_link)
-            } else {
-              resolve(await this.metaTable.getBuylinkById(id))
-            }
+      request(
+        `http://s5.a.dx2rd.com:3000/v1/articlesku/${id}`,
+        async (err, body) => {
+          if (err) {
+            resolve(null)
           }
-        } catch (e) {
-          Log.exception(e)
-          resolve(null)
+          try {
+            const { state, data } = JSON.parse(body.body)
+            const skus = data[Utils.toLongId(id)]
+            // 如果只有1个sku且这个sku的status为1（即已经发布了），则把SKU页作为购买页
+            if (
+              Utils.isValidArray(skus) &&
+              skus.length === 1 &&
+              skus[0].status === 1
+            ) {
+              resolve(
+                `http://c.diaox2.com/view/app/sku/${id}/${skus[0].sid}.html`
+              )
+            } else {
+              // 若SKU有0个或多个，则从diaodiao_buyinfo取购买页
+              // const buy_info = await this.metaTable.exec(`SELECT * FROM diaodiao_buyinfo where aid = ${id}`)
+              const buy_info = await this.buyinfoTable.getByAid(id)
+              // 如果diaodiao_buyinfo表存在购买信息
+              if (buy_info.length > 0 && buy_info[0].link) {
+                resolve(`http://c.diaox2.com/view/app/?m=buy&aid=${id}`)
+              } else if (cms_buy_link) {
+                resolve(cms_buy_link)
+              } else {
+                resolve(await this.metaTable.getBuylinkById(id))
+              }
+            }
+          } catch (e) {
+            Log.exception(e)
+            resolve(null)
+          }
         }
-      })
+      )
     })
   }
 }
 
 module.exports = MetaService
-
 
 // async getRawMeta (id = this.id) {
 //   try {

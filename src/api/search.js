@@ -2,9 +2,9 @@ const DB = require('../db/DB')
 const moment = require('moment')
 const Utils = require('../utils/Utils')
 const MetaService = require('../service/MetaService')
-const metaService = new MetaService
+const metaService = new MetaService()
 const MetaTable = require('../db/MetaTable')
-const metaTable = new MetaTable
+const metaTable = new MetaTable()
 const Log = require('../utils/Log')
 
 class Search {
@@ -12,9 +12,16 @@ class Search {
     const ret = []
     try {
       const aids = await metaTable.getAidsByCond(cond)
-      if(!Utils.isValidArray(aids)) return null
-      const metas = await metaService.getRawMetas(aids, true, true, true, true, true)
-      if(!Utils.isValidArray(metas)) return null
+      if (!Utils.isValidArray(aids)) return null
+      const metas = await metaService.getRawMetas(
+        aids,
+        true,
+        true,
+        true,
+        true,
+        true
+      )
+      if (!Utils.isValidArray(metas)) return null
       metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
       for (let meta of metas) {
         ret.push(this._handleMeta(meta))
@@ -22,7 +29,7 @@ class Search {
     } catch (error) {
       Log.exception(error)
     }
-    return ret.length > 1? {metas: ret} : null
+    return ret.length > 1 ? { metas: ret } : null
   }
 
   byTitle (title) {
@@ -33,17 +40,17 @@ class Search {
   byDate (start, end) {
     Log.business(`[API SearchByDate] 输入参数为：start = ${start}, end = ${end}`)
     let pattern = 'YYYYMMDD'
-    if(!start || !/\d{8}/.test(start)){
+    if (!start || !/\d{8}/.test(start)) {
       // 如果没有起始日期，则定为 昨天
       start = moment().subtract(1, 'days').format(pattern)
     }
-    if(!end || !/\d{8}/.test(end)){
+    if (!end || !/\d{8}/.test(end)) {
       // 如果没有结束日期，则定为 今天
       end = moment().format(pattern)
     }
     start = Number(start)
     end = Number(end)
-    if(start > end) {
+    if (start > end) {
       [start, end] = [end, start] // 交换位置
     }
     // stimestamp = moment(start, pattern).valueOf()
@@ -112,4 +119,4 @@ class Search {
   }
 }
 
-module.exports = new Search
+module.exports = new Search()

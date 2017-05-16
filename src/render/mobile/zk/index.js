@@ -1,6 +1,6 @@
 const Render = require('../../')
 const Utils = require('../../../utils/Utils')
-const imageHandler = require('./imageHandler')
+// const imageHandler = require('./imageHandler')
 const Parser = require('./parser')
 const MetaService = require('../../../service/MetaService')
 const Log = require('../../../utils/Log')
@@ -9,17 +9,17 @@ const Log = require('../../../utils/Log')
  *  1. 专刊 zhuankan (ctype = 4)    http://c.diaox2.com/view/app/?m=zk&id=3053
  */
 class ZKRender extends Render {
-  constructor(id) {
+  constructor (id) {
     super()
     this.setId(id)
     this.template = this.readTemplate(__dirname + '/zk.ejs')
-    this.parser = new Parser
-    this.metaService = new MetaService
+    this.parser = new Parser()
+    this.metaService = new MetaService()
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
-  setId(id) {
+  setId (id) {
     this.id = id
     return this
   }
@@ -31,28 +31,28 @@ class ZKRender extends Render {
    *  flipboard、
    *  jike       即刻
    */
-   setPageType (pageType) {
-     this.pageType = pageType
-     return this
-   }
+  setPageType (pageType) {
+    this.pageType = pageType
+    return this
+  }
 
   getCidByMarkdown (markdown) {
-    const idReg =  /id[:：]\s*(\d+)\s*title[:：]/
+    const idReg = /id[:：]\s*(\d+)\s*title[:：]/
     const allCardReg = /```card[\s\S]+?```/ig
     const allCardMarkdown = markdown.match(allCardReg)
     const ret = []
-    for(let cardMarkdown of allCardMarkdown){
+    for (let cardMarkdown of allCardMarkdown) {
       let id = cardMarkdown.match(idReg)
-      if(Utils.isValidArray(id)){
+      if (Utils.isValidArray(id)) {
         ret.push(Number(id[1]))
       }
     }
     return ret
   }
 
-  async rende() {
+  async rende () {
     const { parser, id, metaService } = this
-    if(!id) return
+    if (!id) return
     try {
       let { content, meta, images } = await metaService.getRenderData(id)
       let { title } = meta
@@ -62,9 +62,9 @@ class ZKRender extends Render {
       let buylinks = []
       // 先读diaodiao_buyinfo表
       // 根据文章id获取其buylink
-      for(let cid of cids) {
+      for (let cid of cids) {
         let buylink = await metaService.getBuylink(cid)
-        buylinks.push({cid, link: Utils.convertSkuUrl(buylink, cid) })
+        buylinks.push({ cid, link: Utils.convertSkuUrl(buylink, cid) })
       }
       let body = parser.setBuylinks(buylinks).getHTML()
       // console.log(`ID为${id}的专刊引用的文章ID列表为：`,cids)

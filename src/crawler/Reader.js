@@ -38,36 +38,38 @@ class Reader {
           reject(err)
         } else {
           resolve(
-            text.split(/\n/)
-            // .filter(content => /goodthing|firstpage|experience|zhuankan|zhuanti/.test(content))
-            // .filter(content => /zhuankan|zhuanti/.test(content))
-            .map(content => {
-              if(!content) return;
-              // 这个脚本填充 article_meta 和 image表
-              let article = null
-              try {
-                article = JSON.parse(content)
-              } catch (e) {
-                console.log(e)
-                return
-              }
-              const { node } = article
-              let { type } = node
-              let id = Number(node.nid)
-              // let [id, type] = content.split(/\s+/)
-              const item = { id, m: 'show', type }
-              switch (type) {
-                case 'zhuankan':
-                  item.m = 'zk'
-                  break;
-                case 'zhuanti':
-                  item.m = 'zt'
-                  break;
-              }
-              item.url = `http://c.diaox2.com/view/app/?m=${item.m}&id=${id}`
-              // console.log(item)
-              return item
-            }).sort((c1, c2) => c2.id - c1.id)
+            text
+              .split(/\n/)
+              // .filter(content => /goodthing|firstpage|experience|zhuankan|zhuanti/.test(content))
+              // .filter(content => /zhuankan|zhuanti/.test(content))
+              .map(content => {
+                if (!content) return
+                // 这个脚本填充 article_meta 和 image表
+                let article = null
+                try {
+                  article = JSON.parse(content)
+                } catch (e) {
+                  console.log(e)
+                  return
+                }
+                const { node } = article
+                let { type } = node
+                let id = Number(node.nid)
+                // let [id, type] = content.split(/\s+/)
+                const item = { id, m: 'show', type }
+                switch (type) {
+                  case 'zhuankan':
+                    item.m = 'zk'
+                    break
+                  case 'zhuanti':
+                    item.m = 'zt'
+                    break
+                }
+                item.url = `http://c.diaox2.com/view/app/?m=${item.m}&id=${id}`
+                // console.log(item)
+                return item
+              })
+              .sort((c1, c2) => c2.id - c1.id)
           )
         }
       })

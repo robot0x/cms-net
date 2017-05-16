@@ -1,6 +1,6 @@
 const Render = require('../../')
 const Utils = require('../../../utils/Utils')
-const imageHandler = require('./imageHandler')
+// const imageHandler = require('./imageHandler')
 const Parser = require('./parser')
 const MetaService = require('../../../service/MetaService')
 const Log = require('../../../utils/Log')
@@ -9,25 +9,27 @@ const Log = require('../../../utils/Log')
  *  1. 专刊 zhuankan (ctype = 4)   http://www.diaox2.com/article/4234.html
  */
 class ZKRender extends Render {
-  constructor(id) {
+  constructor (id) {
     super()
     this.setId(id)
     this.template = this.readTemplate(__dirname + '/zk.ejs')
-    this.parser = new Parser
+    this.parser = new Parser()
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
-  setId(id) {
+  setId (id) {
     this.id = id
     return this
   }
 
-  async rende() {
-    const { parser,id } = this
-    if(!id) return
+  async rende () {
+    const { parser, id } = this
+    if (!id) return
     try {
-      let { content, meta, images } = await new MetaService(this.id).getRenderData()
+      let { content, meta, images } = await new MetaService(
+        this.id
+      ).getRenderData()
       let { title, titleex } = meta
       parser.markdown = content // markdown is a setter like method `setMarkdown`
       let body = parser.getHTML()

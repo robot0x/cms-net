@@ -2,13 +2,11 @@ const dbConfig = require('../../config/db')
 const mysql = require('promise-mysql')
 const _ = require('lodash')
 const Log = require('../utils/Log')
-const runLogger = Log.getLogger('cms_run')
 const varLogger = Log.getLogger('cms_var')
 /**
  * 提供基础的与数据库相关的工具方法
  */
 class DB {
-
   // DB.use('cms').exec('select * from article_meta')
   static use (database = 'cms') {
     // return mysql.createPool(dbConfig)
@@ -19,9 +17,9 @@ class DB {
   }
   // id = 1 => where id = 1
   static addWhere (cond) {
-    if(cond){
+    if (cond) {
       cond = DB.normalize(cond)
-      if(cond) {
+      if (cond) {
         return ` where ${cond} `
       }
     }
@@ -40,7 +38,7 @@ class DB {
     if (_.isPlainObject(cond)) {
       const keys = Object.keys(cond)
       let ret = []
-      for(let key of keys) {
+      for (let key of keys) {
         ret.push(`${key} = ${cond[key]}`)
       }
       cond = ret.join(',')
@@ -64,12 +62,12 @@ class DB {
     } else if (_.isPlainObject(cond)) {
       const keys = Object.keys(cond)
       ret = {}
-      for(let key of keys) {
+      for (let key of keys) {
         ret[key] = DB.escape(cond[key])
       }
     } else if (Array.isArray(cond)) {
       ret = []
-      for(let c of cond) {
+      for (let c of cond) {
         ret.push(DB.escapeValue(c))
       }
     }
@@ -107,30 +105,38 @@ class DB {
   /**
    * 执行单条sql语句，单条语句的话，没有必要执行事务
    */
-   static exec (sql, data) {
-     return new Promise((resolve, reject) => {
-       DB.getConnection().then(connection => {
-           console.log("[DB.exec] got connetion")
-           console.log(`[DB.exe] prepare to run ${sql} ${data? `with ${data}` : ''}`)
-           console.log(sql)
-           connection.query(sql, data).then(rows => {
-             console.log('[DB.exec] got row ', rows.length);
-             resolve(rows)
-           }).catch(err => {
-             console.log("[DB.exec] query error %s", err);
-             varLogger.error(err);
-             reject(err)
-           }).finally(() => {
-           // 一定要释放连接，否则可能导致连接池中无可用连接而hang住数据库
-           this.releaseConnection(connection)
-         })
-       }).catch(e => {
-         console.log("[DB.exec] getConnection error %s", err);
-         varLogger.error(err);
-         reject(err)
-       })
-     })
-   }
+  static exec (sql, data) {
+    return new Promise((resolve, reject) => {
+      DB.getConnection()
+        .then(connection => {
+          console.log('[DB.exec] got connetion')
+          console.log(
+            `[DB.exe] prepare to run ${sql} ${data ? `with ${data}` : ''}`
+          )
+          console.log(sql)
+          connection
+            .query(sql, data)
+            .then(rows => {
+              console.log('[DB.exec] got row ', rows.length)
+              resolve(rows)
+            })
+            .catch(err => {
+              console.log('[DB.exec] query error %s', err)
+              varLogger.error(err)
+              reject(err)
+            })
+            .finally(() => {
+              // 一定要释放连接，否则可能导致连接池中无可用连接而hang住数据库
+              this.releaseConnection(connection)
+            })
+        })
+        .catch(e => {
+          console.log('[DB.exec] getConnection error %s', err)
+          varLogger.error(err)
+          reject(err)
+        })
+    })
+  }
 }
 DB.pool = DB.use()
 // DB.exec('select * from diaodiao_article_meta').then(data => console.log(data.length))

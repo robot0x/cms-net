@@ -1,5 +1,5 @@
 const Render = require('../../')
-const Utils = require('../../../utils/Utils')
+// const Utils = require('../../../utils/Utils')
 const Parser = require('./parser')
 const BuyinfoService = require('../../../service/BuyinfoService')
 const Log = require('../../../utils/Log')
@@ -8,12 +8,11 @@ const Log = require('../../../utils/Log')
  *  1. 购买页 http://c.diaox2.com/view/app/?m=buy&aid=2112
  */
 class BuyRender extends Render {
-
   constructor (aid) {
     super()
     this.setAid(aid)
     this.template = this.readTemplate(__dirname + '/buy.ejs')
-    this.parser = new Parser
+    this.parser = new Parser()
   }
 
   setAid (aid) {
@@ -22,11 +21,11 @@ class BuyRender extends Render {
   }
 
   async rende () {
-    const {aid} = this
-    if(!aid) return
+    const { aid } = this
+    if (!aid) return
     try {
       let { meta, buyinfos } = await new BuyinfoService(aid).getRenderData()
-      let {id, title, thumb_image_url} = meta
+      let { id, title, thumb_image_url } = meta
       return this.getDoc(this.template, {
         id,
         title,

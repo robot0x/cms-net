@@ -21,7 +21,7 @@ class ShowRender extends Render {
     super()
     this.setId(id)
 
-    this.parser = new Parser
+    this.parser = new Parser()
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
@@ -42,7 +42,7 @@ class ShowRender extends Render {
   setPageType (pageType) {
     this.pageType = pageType
     let tempFile = __dirname + '/show.ejs'
-    if(/share/i.test(this.pageType)) {
+    if (/share/i.test(this.pageType)) {
       tempFile = __dirname + '/share.ejs'
     }
     this.template = this.readTemplate(tempFile)
@@ -50,9 +50,9 @@ class ShowRender extends Render {
   }
   async getRelsearchWords (id = this.id) {
     let searchWords = await relsearch(id)
-    if(!Utils.isValidArray(searchWords)) return null
+    if (!Utils.isValidArray(searchWords)) return null
     let words = []
-    for(let word of searchWords) {
+    for (let word of searchWords) {
       words.push(`'${word}'`)
     }
     return words.join(',')
@@ -60,78 +60,87 @@ class ShowRender extends Render {
   // 拿出文章关联的所有sku
   async _getSkus (id = this.id) {
     let skus = null
-    const result = await Promise.promisify(request)('http://s5.a.dx2rd.com:3000/v1/articlesku/' + id)
+    const result = await Promise.promisify(request)(
+      'http://s5.a.dx2rd.com:3000/v1/articlesku/' + id
+    )
     let { data } = JSON.parse(result.body)
     skus = data[Utils.toLongId(id)]
     return skus
   }
   async rende () {
-    const { parser,id } = this
-    if(!id) return
-   try {
-     let { content, meta, author, images } = await new MetaService().getRenderData(id, true)
-     let {title, ctype, timetopublish, price, has_buylink, buylink} = meta
-     let relwords = await this.getRelsearchWords()
-     // 在此处进行ctype判断
-     parser.markdown = content // markdown is a setter like method `setMarkdown`
-     let body = await parser.getHTML()
-     body = imageHandler(body, images)
-     //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
-     let cover = images.filter(img => {
-       return (img.type & 2) === 2
-     })
-     let thumb = images.filter(img => {
-       return (img.type & 8) === 8
-     })
-     const swipes = images.filter(img => {
-       return (img.type & 16) === 16
-     })
-     thumb = Utils.getFirst(thumb)
-     cover = Utils.getFirst(cover)
-     let shouldUsedSku = null
+    const { parser, id } = this
+    if (!id) return
+    try {
+      let {
+        content,
+        meta,
+        author,
+        images
+      } = await new MetaService().getRenderData(id, true)
+      let { title, ctype, timetopublish, price, has_buylink, buylink } = meta
+      let relwords = await this.getRelsearchWords()
+      // 在此处进行ctype判断
+      parser.markdown = content // markdown is a setter like method `setMarkdown`
+      let body = await parser.getHTML()
+      body = imageHandler(body, images)
+      //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
+      let cover = images.filter(img => {
+        return (img.type & 2) === 2
+      })
+      let thumb = images.filter(img => {
+        return (img.type & 8) === 8
+      })
+      const swipes = images.filter(img => {
+        return (img.type & 16) === 16
+      })
+      thumb = Utils.getFirst(thumb)
+      cover = Utils.getFirst(cover)
+      let shouldUsedSku = null
 
-     // 如果是好物页，拿出所有的sku，并取出第一个，赋值给页面的 g_ab 变量，由前端js在页面底部插入这条sku
-     if(ctype == 2) {
-       const skus = await this._getSkus()
-       if(Utils.isValidArray(skus)){
-         shouldUsedSku = Utils.getFirst(skus)
-         try {
-           shouldUsedSku.images = JSON.parse(shouldUsedSku.images)
-         } catch (e) {
-           shouldUsedSku.images = []
-         }
-       }
-     }
+      // 如果是好物页，拿出所有的sku，并取出第一个，赋值给页面的 g_ab 变量，由前端js在页面底部插入这条sku
+      if (ctype == 2) {
+        const skus = await this._getSkus()
+        if (Utils.isValidArray(skus)) {
+          shouldUsedSku = Utils.getFirst(skus)
+          try {
+            shouldUsedSku.images = JSON.parse(shouldUsedSku.images)
+          } catch (e) {
+            shouldUsedSku.images = []
+          }
+        }
+      }
       // 首页和经验，顶部出的一定是时间
       // 好物有price出price，否则出时间
-      if(ctype === 1 || ctype === 5) {
+      if (ctype === 1 || ctype === 5) {
         price = ''
       }
       return this.getDoc(this.template, {
-         id,
-         body,
-         title,
-         author,
-         swipes,
-         thumb,
-         cover,
-         price,
-         date: timetopublish ? moment(timetopublish, 'YYYYMMDD').format('YYYY-MM-DD'): '',
-         relwords,
-         shouldUsedSku,
-         type: Utils.ctypeToType(ctype),
-         has_buylink,
-         //  如果有购买链接且购买链接是sku页，则需要转成 /sku/longid/sid.html这种形式，用来进行统计
-         buylink: Utils.convertSkuUrl(buylink, id),
-         pageType: this.pageType,
-         downloadAddr: this.downloadAddr,
-         prefix: this.prefix,
-         version: this.version,
-       })
-   } catch (e) {
+        id,
+        body,
+        title,
+        author,
+        swipes,
+        thumb,
+        cover,
+        price,
+        date: timetopublish
+          ? moment(timetopublish, 'YYYYMMDD').format('YYYY-MM-DD')
+          : '',
+        relwords,
+        shouldUsedSku,
+        type: Utils.ctypeToType(ctype),
+        has_buylink,
+        //  如果有购买链接且购买链接是sku页，则需要转成 /sku/longid/sid.html这种形式，用来进行统计
+        buylink: Utils.convertSkuUrl(buylink, id),
+        pageType: this.pageType,
+        downloadAddr: this.downloadAddr,
+        prefix: this.prefix,
+        version: this.version
+      })
+    } catch (e) {
       Log.exception(e)
       return null
-   }
+    }
   }
 }
 //

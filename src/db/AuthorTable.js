@@ -3,7 +3,22 @@ const Utils = require('../utils/Utils')
 
 class AuthorTable extends Table {
   constructor () {
-    super('diaodiao_author', ['source','title','intro','type','pic_uri', 'link','naming','value','brief'], null, null)
+    super(
+      'diaodiao_author',
+      [
+        'source',
+        'title',
+        'intro',
+        'type',
+        'pic_uri',
+        'link',
+        'naming',
+        'value',
+        'brief'
+      ],
+      null,
+      null
+    )
   }
   // article_content的主键为aid
   async getBySource (source) {

@@ -1,7 +1,6 @@
-const Parser = require('../../../parser')
+// const Parser = require('../../../parser')
 
-class AuthorParser{
-
+class AuthorParser {
   setMetas (metas) {
     this.metas = metas
     return this
@@ -11,10 +10,10 @@ class AuthorParser{
     let html = ''
     let { metas } = this
     let metaslen = metas.length
-    if(metaslen > len){
+    if (metaslen > len) {
       metas = metas.slice(0, len)
     }
-    for(let meta of metas) {
+    for (let meta of metas) {
       html += `
         <li class="article clearfix">
           <a href="//www.diaox2.com/article/${meta.nid}.html">

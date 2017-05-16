@@ -1,7 +1,7 @@
-const Parser = require('../../../parser')
+// const Parser = require('../../../parser')
 const Utils = require('../../../utils/Utils')
 
-class RssParser{
+class RssParser {
   setMetas (metas) {
     this.metas = metas
     // console.log(metas);
@@ -15,8 +15,8 @@ class RssParser{
     if (metaslen > limit) {
       metas = metas.slice(0, limit)
     }
-    for(let meta of metas) {
-      let {id, title, longid, thumb_image_url, ctype } = meta
+    for (let meta of metas) {
+      let { id, title, longid, thumb_image_url, ctype } = meta
       // console.log(id);
       html += `
       <div class="articlecard" data-href="//c.diaox2.com/view/app/?m=${Utils.ctypeToM(ctype)}&id=${id}">

@@ -24,51 +24,54 @@ const path = require('path')
 const theAbsolutePathDirOfLogfiles = path.resolve(__dirname, '../', 'logs')
 // https://github.com/nomiddlename/log4js-node/wiki/Layouts
 // 2017-05-13 13:16:07.464 [INFO] - 这是一条业务
-const pattern = "[%d] [%p] - %m"
+const pattern = '[%d] [%p] - %m'
 const log4jsConfig = {
   appenders: [
     {
-      type: "console",
-      category: "console"
-    }, {
+      type: 'console',
+      category: 'console'
+    },
+    {
       //
-      category: "http",
-      type: "file",
+      category: 'http',
+      type: 'file',
       filename: `${theAbsolutePathDirOfLogfiles}/http/access.log`,
       // 当http日志文件超过200kb，会自动生成 http.log.1/http.log.2/ ... 以此类推
       // 后面的数字有 buckups 的大小决定
       maxLogSize: 204800,
       backups: 10
-    }, {
+    },
+    {
       // 最终生成的业务log文件形如：business.log.2017-05-13
-      category: "business",
-      type: "dateFile",
+      category: 'business',
+      type: 'dateFile',
       filename: `${theAbsolutePathDirOfLogfiles}/business/business`,
       alwaysIncludePattern: true,
-      pattern: ".log.yyyy-MM-dd",
+      pattern: '.log.yyyy-MM-dd',
       layout: {
-        type: "pattern",
+        type: 'pattern',
         pattern
       }
-    }, {
+    },
+    {
       // 最终生成的异常log文件形如：exception.log.2017-05-13
-      category: "exception",
-      type: "dateFile",
+      category: 'exception',
+      type: 'dateFile',
       filename: `${theAbsolutePathDirOfLogfiles}/exception/exception`,
       alwaysIncludePattern: true,
-      pattern: ".log.yyyy-MM-dd",
+      pattern: '.log.yyyy-MM-dd',
       layout: {
-        type: "pattern",
+        type: 'pattern',
         pattern
       }
     }
   ],
   replaceConsole: true,
   levels: {
-    business: "info",
-    exception: "ALL",
-    http: "ALL",
-    console: "ALL"
+    business: 'info',
+    exception: 'ALL',
+    http: 'ALL',
+    console: 'ALL'
   }
 }
 

@@ -3,7 +3,7 @@ const mysql = require('mysql')
 const _ = require('lodash')
 const Log = require('../utils/Log')
 const CMS = 'cms'
-const DIAODIAO = 'diaodiao'
+// const DIAODIAO = 'diaodiao'
 
 /**
  * 提供基础的与数据库相关的工具方法
@@ -11,9 +11,9 @@ const DIAODIAO = 'diaodiao'
 class DB {
   // id = 1 => where id = 1
   static addWhere (cond) {
-    if(cond){
+    if (cond) {
       cond = DB.normalize(cond)
-      if(cond) {
+      if (cond) {
         return ` where ${cond} `
       }
     }
@@ -32,7 +32,7 @@ class DB {
     if (_.isPlainObject(cond)) {
       const keys = Object.keys(cond)
       let ret = []
-      for(let key of keys) {
+      for (let key of keys) {
         ret.push(`${key} = ${cond[key]}`)
       }
       cond = ret.join(',')
@@ -56,12 +56,12 @@ class DB {
     } else if (_.isPlainObject(cond)) {
       const keys = Object.keys(cond)
       ret = {}
-      for(let key of keys) {
+      for (let key of keys) {
         ret[key] = DB.escape(cond[key])
       }
     } else if (Array.isArray(cond)) {
       ret = []
-      for(let c of cond) {
+      for (let c of cond) {
         ret.push(DB.escapeValue(c))
       }
     }
@@ -87,27 +87,29 @@ class DB {
   /**
    * 执行单条sql语句，单条语句的话，没有必要执行事务
    */
-   static exec (sql, data) {
-     return new Promise((resolve, reject) => {
-       DB.poolCluster.getConnection(CMS, function(err, connection) {
-      //  DB.poolCluster.getConnection(CMS, DIAODIAO, function(err, connection) {
-         if(err) {
-           reject(err)
-           Log.exception(err)
-         }
-         connection.query(sql, data, (error, rows) => {
-           Log.business(`[DB.exe] ${sql} ${data? `with ${data}` : ''}\nfetch rows\'s length is ${rows.length} `)
-           connection.release()
-           if(error){
-             console.log(error)
-             Log.exception(error)
-             reject(error)
-           }
-           resolve(rows)
-         })
-       })
-     })
-   }
+  static exec (sql, data) {
+    return new Promise((resolve, reject) => {
+      DB.poolCluster.getConnection(CMS, function (err, connection) {
+        //  DB.poolCluster.getConnection(CMS, DIAODIAO, function(err, connection) {
+        if (err) {
+          reject(err)
+          Log.exception(err)
+        }
+        connection.query(sql, data, (error, rows) => {
+          Log.business(
+            `[DB.exe] ${sql} ${data ? `with ${JSON.stringify(data)}` : ''}\nfetch rows\'s length is ${rows.length} `
+          )
+          connection.release()
+          if (error) {
+            console.log(error)
+            Log.exception(error)
+            reject(error)
+          }
+          resolve(rows)
+        })
+      })
+    })
+  }
 }
 
 DB.initPoolCluster()

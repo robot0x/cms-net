@@ -11,26 +11,20 @@ const Log = require('../utils/Log')
 const MetaService = require('./MetaService')
 
 class AuthorService {
-
-  constructor(source) {
-    this.metaTable = new MetaTable
-    this.authorTable = new AuthorTable
-    this.metaService = new MetaService
+  constructor (source) {
+    this.metaTable = new MetaTable()
+    this.authorTable = new AuthorTable()
+    this.metaService = new MetaService()
     this.setSource(source)
   }
 
-  setSource(source) {
+  setSource (source) {
     this.source = source
   }
 
   // 渲染数据接口
-  async getRenderData() {
-    const {
-      authorTable,
-      metaTable,
-      metaService,
-      source
-    } = this
+  async getRenderData () {
+    const { authorTable, metaTable, metaService, source } = this
     try {
       // let source = '+0'
       let author = await authorTable.getBySource(source)
@@ -42,13 +36,13 @@ class AuthorService {
       }
       // 如果aids的长度为1，则返回的是对象而不是对象数组形式，需要处理一下
       let metas = await metaService.getRawMetas(aids, false, true)
-      if(metas && !Utils.isValidArray(metas)) {
+      if (metas && !Utils.isValidArray(metas)) {
         metas = [metas]
       }
       console.log('author:', author)
       console.log('aids:', aids)
       console.log('metas:', metas)
-      if(metas) {
+      if (metas) {
         metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
       }
       author.pic_uri = Utils.addUrlPrefix(author.pic_uri)
@@ -61,7 +55,6 @@ class AuthorService {
       return null
     }
   }
-
 }
 
 // const service = new AuthorService('+0')
