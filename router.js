@@ -349,7 +349,9 @@ router.post('/', async(req, res) => {
 
 // 幸福和快乐是结局 ...
 function happyEnd (e, res) {
+  // 打印异常log
   Log.exception(e)
+  // 直接结束。防止一直没有返回，导致客户端请求一致是pending状态
   res.end()
 }
 
