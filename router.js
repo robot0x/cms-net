@@ -46,20 +46,11 @@ const {
 
 async function showAndZKAndZTRouter(m, id, pageType, req, res) {
   if (/show/.test(m)) {
-    mShowRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share' ? 'showShare' : 'show')).catch(e => {
-      Log.exception(e)
-      res.end()
-    })
+    mShowRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share' ? 'showShare' : 'show')).catch(e => happyEnd(e, res))
   } else if (/zk/.test(m)) {
-    mZKRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share' ? 'zkShare' : 'zk')).catch(e => {
-      Log.exception(e)
-      res.end()
-    })
+    mZKRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share' ? 'zkShare' : 'zk')).catch(e => happyEnd(e, res))
   } else if (/zt/.test(m)) {
-    mZTRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share' ? 'ztShare' : 'zt')).catch(e => {
-      Log.exception(e)
-      res.end()
-    })
+    mZTRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share' ? 'ztShare' : 'zt')).catch(e => happyEnd(e, res))
   } else {
     pageNotFound(res)
   }
@@ -108,10 +99,7 @@ router.get('/', async(req, res) => {
       const defaultSource = '有调机器人'
       src = decodeURIComponent(src || defaultSource)
       console.log('routers.js src is ', src);
-      mAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res, 'author')).catch(e => {
-          Log.exception(e)
-          res.end()
-      })
+      mAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res, 'author')).catch(e => happyEnd(e, res))
       // if (src = decodeURIComponent(src)) {
       //   console.log('routers.js src ', src);
       //   mAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res, 'author')).catch(e => {
@@ -124,15 +112,9 @@ router.get('/', async(req, res) => {
     } else if (/tag/i.test(m)) {
       if (tid && /\d+/.test(tid)) {
         if ('apimode' in req.body) {
-          apimode(tid).then(result => writeJSON(result, res, 'apimode')).catch(e => {
-            Log.exception(e)
-            res.end()
-          })
+          apimode(tid).then(result => writeJSON(result, res, 'apimode')).catch(e => happyEnd(e, res))
         } else {
-          mTagRender.setTid(tid).rende().then(doc => writeDoc(doc, res, 'tag')).catch(e => {
-            Log.exception(e)
-            res.end()
-          })
+          mTagRender.setTid(tid).rende().then(doc => writeDoc(doc, res, 'tag')).catch(e => happyEnd(e, res))
         }
 
       } else {
@@ -141,63 +123,42 @@ router.get('/', async(req, res) => {
     } else if (/buy/i.test(m)) {
       if (aid && /\d+/.test(aid)) {
         console.log('购买页路由被命中，aid为', aid)
-        mBuyRender.setAid(aid).rende().then(doc => writeDoc(doc, res, 'buy')).catch(e => {
-          Log.exception(e)
-          res.end()
-        })
+        mBuyRender.setAid(aid).rende().then(doc => writeDoc(doc, res, 'buy')).catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
       }
     } else if (/sku/i.test(m)) {
       if (sid && /\d+/.test(sid)) {
-        mSkuRender.setSid(sid).rende().then(doc => writeDoc(doc, res, 'sku')).catch(e => {
-          Log.exception(e)
-          res.end()
-        })
+        mSkuRender.setSid(sid).rende().then(doc => writeDoc(doc, res, 'sku')).catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
       }
     } else if (/rss/i.test(m)) {
       if (type) {
-        mRssRender.setType(type).rende().then(doc => writeDoc(doc, res, 'rss')).catch(e => {
-          Log.exception(e)
-          res.end()
-        })
+        mRssRender.setType(type).rende().then(doc => writeDoc(doc, res, 'rss')).catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
       }
     } else if (/jfitem/i.test(m)) {
       if (gid && /\d+/.test(gid)) {
-        mJfitemRender.setPageType('inapp').setGid(gid).rende().then(doc => writeDoc(doc, res, 'jfitem')).catch(e => {
-          Log.exception(e)
-          res.end()
-        })
+        mJfitemRender.setPageType('inapp').setGid(gid).rende().then(doc => writeDoc(doc, res, 'jfitem')).catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
       }
     } else if (/jfmall/i.test(m)) {
       console.log('积分商城页路由命中 ....')
-      mJfMallRender.setPageType('inapp').rende().then(doc => writeDoc(doc, res, 'jfmall')).catch(e => {
-        Log.exception(e)
-        res.end()
-      })
+      mJfMallRender.setPageType('inapp').rende().then(doc => writeDoc(doc, res, 'jfmall')).catch(e => happyEnd(e, res))
     } else if (/metaband/i.test(m)) {
       console.log('文章列表条html路由命中 ....')
       if (id && /\d+/.test(id)) {
-        mMetabandRender.setId(id).rende().then(doc => writeDoc(doc, res, 'metaband')).catch(e => {
-          Log.exception(e)
-          res.end()
-        })
+        mMetabandRender.setId(id).rende().then(doc => writeDoc(doc, res, 'metaband')).catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
       }
     } else if (/meta/i.test(m)) {
       console.log('meta接口的路由被命中：', id)
       if (id && /\d+/.test(id)) {
-        getMetas(id).then(meta => writeJSON(meta, res, 'meta_get')).catch(e => {
-          Log.exception(e)
-          res.end()
-        })
+        getMetas(id).then(meta => writeJSON(meta, res, 'meta_get')).catch(e => happyEnd(e, res))
         // metaService.getRawMetas(id).then(meta => writeJSON(meta, res))
       } else {
         pageNotFound(res)
@@ -205,34 +166,22 @@ router.get('/', async(req, res) => {
     } else if (/relsearch/i.test(m)) {
       console.log('相关搜索接口的路由被命中：', id)
       if (id && /\d+/.test(id)) {
-        relsearch(id).then(result => writeJSON(result, res, 'relsearch')).catch(e => {
-          Log.exception(e)
-          res.end()
-        })
+        relsearch(id).then(result => writeJSON(result, res, 'relsearch')).catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
       }
     } else if (/recommend/i.test(m)) {
       console.log('推荐结果接口的路由被命中ID为', id)
       if (id && /\d+/.test(id)) {
-        recommend(id).then(result => writeJSON(result, res, 'recommend')).catch(e => {
-          Log.exception(e)
-          res.end()
-        })
+        recommend(id).then(result => writeJSON(result, res, 'recommend')).catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
       }
     } else if (/TR/i.test(m)) {
       console.log(`文章搜索按照date的接口的路由被命中，start = ${start}, end = ${end}`)
-      search.byDate(start, end).then(meta => writeJSON(meta, res, 'TR')).catch(e => {
-        Log.exception(e)
-        res.end()
-      })
+      search.byDate(start, end).then(meta => writeJSON(meta, res, 'TR')).catch(e => happyEnd(e, res))
     } else if (/TS/i.test(m)) {
-      search.byTitle(title).then(meta => writeJSON(meta, res, 'TS')).catch(e => {
-        Log.exception(e)
-        res.end()
-      })
+      search.byTitle(title).then(meta => writeJSON(meta, res, 'TS')).catch(e => happyEnd(e, res))
     } else {
       pageNotFound(res)
     }
@@ -246,10 +195,7 @@ router.get(showReg, async(req, res) => {
   let id = Utils.toShortId(match[1])
   console.log('APP内渲染接口被命中 ....', id)
   if (id && /\d+/.test(id)) {
-    show(id).then(result => writeJSON(result, res, 'app_show')).catch(e => {
-      Log.exception(e)
-      res.end()
-    })
+    show(id).then(result => writeJSON(result, res, 'app_show')).catch(e => happyEnd(e, res))
   } else {
     pageNotFound(res)
   }
@@ -275,10 +221,7 @@ router.get(inapp_zdmReg, (req, res) => {
   let activity_cid = match[1]
   let goods_cid = match[2]
   console.log(`app内的值得买活动路由被激活,activity_cid:${activity_cid}, goods_cid:${goods_cid}`)
-  mZDMRender.setData(activity_cid, goods_cid).setPageType('inapp').rende().then(doc => writeDoc(doc, res, 'zdmactivity')).catch(e => {
-    Log.exception(e)
-    res.end()
-  })
+  mZDMRender.setData(activity_cid, goods_cid).setPageType('inapp').rende().then(doc => writeDoc(doc, res, 'zdmactivity')).catch(e => happyEnd(e, res))
 })
 
 const share_zdmReg = /\/zdmshare\/(\d+)_?(\d+)?\.html/
@@ -287,37 +230,25 @@ router.get(share_zdmReg, (req, res) => {
   let activity_cid = match[1]
   let goods_cid = match[2]
   console.log(`值得买活动share页路由被激活,activity_cid:${activity_cid}, goods_cid:${goods_cid}`)
-  mZDMRender.setData(activity_cid, goods_cid).setPageType('share').rende().then(doc => writeDoc(doc, res, 'zdmshare')).catch(e => {
-    Log.exception(e)
-    res.end()
-  })
+  mZDMRender.setData(activity_cid, goods_cid).setPageType('share').rende().then(doc => writeDoc(doc, res, 'zdmshare')).catch(e => happyEnd(e, res))
 })
 
 router.get(/\/mall\.html/, (req, res) => {
-  mJfMallRender.setPageType('share').rende().then(doc => writeDoc(doc, res, 'jfmallShare')).catch(e => {
-    Log.exception(e)
-    res.end()
-  })
+  mJfMallRender.setPageType('share').rende().then(doc => writeDoc(doc, res, 'jfmallShare')).catch(e => happyEnd(e, res))
 })
 
 const gidReg = /\/jfitem\/(\d+)\.html/
 router.get(gidReg, (req, res) => {
   let match = req.originalUrl.match(gidReg)
   let gid = match[1]
-  mJfitemRender.setPageType('share').setGid(gid).rende().then(doc => writeDoc(doc, res, 'jfitem')).catch(e => {
-    Log.exception(e)
-    res.end()
-  })
+  mJfitemRender.setPageType('share').setGid(gid).rende().then(doc => writeDoc(doc, res, 'jfitem')).catch(e => happyEnd(e, res))
 })
 
 const uidReg = /\/invite\/(\d+)\.html/
 router.get(uidReg, (req, res) => {
   let match = req.originalUrl.match(uidReg)
   let uid = match[1]
-  mInviteRender.setUid(uid).rende().then(doc => writeDoc(doc, res, 'invite')).catch(e => {
-    Log.exception(e)
-    res.end()
-  })
+  mInviteRender.setUid(uid).rende().then(doc => writeDoc(doc, res, 'invite')).catch(e => happyEnd(e, res))
 })
 
 const pcShowReg = /\/article\/(\d+)\.html/
@@ -331,15 +262,9 @@ router.get(pcShowReg, async(req, res) => {
     // 好物/首页/经验/活动
     // if(ctype === 1 || ctype === 2 || ctype === 4 || ctype === 5) {
     if (/^1|2|4|5$/.test(ctype)) {
-      pShowRender.setId(id).rende().then(doc => writeDoc(doc, res, 'article')).catch(e => {
-        Log.exception(e)
-        res.end()
-      })
+      pShowRender.setId(id).rende().then(doc => writeDoc(doc, res, 'article')).catch(e => happyEnd(e, res))
     } else if (ctype === 3) { // 专刊
-      pZKRender.setId(id).rende().then(doc => writeDoc(doc, res, 'pc_zk')).catch(e => {
-        Log.exception(e)
-        res.end()
-      })
+      pZKRender.setId(id).rende().then(doc => writeDoc(doc, res, 'pc_zk')).catch(e => happyEnd(e, res))
     } else {
       pageNotFound(res)
     }
@@ -352,10 +277,7 @@ const mSkuReg = /\/sku\/(?:\d+\/)?(\d+)\.html/
 router.get(mSkuReg, (req, res) => {
   let match = req.originalUrl.match(mSkuReg)
   let sid = match[1]
-  mSkuRender.setSid(sid).rende().then(doc => writeDoc(doc, res, 'sku')).catch(e => {
-    Log.exception(e)
-    res.end()
-  })
+  mSkuRender.setSid(sid).rende().then(doc => writeDoc(doc, res, 'sku')).catch(e => happyEnd(e, res))
 })
 
 const pcEditorReg = /\/editor\/(.+)\.html/
@@ -366,10 +288,7 @@ router.get(pcEditorReg, (req, res) => {
    * 但是很奇怪，对于/?m=author&src=土豆泥，虽然浏览器也encode了，但是没有decode也没问题
    */
   let src = decodeURIComponent(match[1])
-  pAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res, 'editor')).catch(e => {
-    Log.exception(e)
-    res.end()
-  })
+  pAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res, 'editor')).catch(e => happyEnd(e, res))
 })
 
 const pcCategoryReg = /\/category\/(\d+)\.html/
@@ -377,10 +296,7 @@ router.get(pcCategoryReg, (req, res) => {
   let match = req.originalUrl.match(pcCategoryReg)
   let tid = match[1]
   console.log(tid)
-  pTagRender.setTid(tid).rende().then(doc => writeDoc(doc, res, 'category')).catch(e => {
-    Log.exception(e)
-    res.end()
-  })
+  pTagRender.setTid(tid).rende().then(doc => writeDoc(doc, res, 'category')).catch(e => happyEnd(e, res))
 })
 
 
@@ -400,10 +316,7 @@ router.post('/', async(req, res) => {
     console.log('/TR/i.test(m)：', /TR/i.test(m))
     if (/genpub/i.test(m)) {
       console.log('命中genpub接口 ....')
-      genpub(postData).then(data => writeJSON(data, res, 'genpub')).catch(e => {
-        Log.exception(e)
-        res.end()
-      })
+      genpub(postData).then(data => writeJSON(data, res, 'genpub')).catch(e => happyEnd(e, res))
     } else if (/meta/i.test(m)) {
       console.log('命中meta POST接口 ...., postData为：', postData)
       let cids = postData.cids
@@ -419,27 +332,26 @@ router.post('/', async(req, res) => {
     } else if (/TR/i.test(m)) {
       // console.log(`文章搜索按照date的接口的路由被命中，start = ${start}, end = ${end}` )
       let start = null
-      let end = null
+      let end = nullx
       if (postData) {
         start = postData.start
         end = postData.end
       }
-      search.byDate(start, end).then(meta => writeJSON(meta, res, 'TR')).catch(e => {
-        Log.exception(e)
-        res.end()
-      })
+      search.byDate(start, end).then(meta => writeJSON(meta, res, 'TR')).catch(e => happyEnd(e, res))
     } else if (/TS/i.test(m)) {
       // console.log('命中TS POST接口 ....')
       // console.log(postData)
       // res.json('noting')
-      search.byTitle(postData).then(meta => writeJSON(meta, res, 'TS')).catch(e => {
-        Log.exception(e)
-        res.end()
-      })
+      search.byTitle(postData).then(meta => writeJSON(meta, res, 'TS')).catch(e => happyEnd(e, res))
     }
   }
 })
 
+// 幸福和快乐是结局 ...
+function happyEnd (e, res) {
+  Log.exception(e)
+  res.end()
+}
 
 function redirect(res, Location) {
   res.writeHead(302, {
