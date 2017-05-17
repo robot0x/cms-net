@@ -11,7 +11,7 @@ const recommend = require(`${SRC}/api/recommend`) // 推荐结果接口
 const search = require(`${SRC}/api/search`) // 文章搜索。按照title搜索，按照date搜索
 const show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，按照date搜索
 const getMetas = require(`${SRC}/api/meta`) // meta接口
-const apimode = require(`${SRC}/api/apimode`) // m=tag&tid=100081&apimode 接口
+const apimode = require(`${SRC}/api/apimode`) // apimode接口
 const MetaTable = require(`${SRC}/db/MetaTable`)
 const metaTable = new MetaTable
 const moment = require('moment')

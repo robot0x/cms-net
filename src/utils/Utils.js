@@ -235,13 +235,13 @@ class Utils {
   }
   /**
    * 输入形如：
-   *  //content.image.alimmdn.com/cms/sites/default/files/20160122/experience/kk.jpg
-   *  http://content.image.alimmdn.com/cms/sites/default/files/20141014/firstpage/coffeelast.jpg
-   *  https://content.image.alimmdn.com/cms/sites/default/files/20150120/experience/0_0.jpg
+   *  1. //content.image.alimmdn.com/cms/sites/default/files/20160122/experience/kk.jpg
+   *  2. http://content.image.alimmdn.com/cms/sites/default/files/20141014/firstpage/coffeelast.jpg
+   *  3. https://content.image.alimmdn.com/cms/sites/default/files/20150120/experience/0_0.jpg
    * 输出：
-   *   content.image.alimmdn.com/cms/sites/default/files/20160122/experience/kk.jpg
-   *   content.image.alimmdn.com/cms/sites/default/files/20141014/firstpage/coffeelast.jpg
-   *   content.image.alimmdn.com/cms/sites/default/files/20150120/experience/0_0.jpg
+   *  1. content.image.alimmdn.com/cms/sites/default/files/20160122/experience/kk.jpg
+   *  2. content.image.alimmdn.com/cms/sites/default/files/20141014/firstpage/coffeelast.jpg
+   *  3. content.image.alimmdn.com/cms/sites/default/files/20150120/experience/0_0.jpg
    */
   static removeProtocolHead (url) {
     try {

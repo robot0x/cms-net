@@ -54,8 +54,8 @@ module.exports = {
     // 服务端错误
     return res.json({
       status: 500,
-      server_timestamp: server_timestamp,
-      message: `后端报错：${err.message}`
+      server_timestamp: Date.now(),
+      message: `后端报错：${err}`
     })
   },
 
