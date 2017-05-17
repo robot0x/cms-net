@@ -3,11 +3,10 @@ const appConfig = require('../../config/app')
 const moment = require('moment')
 
 class Utils {
-
   // 如果是阿里云图，则加上后缀，否则不用处理
   static addAliImageSuffix (url, suffix = '@200w_200h_1e%7C200x200-5rc') {
-    if(/content\.image\.alimmdn\.com/i.test(url)){
-        url += '@200w_200h_1e%7C200x200-5rc'
+    if (/content\.image\.alimmdn\.com/i.test(url)) {
+      url += '@200w_200h_1e%7C200x200-5rc'
     }
     return url
   }
@@ -17,7 +16,9 @@ class Utils {
    */
   static genTimetopublishInterval (col = 'timetopublish') {
     // 从 [20141108, 明天) 的数据，即截止到今天
-    return ` (${col} BETWEEN 20141108 AND ${Number(moment().add(1, 'days').format('YYYYMMDD'))}) `
+    return ` (${col} BETWEEN 20141108 AND ${Number(moment()
+        .add(1, 'days')
+        .format('YYYYMMDD'))}) `
   }
 
   // 把sku的形如：http://c.diaox2.com/view/app/sku/8383.html
@@ -25,32 +26,32 @@ class Utils {
   static convertSkuUrl (buylink, id) {
     // console.log('[Utils.convertSkuUrl] input  is:', buylink)
     //  如果有购买链接且购买链接是sku页，则需要转成 /sku/longid/sid.html这种形式，用来进行统计
-     if(/\/sku\//i.test(buylink)) {
-        let mSkuReg = /\/sku\/(?:\d+\/)?(\d+)\.html/
-        let match = buylink.match(mSkuReg)
-        let sid = match[1]
-        buylink = `//c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${sid}.html`
-     }
+    if (/\/sku\//i.test(buylink)) {
+      let mSkuReg = /\/sku\/(?:\d+\/)?(\d+)\.html/
+      let match = buylink.match(mSkuReg)
+      let sid = match[1]
+      buylink = `//c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${sid}.html`
+    }
     //  console.log('[Utils.convertSkuUrl] output is:', buylink)
-     return buylink
+    return buylink
   }
   static addUrlPrefix (url) {
-    if(!url) return null
-    if(!/^(https?:)?\/\//.test(url)) {
+    if (!url) return null
+    if (!/^(https?:)?\/\//.test(url)) {
       url = appConfig.CDIAOX2 + url
     }
     return url
   }
   static toShortId (ids) {
     const factor = 4294967297 // Math.pow(2, 32) + 1
-    const factor2 = 0XFFFFFF
+    const factor2 = 0xffffff
     const numReg = /^\d+$/
     let ret = null
-    if(Utils.isValidArray(ids)) {
+    if (Utils.isValidArray(ids)) {
       ret = []
       for (let id of ids) {
         if (numReg.test(id)) {
-          if(id >= factor) {
+          if (id >= factor) {
             ret.push(id & factor2)
           } else {
             ret.push(id)
@@ -58,7 +59,7 @@ class Utils {
         }
       }
     } else if (numReg.test(ids)) {
-      if(ids >= factor){
+      if (ids >= factor) {
         ret = ids & factor2
       } else {
         ret = ids
@@ -69,22 +70,21 @@ class Utils {
 
   static toLongId (ids) {
     const factor = 4294967297 // Math.pow(2, 32) + 1
-    const factor2 = 0XFFFFFF
     const numReg = /^\d+$/
     let ret = null
-    if(Utils.isValidArray(ids)) {
+    if (Utils.isValidArray(ids)) {
       ret = []
       for (let id of ids) {
         if (numReg.test(id)) {
-          if(id < factor) {
+          if (id < factor) {
             ret.push(id * factor)
           } else {
             ret.push(id)
           }
         }
       }
-    } else if (numReg.test(ids) ) {
-      if(ids < factor){
+    } else if (numReg.test(ids)) {
+      if (ids < factor) {
         ret = ids * factor
       } else {
         ret = ids
@@ -92,7 +92,6 @@ class Utils {
     }
     return ret
   }
-
 
   // 获取数组中第一个元素
   static getFirst (data) {
@@ -112,28 +111,28 @@ class Utils {
     switch (ctype) {
       case 1:
         m = 'show'
-        break;
+        break
       case 2:
         m = 'show'
-        break;
+        break
       case 3:
         m = 'zk'
-        break;
+        break
       case 4:
         m = 'show'
-        break;
+        break
       case 5:
         m = 'show'
-        break;
+        break
       case 7:
         m = 'zdm'
-        break;
+        break
       case 8:
         m = 'ceping'
-        break;
+        break
       case 9:
         m = 'zt'
-        break;
+        break
       default:
         m = null
     }
@@ -146,28 +145,28 @@ class Utils {
     switch (ctype) {
       case 1:
         type = 'firstpage'
-        break;
+        break
       case 2:
         type = 'goodthing'
-        break;
+        break
       case 3:
         type = 'zhuankan'
-        break;
+        break
       case 4:
         type = 'activity'
-        break;
+        break
       case 5:
         type = 'experience'
-        break;
+        break
       case 7:
         type = 'zdm'
-        break;
+        break
       case 8:
         type = 'ceping'
-        break;
+        break
       case 9:
         type = 'zhuanti'
-        break;
+        break
       default:
         type = 'nothing'
     }
@@ -185,7 +184,7 @@ class Utils {
    *  其他url原样返回
    */
   static normalize (src) {
-    if(!src) return src
+    if (!src) return src
     let { host, hash } = url.parse(src, true, true)
     /**
      * 如果 host 为null，则一定是我们自己的url
@@ -200,32 +199,32 @@ class Utils {
     // let cmsDiaoReg = /\/cms\/diaodiao\/articles\/(?:goodthing|firstpage|experience|weekend)\/\d+_(\d+)?\.html/i
     // console.log(host)
     let ret = ''
-    if(/null|diaox2\.com|s2\.a\.dx2rd\.com|42\.96\.166\.118/.test(host)){
+    if (/null|diaox2\.com|s2\.a\.dx2rd\.com|42\.96\.166\.118/.test(host)) {
       hash = hash || ''
       let viewAppReg = /view\/app\/\?m=\w+&id=(\d+)?(?:&ch=goodthing)?/i
-      let cmsDDReg   = /cms\/diaodiao\/articles\/\w+\/\d+_(\d+)?\.html/i
-      let pcSiteReg  = /article\/(\d+)\.html/i
-      let shareReg   = /share\/(\d+)\.html/i
-      let skuReg     = /view\/app\/sku\/(\d+)\.html/i
+      let cmsDDReg = /cms\/diaodiao\/articles\/\w+\/\d+_(\d+)?\.html/i
+      let pcSiteReg = /article\/(\d+)\.html/i
+      let shareReg = /share\/(\d+)\.html/i
+      let skuReg = /view\/app\/sku\/(\d+)\.html/i
       let match = null
       let isSku = false
-      if(match = src.match(viewAppReg)){
+      if ((match = src.match(viewAppReg))) {
         ret = match[1]
-      } else if(match = src.match(cmsDDReg)){
+      } else if ((match = src.match(cmsDDReg))) {
         ret = match[1]
-      } else if(match = src.match(pcSiteReg)){
+      } else if ((match = src.match(pcSiteReg))) {
         ret = match[1]
-      } else if(match = src.match(shareReg)){
+      } else if ((match = src.match(shareReg))) {
         ret = match[1] & 0xffffff
-      } else if(match = src.match(skuReg)){
+      } else if ((match = src.match(skuReg))) {
         ret = match[1]
         isSku = true
       }
-      if(ret && !isSku){
+      if (ret && !isSku) {
         ret += ' ' + hash
       }
     }
-    return ret ? ret  : src
+    return ret || src
   }
 
   /**
@@ -244,29 +243,30 @@ class Utils {
    *   content.image.alimmdn.com/cms/sites/default/files/20141014/firstpage/coffeelast.jpg
    *   content.image.alimmdn.com/cms/sites/default/files/20150120/experience/0_0.jpg
    */
-  static removeProtocolHead(url) {
-    try{
+  static removeProtocolHead (url) {
+    try {
       // 如果url不存在或者不是以 http:// or https:// or // 开头，则直接返回url
-      if(!Utils.hasProtocol(url)){
+      if (!Utils.hasProtocol(url)) {
         return url
       }
       url = url.replace(/^(https?:)?\/\//i, '')
       return url
-    }catch(e){
+    } catch (e) {
       return url
     }
   }
   // 获取文件扩展名
   // http://leftstick.github.io/tech/2016/04/23/how-to-get-the-file-extension-more-efficiently
-  static getFileExtension( filename = '' ) {
+  static getFileExtension (filename = '') {
     // 形如 content.image.alimmdn.com/sku/1492441129999184_jpg.jpeg@200w_200h_1e%7C200x200-5rc ，的url，得到的扩展名为jpeg@200w_200h_1e%7C200x200-5rc，显然是有问题的
-    const extension_name = filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2)
-    if(extension_name && extension_name.indexOf('@') !== -1){
-      return extension_name.split('@')[0]
+    const extensionName = filename.slice(
+      ((filename.lastIndexOf('.') - 1) >>> 0) + 2
+    )
+    if (extensionName && extensionName.indexOf('@') !== -1) {
+      return extensionName.split('@')[0]
     }
-    return extension_name
+    return extensionName
   }
-
 }
 
 // console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=show&id=9625'))

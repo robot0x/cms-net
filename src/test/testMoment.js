@@ -27,4 +27,7 @@ const moment = require('moment')
 // console.log('expires:', expires)
 
 let timetopublish = moment('20141108', 'YYYYMMDD')
+let timestamp = timetopublish.valueOf()
 console.log('timetopublish string:', timetopublish.format('YYYY-MM-DD'))
+console.log('timestamp:', timestamp)
+console.log('new Date:', new Date(timestamp))
