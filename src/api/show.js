@@ -151,7 +151,7 @@ class Show {
    * @memberof Show
    * 根据id拿到firstpage/goodthing/activity/exprience类型的渲染数据
    */
-〔方案選單〕  async getArticleData (id, ctype) {
+  async getArticleData (id, ctype) {
     Log.business('[API show showArticle] 输入参数为：', id)
     try {
       let content = await contentTable.getById(id)
