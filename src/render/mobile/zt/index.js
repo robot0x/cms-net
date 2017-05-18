@@ -13,7 +13,7 @@ class ZTRender extends Render {
   constructor (id) {
     super()
     this.setId(id)
-    this.template = this.readTemplate(__dirname + '/zt.ejs')
+    this.template = this.readTemplate(require('path').resolve(__dirname, 'zt.ejs'))
     this.parser = new Parser()
   }
   /**

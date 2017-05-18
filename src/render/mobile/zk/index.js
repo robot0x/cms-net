@@ -12,7 +12,7 @@ class ZKRender extends Render {
   constructor (id) {
     super()
     this.setId(id)
-    this.template = this.readTemplate(__dirname + '/zk.ejs')
+    this.template = this.readTemplate(require('path').resolve(__dirname, 'zk.ejs'))
     this.parser = new Parser()
     this.metaService = new MetaService()
   }
@@ -36,20 +36,6 @@ class ZKRender extends Render {
     return this
   }
 
-  getCidByMarkdown (markdown) {
-    const idReg = /id[:：]\s*(\d+)\s*title[:：]/
-    const allCardReg = /```card[\s\S]+?```/ig
-    const allCardMarkdown = markdown.match(allCardReg)
-    const ret = []
-    for (let cardMarkdown of allCardMarkdown) {
-      let id = cardMarkdown.match(idReg)
-      if (Utils.isValidArray(id)) {
-        ret.push(Number(id[1]))
-      }
-    }
-    return ret
-  }
-
   async rende () {
     const { parser, id, metaService } = this
     if (!id) return
@@ -58,7 +44,7 @@ class ZKRender extends Render {
       let { title } = meta
       parser.markdown = content // markdown is a setter like method `setMarkdown`
       //  对于专刊，我们要先取出所引用的所有文章id
-      let cids = this.getCidByMarkdown(content)
+      let cids = Utils.getCidByMarkdown(content)
       let buylinks = []
       // 先读diaodiao_buyinfo表
       // 根据文章id获取其buylink

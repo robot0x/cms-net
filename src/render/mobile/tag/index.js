@@ -44,7 +44,7 @@ class TagRender extends Render {
         .getRenderData()
       let allarticles = []
       let infos = Object.create(null)
-      let len = allarticles.length
+      // let len = allarticles.length
       // console.log(metas)
       for (let meta of metas) {
         let { id, title } = meta

@@ -20,11 +20,9 @@
 </head>
 <body id="<%-4294967297 * id%>" class="<%-id%>_<%-id%>" data-type="zhuankan" data-share="<%-pageType === 'share'? 1 : 0%>" data-render="<%-version%>">
 	<div class="total" data-thumb="<%-'//' + thumb.url%>" data-cover="<%-'//' + cover.url%>" data-self="<%-prefix%>/view/app/?m=show&id=<%-id%>">
-
 		<% if( pageType === 'share') {%>
 			<div class="banner tpl" data-href="<%-downloadAddr%>"><img class="bannerleft" src="<%-prefix%>/cms/diaodiao/assets/icontodown.png"><p class="bannerhigh">品质生活导购平台</p><p class="bannerlow">尽在<span> 有调</span></p><div class="bannerright">点此下载</div></div>
 		<% } %>
-
 		<%-body %>
 	</div>
 	<div class="botmenu" style="display:none">

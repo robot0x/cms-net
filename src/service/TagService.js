@@ -78,7 +78,8 @@ class TagService {
   async getRenderData (
     useImage = true,
     useThumb = true,
-    useTimetopublish = false
+    useTimetopublish = false,
+    useCtype = false
   ) {
     // const { tagNameTable, tagIndexTable, metaTable } = this
     const { tagNameTable, tagIndexTable, limit } = this
@@ -104,17 +105,22 @@ class TagService {
       if (useTimetopublish) {
         metaSql = `SELECT CONCAT('', id) AS aid, CONCAT('', timetopublish) AS pubtime FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
       } else {
-        metaSql = `SELECT id, CONCAT(title,titleex) AS title FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
+        // app内tag页原生渲染数据接口要用到Ctype
+        if (useCtype) {
+          metaSql = `SELECT id, CONCAT(title,titleex) AS title, ctype FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
+        } else {
+          metaSql = `SELECT id, CONCAT(title,titleex) AS title FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
+        }
       }
       Log.business(`[TagService.getRenderData] metaSql: ${metaSql}`)
       // 此数组已经有顺序，顺序是按照timetopublish从大到小排列
       const metas = await DB.exec(metaSql)
-      let slice_aids = null
+      let sliceAids = null
       // 这儿有逻辑错误，不应该截断aids，应该阶段有顺序的metas
       if (limit !== -1) {
-        slice_aids = metas.slice(0, limit).map(meta => meta.id)
+        sliceAids = metas.slice(0, limit).map(meta => meta.id)
       } else {
-        slice_aids = metas.map(meta => meta.id)
+        sliceAids = metas.map(meta => meta.id)
       }
       let ret = Object.create(null)
       let images = null
@@ -123,7 +129,7 @@ class TagService {
         if (!useThumb) {
           type = 2
         }
-        let sql = `SELECT url,aid FROM diaodiao_article_image where aid in (${slice_aids.join(',')}) AND type & ${type} = ${type}`
+        let sql = `SELECT url,aid FROM diaodiao_article_image where aid in (${sliceAids.join(',')}) AND type & ${type} = ${type}`
         Log.business(`[TagService.getRenderData] imagesSql: ${sql}`)
         images = await DB.exec(sql)
         ret.images = images

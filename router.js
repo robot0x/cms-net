@@ -9,53 +9,54 @@ const genpub = require(`${SRC}/api/genpub`) // pub页数据生成接口
 const relsearch = require(`${SRC}/api/relsearch`) // 相关搜索接口
 const recommend = require(`${SRC}/api/recommend`) // 推荐结果接口
 const search = require(`${SRC}/api/search`) // 文章搜索。按照title搜索，按照date搜索
-const show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，按照date搜索
+const Show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，按照date搜索
+const show = new Show()
 const getMetas = require(`${SRC}/api/meta`) // meta接口
 const apimode = require(`${SRC}/api/apimode`) // apimode接口
 const MetaTable = require(`${SRC}/db/MetaTable`)
-const metaTable = new MetaTable
+const metaTable = new MetaTable()
 const moment = require('moment')
 const cache = require('./config/cache')
 // 只执行一次渲染器对象实例化，然后渲染器实例长存于内存中即可，所以应该在这儿实例化所有渲染器，而不是在路由回调中实例化
 // 否则，每次路由回调执行都会实例化一个对象，可能会导致内存占用过多GC压力过大，GC压力过大，也会导致CPU占用过高
 const {
-  mShowRender,
-  mZKRender,
-  mZTRender,
-  mAuthorRender,
-  mTagRender, // 移动端渲染器
-  mBuyRender,
-  mSkuRender,
-  mRssRender, //RSS聚合页
-  mInviteRender, // 个人邀请页
-  mJfitemRender, // 积分单品页
-  mJfMallRender, // 积分商城页
-  mZDMRender, // 值得买活动页
-  mMetabandRender, // 值得买活动页
+  // m开头的为移动端渲染器
+  mShowRender, // firstpage/goodthing/activity/expreience渲染器
+  mZKRender, // 专刊页渲染器
+  mZTRender, // 专题页渲染器
+  mAuthorRender, // 作者页渲染器
+  mTagRender, // tag页渲染器
+  mBuyRender, // 购买页渲染器
+  mSkuRender, // SKU渲染器
+  mRssRender, // RSS聚合页
+  mInviteRender, // 个人邀请页渲染器
+  mJfitemRender, // 积分单品页渲染器
+  mJfMallRender, // 积分商城页渲染器
+  mZDMRender, // 值得买活动页渲染器
+  mMetabandRender, // 值得买活动页渲染器
 
+  // p开头的为pc端渲染器
   pShowRender,
   pZKRender,
   pAuthorRender,
-  pTagRender, // PC端渲染器
-
-  jkRender, // 即刻渲染接口
-  wxAppRender, // 小程序渲染接口
-  appRender, // app渲染接口
+  pTagRender // PC端渲染器
+  // jkRender, // 即刻渲染接口
+  // wxAppRender, // 小程序渲染接口
+  // appRender, // app渲染接口
   // fbRender, // flipborad渲染接口
 } = renders
 
-async function showAndZKAndZTRouter(m, id, pageType, req, res) {
+async function showAndZKAndZTRouter (m, id, pageType, req, res) {
   if (/show/.test(m)) {
-    mShowRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share' ? 'showShare' : 'show')).catch(e => happyEnd(e, res))
+    mShowRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType === 'share' ? 'showShare' : 'show')).catch(e => happyEnd(e, res))
   } else if (/zk/.test(m)) {
-    mZKRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share' ? 'zkShare' : 'zk')).catch(e => happyEnd(e, res))
+    mZKRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType === 'share' ? 'zkShare' : 'zk')).catch(e => happyEnd(e, res))
   } else if (/zt/.test(m)) {
-    mZTRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType == 'share' ? 'ztShare' : 'zt')).catch(e => happyEnd(e, res))
+    mZTRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType === 'share' ? 'ztShare' : 'zt')).catch(e => happyEnd(e, res))
   } else {
     pageNotFound(res)
   }
 }
-
 
 router.get('/', async(req, res) => {
   let {
@@ -81,7 +82,7 @@ router.get('/', async(req, res) => {
         const trueM = Utils.ctypeToM(ctype)
         if (trueM) {
           if (m !== trueM) {
-            console.log('redirect ....');
+            console.log('redirect ....')
             redirect(res, `//${req.headers.host}/?m=${trueM}&id=${id}`)
           } else {
             console.log('not redirect ....')
@@ -98,7 +99,7 @@ router.get('/', async(req, res) => {
       // 虽然在querystring中的汉字貌似nodejs自动decode了，但是为了保险，还是要decode
       const defaultSource = '有调机器人'
       src = decodeURIComponent(src || defaultSource)
-      console.log('routers.js src is ', src);
+      console.log('routers.js src is ', src)
       mAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res, 'author')).catch(e => happyEnd(e, res))
       // if (src = decodeURIComponent(src)) {
       //   console.log('routers.js src ', src);
@@ -116,7 +117,6 @@ router.get('/', async(req, res) => {
         } else {
           mTagRender.setTid(tid).rende().then(doc => writeDoc(doc, res, 'tag')).catch(e => happyEnd(e, res))
         }
-
       } else {
         pageNotFound(res)
       }
@@ -189,24 +189,66 @@ router.get('/', async(req, res) => {
 })
 
 // APP内正文页、专刊页渲染接口
-const showReg = /\/show\/(\d+)/
-router.get(showReg, async(req, res) => {
-  let match = req.originalUrl.match(showReg)
-  let id = Utils.toShortId(match[1])
-  console.log('APP内渲染接口被命中 ....', id)
+router.get('/show', async(req, res) => {
+  let {
+  id, // ?id=
+  src, // ?src=
+  tid // ?tid=
+} = req.body
   if (id && /\d+/.test(id)) {
-    show(id).then(result => writeJSON(result, res, 'app_show')).catch(e => happyEnd(e, res))
+    show.setType('show').getData(id).then(result => writeJSON(result, res, 'app_show')).catch(e => happyEnd(e, res))
+  } else if (src && src.trim()) {
+    show.setType('author').getData(src).then(result => writeJSON(result, res, 'app_show')).catch(e => happyEnd(e, res))
+  } else if (tid && /\d+/.test(tid)) {
+    show.setType('tag').getData(tid).then(result => writeJSON(result, res, 'app_show')).catch(e => happyEnd(e, res))
   } else {
     pageNotFound(res)
   }
 })
+
+// const showReg = /\/show\/(\d+)/
+// router.get(showReg, async(req, res) => {
+//   let match = req.originalUrl.match(showReg)
+//   let id = Utils.toShortId(match[1])
+//   console.log('APP内渲染接口被命中 ....', id)
+//   if (id && /\d+/.test(id)) {
+//     show.setType('show').getData(id).then(result => writeJSON(result, res, 'app_show')).catch(e => happyEnd(e, res))
+//     // show(id).then()
+//   } else {
+//     pageNotFound(res)
+//   }
+// })
+
+// const authorReg = /\/show\/\?src=(.+)/
+// router.get(authorReg, async(req, res) => {
+//   let match = req.originalUrl.match(authorReg)
+//   let src = match[1]
+//   if (src && src.trim()) {
+//     show.setType('author').getData(src).then(result => writeJSON(result, res, 'app_show')).catch(e => happyEnd(e, res))
+//     // show(id).then()
+//   } else {
+//     pageNotFound(res)
+//   }
+// })
+
+// const tagReg = /\/show\/\?tid=(\d+)/
+// router.get(tagReg, async(req, res) => {
+//   let match = req.originalUrl.match(tagReg)
+//   let tid = match[1]
+//   if (tid && /\d+/.test(tid)) {
+//     show.setType('tag').getData(tid).then(result => writeJSON(result, res, 'app_show')).catch(e => happyEnd(e, res))
+//     // show(id).then()
+//   } else {
+//     pageNotFound(res)
+//   }
+// })
 
 // m=show OR m=zk OR m=zt的share页
 const longidReg = /\/share\/(\d+)\.html/
 router.get(longidReg, async(req, res) => {
   let match = req.originalUrl.match(longidReg)
   let id = Utils.toShortId(match[1])
-  console.log('share页路由被命中 ....', id);
+  console.log('share页路由被命中 ....', id)
   if (id && /\d+/.test(id)) {
     const trueM = Utils.ctypeToM(await metaTable.getCtypeById(id))
     showAndZKAndZTRouter(trueM, id, 'share', req, res)
@@ -215,22 +257,22 @@ router.get(longidReg, async(req, res) => {
   }
 })
 
-const inapp_zdmReg = /\/zdmactivity\/(\d+)_?(\d+)?\.html/
-router.get(inapp_zdmReg, (req, res) => {
-  let match = req.originalUrl.match(inapp_zdmReg)
-  let activity_cid = match[1]
-  let goods_cid = match[2]
-  console.log(`app内的值得买活动路由被激活,activity_cid:${activity_cid}, goods_cid:${goods_cid}`)
-  mZDMRender.setData(activity_cid, goods_cid).setPageType('inapp').rende().then(doc => writeDoc(doc, res, 'zdmactivity')).catch(e => happyEnd(e, res))
+const inappZdmReg = /\/zdmactivity\/(\d+)_?(\d+)?\.html/
+router.get(inappZdmReg, (req, res) => {
+  let match = req.originalUrl.match(inappZdmReg)
+  let activityCid = match[1]
+  let goodsCid = match[2]
+  console.log(`app内的值得买活动路由被激活,activityCid:${activityCid}, goods_cid:${goodsCid}`)
+  mZDMRender.setData(activityCid, goodsCid).setPageType('inapp').rende().then(doc => writeDoc(doc, res, 'zdmactivity')).catch(e => happyEnd(e, res))
 })
 
-const share_zdmReg = /\/zdmshare\/(\d+)_?(\d+)?\.html/
-router.get(share_zdmReg, (req, res) => {
-  let match = req.originalUrl.match(share_zdmReg)
-  let activity_cid = match[1]
-  let goods_cid = match[2]
-  console.log(`值得买活动share页路由被激活,activity_cid:${activity_cid}, goods_cid:${goods_cid}`)
-  mZDMRender.setData(activity_cid, goods_cid).setPageType('share').rende().then(doc => writeDoc(doc, res, 'zdmshare')).catch(e => happyEnd(e, res))
+const shareZdmReg = /\/zdmshare\/(\d+)_?(\d+)?\.html/
+router.get(shareZdmReg, (req, res) => {
+  let match = req.originalUrl.match(shareZdmReg)
+  let activityCid = match[1]
+  let goodsCid = match[2]
+  console.log(`值得买活动share页路由被激活,activityCid:${activityCid}, goodsCid:${goodsCid}`)
+  mZDMRender.setData(activityCid, goodsCid).setPageType('share').rende().then(doc => writeDoc(doc, res, 'zdmshare')).catch(e => happyEnd(e, res))
 })
 
 router.get(/\/mall\.html/, (req, res) => {
@@ -299,7 +341,6 @@ router.get(pcCategoryReg, (req, res) => {
   pTagRender.setTid(tid).rende().then(doc => writeDoc(doc, res, 'category')).catch(e => happyEnd(e, res))
 })
 
-
 router.post('/', async(req, res) => {
   // console.log(req.body);
   let {
@@ -332,7 +373,7 @@ router.post('/', async(req, res) => {
     } else if (/TR/i.test(m)) {
       // console.log(`文章搜索按照date的接口的路由被命中，start = ${start}, end = ${end}` )
       let start = null
-      let end = nullx
+      let end = null
       if (postData) {
         start = postData.start
         end = postData.end
@@ -355,14 +396,14 @@ function happyEnd (e, res) {
   res.end()
 }
 
-function redirect(res, Location) {
+function redirect (res, Location) {
   res.writeHead(302, {
     Location
   })
   res.end()
 }
 
-function pageNotFound(res) {
+function pageNotFound (res) {
   res.writeHead(404)
   res.end('无此页面 ...')
 }
@@ -380,7 +421,7 @@ function pageNotFound(res) {
    GMT的小时数 + 8 = UTC时间
    8是我们的时区
  */
-function addCacheControlHeader(res, type) {
+function addCacheControlHeader (res, type) {
   if (!type) return
   // 从配置中拿到这个路由的缓存配置
   const cacheOfType = cache[type]
@@ -388,7 +429,7 @@ function addCacheControlHeader(res, type) {
   if (cacheOfType) {
     maxAge = cacheOfType.maxAge
   }
-  if (maxAge == -1) return
+  if (maxAge === -1) return
   const GMT = 'GMT'
   const pattern = 'ddd, D MMM YYYY HH:mm:ss'
   // 获得北京时区的UTC时间
@@ -402,7 +443,7 @@ function addCacheControlHeader(res, type) {
   res.append('Expires', expires)
 }
 
-function writeDoc(doc, res, type) {
+function writeDoc (doc, res, type) {
   if (!doc) res.end()
   addCacheControlHeader(res, type)
   res.writeHead(200, {
@@ -412,16 +453,14 @@ function writeDoc(doc, res, type) {
   res.end()
 }
 
-function writeJSON(json, res, type) {
-  if(!json) res.end()
+function writeJSON (json, res, type) {
+  if (!json) res.end()
   addCacheControlHeader(res, type)
   res.json(json)
   res.end()
 }
 // router.all(/(\w+)/i, requestHandler)
 module.exports = router
-
-
 
 // 启动渲染器路由
 // const renderRouter = new RenderRouter

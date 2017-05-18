@@ -20,6 +20,7 @@ class AuthorService {
 
   setSource (source) {
     this.source = source
+    return this
   }
 
   // 渲染数据接口

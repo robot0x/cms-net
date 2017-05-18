@@ -3,6 +3,31 @@ const appConfig = require('../../config/app')
 const moment = require('moment')
 
 class Utils {
+  /**
+   * @param {string} markdown
+   * @returns {array} cidlist
+   * @memberof Utils
+   * 解析
+   * ```card
+   *  id:3053
+   * ```
+   * 然后取出
+   *  => 3053
+   * 根据cidlist，拿matalist
+   */
+  static getCidByMarkdown (markdown) {
+    const idReg = /id[:：]\s*(\d+)\s*title[:：]/
+    const allCardReg = /```card[\s\S]+?```/ig
+    const allCardMarkdown = markdown.match(allCardReg)
+    const ret = []
+    for (let cardMarkdown of allCardMarkdown) {
+      let id = cardMarkdown.match(idReg)
+      if (Utils.isValidArray(id)) {
+        ret.push(Number(id[1]))
+      }
+    }
+    return ret
+  }
   // 如果是阿里云图，则加上后缀，否则不用处理
   static addAliImageSuffix (url, suffix = '@200w_200h_1e%7C200x200-5rc') {
     if (/content\.image\.alimmdn\.com/i.test(url)) {
