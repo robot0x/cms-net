@@ -26,7 +26,7 @@ class Show {
    * @memberof Show
    * 根据id拿到专刊类型的渲染数据
    */
-  async getZKData (id) {
+  async getZKData (id, ctype) {
     Log.business('[API show showZK] 输入参数为：', id)
     const markdown = await contentTable.getById(id)
     if (!markdown) return null
@@ -83,6 +83,7 @@ class Show {
       card.buylink = await metaService.getBuylink(cardId)
       metas.push(card)
     }
+    ret.ctype = ctype
     ret.metas = metas
     return ret
   }
@@ -91,7 +92,7 @@ class Show {
    * @memberof Show
    * 根据id拿到专题类型的渲染数据
    */
-  async getZTData (id) {
+  async getZTData (id, ctype) {
     Log.business('[API show showZK] 输入参数为：', id)
     const markdown = await contentTable.getById(id)
     if (!markdown) return null
@@ -142,6 +143,7 @@ class Show {
       metas.push(card)
     }
     ret.metas = metas
+    ret.ctype = ctype
     return ret
   }
   /**
@@ -149,7 +151,7 @@ class Show {
    * @memberof Show
    * 根据id拿到firstpage/goodthing/activity/exprience类型的渲染数据
    */
-  async getArticleData (id) {
+〔方案選單〕  async getArticleData (id, ctype) {
     Log.business('[API show showArticle] 输入参数为：', id)
     try {
       let content = await contentTable.getById(id)
@@ -166,7 +168,7 @@ class Show {
       parser.markdown = content
       let goods = await recommend(id)
       goods = goods.map(good => {
-        console.log(good.type);
+        console.log(good.type)
         return {
           image: good.thumb,
           title: good.title,
@@ -176,6 +178,7 @@ class Show {
         }
       })
       return {
+        ctype,
         header: {
           title: Utils.getFirst(title),
           price: { type: 'price', value: price },
@@ -196,19 +199,20 @@ class Show {
    * 根据id拿到ctype，然后在路由到取相应数据的方法
    */
   async getZKAndZTAndArticleData (id) {
-    const trueM = Utils.ctypeToM(await metaTable.getCtypeById(id))
+    const ctype = await metaTable.getCtypeById(id)
+    const trueM = Utils.ctypeToM(ctype)
     console.log('trueM:', trueM)
     let data = null
     console.log('trueM:', trueM)
     switch (trueM) {
       case 'show': // 正文页渲染 firstpage/goodthing/activity/exprience
-        data = await this.getArticleData(id)
+        data = await this.getArticleData(id, ctype)
         break
       case 'zk': // 专刊页渲染
-        data = await this.getZKData(id)
+        data = await this.getZKData(id, ctype)
         break
       case 'zt': // 专刊页渲染
-        data = await this.getZTData(id)
+        data = await this.getZTData(id, ctype)
         break
     }
     // console.log(data)
