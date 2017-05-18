@@ -5,7 +5,6 @@ const Parser = require('../parser')
 const parser = new Parser()
 const Log = require('../utils/Log')
 const Utils = require('../utils/Utils')
-
 const ContentTable = require('../db/ContentTable')
 const contentTable = new ContentTable()
 const MetaService = require('../service/MetaService')
@@ -14,12 +13,14 @@ const AuthorService = require('../service/AuthorService')
 const authorService = new AuthorService()
 const TagService = require('../service/TagService')
 const tagService = new TagService()
+const request = require('request')
+const recommend = require('./recommend')
 class Show {
   setType (type) {
     this.type = type
     return this
   }
-
+ 
   /**
    * @param {number} id
    * @memberof Show
@@ -163,6 +164,17 @@ class Show {
       )
       let { swipe_image_url, title, price, author } = meta
       parser.markdown = content
+      let goods = await recommend(id)
+      goods = goods.map(good => {
+        console.log(good.type);
+        return {
+          image: good.thumb,
+          title: good.title,
+          ctype: Utils.typeToCtype(good.type),
+          article_id: Utils.toShortId(good.serverid)
+          // price: 239
+        }
+      })
       return {
         header: {
           title: Utils.getFirst(title),
@@ -170,7 +182,8 @@ class Show {
           banners: swipe_image_url,
           author: { url: author.pic, value: author.name }
         },
-        contents: parser.getData()
+        contents: parser.getData(),
+        goods
       }
     } catch (e) {
       Log.exception(e)
@@ -201,6 +214,36 @@ class Show {
     // console.log(data)
     return data
   }
+  getReadcound (aids) {
+    if (!Utils.isValidArray(aids)) return {}
+    aids = Utils.toLongId(aids)
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          url: 'http://api.diaox2.com/v1/stat/all',
+          method: 'POST',
+          json: true,
+          headers: { 'content-type': 'application/json' },
+          body: { aids }
+        },
+        (error, response, body) => {
+          if (error) reject(error)
+          if (response.statusCode === 200) {
+            const {res} = body
+            const keys = Object.keys(res)
+            const ret = Object.create(null)
+            keys.forEach(key => {
+              ret[key] = res[key].click
+            })
+            console.log('ret:', ret)
+            resolve(ret)
+          } else {
+            reject('接口返回错误的状态吗', response.statusCode)
+          }
+        }
+      )
+    })
+  }
   /**
    * @param {string} src
    * @memberof Show
@@ -209,14 +252,34 @@ class Show {
   async getAuthorData (src) {
     let data = await authorService.setSource(src).getRenderData()
     let ret = Object.create(null)
-    ret.author = data.author
-    ret.metas = []
+    // source: "ZRJ",
+    // title: "开山怪",
+    // intro: "猎天下奇，会天下友，扯三句淡，粗两句口。迷失在：脑洞 + 节操 = 定值　的天赋树方程里。",
+    // type: "author",
+    // pic_uri: "//c.diaox2.com/cms/diaodiao/people/zrj.jpg",
+    // link: "www.diaox2.com",
+    // naming: "调调编辑",
+    // value: "不约",
+    // brief: "怪蜀黍"
+    ret.author = {
+      header_image: data.author.pic_uri,
+      name: data.author.title,
+      introduction: data.author.intro,
+      sub_text: data.author.value
+    }
+    const {metas} = data
+    if (!Utils.isValidArray(metas)) return
+    const aids = metas.slice(0, 20).map(meta => meta.nid)
+    const readCounts = await this.getReadcound(aids)
+    console.log('readCounts:', readCounts)
+    ret.article = []
     for (let meta of data.metas) {
-      ret.metas.push({
-        id: meta.nid,
-        ctype: meta.ctype,
+      ret.article.push({
+        title: meta.title.join(),
+        read_cound: readCounts[Utils.toLongId(meta.nid)] || 0,
         image: meta.thumb_image_url,
-        title: meta.title.join()
+        article_id: meta.nid,
+        ctype: meta.ctype
       })
     }
     return ret
@@ -227,10 +290,12 @@ class Show {
    * 根据tag id拿到tag页的渲染数据
    */
   async getTagData (tid) {
-    let data = await tagService.setTid(tid).getRenderData(true, true, false, true)
+    let data = await tagService
+      .setTid(tid)
+      .getRenderData(true, true, false, true)
     let ret = Object.create(null)
     ret.name = data.name
-    ret.metas = data.metas
+    ret.article = []
     const findImageById = (id, images) => {
       for (let img of images) {
         if (img.aid === id) {
@@ -238,8 +303,17 @@ class Show {
         }
       }
     }
-    for (let meta of ret.metas) {
-      meta.image = findImageById(meta.id, data.images)
+    const {metas} = data
+    const aids = metas.slice(0, 20).map(meta => meta.id)
+    const readCounts = await this.getReadcound(aids)
+    for (let meta of metas) {
+      ret.article.push({
+        title: meta.title,
+        read_cound: readCounts[Utils.toLongId(meta.id)] || 0,
+        image: findImageById(meta.id, data.images),
+        article_id: meta.id,
+        ctype: meta.ctype
+      })
     }
     return ret
   }
@@ -248,7 +322,7 @@ class Show {
    * 对外暴露的接口，根据在 router.js 中所set的type的不同，路由到相应的取数据的方法
    */
   getData (param) {
-    const {type} = this
+    const { type } = this
     if (/show/i.test(type)) {
       return this.getZKAndZTAndArticleData(param)
     } else if (/author/i.test(type)) {
@@ -261,6 +335,11 @@ class Show {
 }
 
 module.exports = Show
+
+// const show = new Show()
+// show.getReadcound([42189463758431, 23484881179996, 23021024711920, 42262478202480]).then(data => {
+//   console.log(data)
+// })
 
 // async function show (id) {
 //   const trueM = Utils.ctypeToM(await metaTable.getCtypeById(id))

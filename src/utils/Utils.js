@@ -163,6 +163,37 @@ class Utils {
     }
     return m
   }
+  static typeToCtype (type) {
+    // 1-首页/2-好物/3-专刊/4-活动/5-经验/7-值得买/8-评测/9-专题
+    let ctype = 0
+    switch (type) {
+      case 'firstpage':
+        ctype = 1
+        break
+      case 'goodthing':
+        ctype = 2
+        break
+      case 'zhuankan':
+        ctype = 3
+        break
+      case 'activity':
+        ctype = 4
+        break
+      case 'experience':
+        ctype = 5
+        break
+      // case 'zdm':
+      //   ctype = 7
+      //   break
+      // case 'ceping':
+      //   ctype = 8
+      //   break
+      case 'zhuanti':
+        ctype = 9
+        break
+    }
+    return ctype
+  }
   static ctypeToType (ctype) {
     ctype = Number(ctype)
     // 1-首页/2-好物/3-专刊/4-活动/5-经验/7-值得买/8-评测/9-专题

@@ -354,7 +354,6 @@ router.post('/', async(req, res) => {
   // 有m说明是渲染器
   if (m && (m = m.trim())) {
     console.log('m：', m)
-    console.log('/TR/i.test(m)：', /TR/i.test(m))
     if (/genpub/i.test(m)) {
       console.log('命中genpub接口 ....')
       genpub(postData).then(data => writeJSON(data, res, 'genpub')).catch(e => happyEnd(e, res))

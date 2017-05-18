@@ -43,6 +43,7 @@ async function recommend (id) {
   // diaodiao_article_recommend, diaodiao_hot_goodthing
   // 先从 diaodiao_article_recommend 拿，若没有，再去diaodiao_hot_goodthing拿，若多于15条，则截断
   let rel_articles = null
+  let simpleMetas = null
   try {
     let rel_articlesSQL = `SELECT rel_article FROM diaodiao_article_recommend WHERE ori_article = ${id}`
     rel_articles = Utils.getFirst(await DB.exec(rel_articlesSQL))
@@ -76,7 +77,6 @@ async function recommend (id) {
     }
 
     const metas = await metaService.getRawMetas(rel_articles, false, true)
-    let simpleMetas = null
     if (metas) {
       simpleMetas = []
       let simpleMeta = null
