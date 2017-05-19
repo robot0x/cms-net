@@ -134,8 +134,11 @@ class Parser {
       case 'firstpage':
         ctype = 2
         break
+      case 'activity':
+        ctype = 4
+        break
       case 'experience':
-        ctype = 3
+        ctype = 5
         break
     }
     return {

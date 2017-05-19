@@ -2,14 +2,13 @@
  * @Author: liyanfeng
  * @Date: 2017-04-18 14:44:46
  * @Last Modified by: liyanfeng
- * @Last Modified time: 2017-05-16 18:37:25
+ * @Last Modified time: 2017-05-18 21:17:49
  *  为了减轻服务器的压力，要使异步任务顺序化，而不是近1W个url一次性地请求完
  *  请求完一个url，并成功返回结果，才接着请求下一个url
  */
 const request = require('request')
 const Promise = require('bluebird')
 const Log = require('../utils/Log')
-const runLogger = Log.getLogger('cms_run')
 
 class Downloader {
   // max为连接池的长度
@@ -35,12 +34,12 @@ class Downloader {
             return resolve(body)
           } else {
             console.log(err)
-            runLogger.error(`url为${url}的文章download出错，出错信息：`, e.message)
+            Log.exception(`url为${url}的文章download出错，出错信息：`, e.message)
             reject(err)
           }
         } catch (e) {
           console.log(err)
-          runLogger.error(`url为${url}的文章download出错，出错信息：`, e.message)
+          Log.exception(`url为${url}的文章download出错，出错信息：`, e.message)
           reject(e)
         }
       })

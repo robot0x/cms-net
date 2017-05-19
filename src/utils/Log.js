@@ -1,5 +1,5 @@
-const log4js = require("log4js")
-const cfg = require("../../config/log4js")
+const log4js = require('log4js')
+const cfg = require('../../config/log4js')
 log4js.configure(cfg)
 const bus = log4js.getLogger('business')
 const exce = log4js.getLogger('exception')

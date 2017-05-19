@@ -2,13 +2,12 @@
 // const Table = require('../db/Table')
 // const table = new Table('article_meta', ['aid', 'content'])
 const Log = require('../utils/Log')
-const runLogger = Log.getLogger('cms_run')
 // const Promise = require('bluebird')
 const Utils = require('../utils/Utils')
 const DB = require('../db/DB')
 
 const lineReader = require('readline').createInterface({
-  input: require('fs').createReadStream('./data/ajFson'),
+  input: require('fs').createReadStream('./data/ajson.3'),
   output: process.stdout,
   terminal: false
 })
@@ -148,7 +147,7 @@ lineReader.on('line', json => {
       console.log(`ID为 ${nid} 的文章入库成功 ....`)
     })
     .catch(err => {
-      runLogger.error(`ID为${nid}的META更新失败， SQL:${sql} 出错信息：`, err.message)
+      Log.exception(`ID为${nid}的META更新失败， SQL:${sql} 出错信息：`, err.message)
     })
   // )
 
@@ -185,7 +184,7 @@ lineReader.on('line', json => {
       })
       .catch(err => {
         console.log(err)
-        runLogger.error(`D为 ${nid} 的image更新成功，出错信息：`, err.message)
+        Log.exception(`D为 ${nid} 的image更新成功，出错信息：`, err.message)
       })
     // )
   }
@@ -323,7 +322,7 @@ lineReader.on('line', json => {
 //           .exec(sql)
 //           .then(data => {
 //             console.log(`ID为 ${nid} 的文章入库成功 ....`)
-//           }).catch(err => {runLogger.error(`ID为${nid}的META更新失败， SQL:${sql} 出错信息：`, err.message)})
+//           }).catch(err => {Log.exception(`ID为${nid}的META更新失败， SQL:${sql} 出错信息：`, err.message)})
 //         )
 //
 //         const images = [].concat(setImage(1, pics))
@@ -353,7 +352,7 @@ lineReader.on('line', json => {
 //             console.log(`ID为 ${nid} 的image更新成功 ....`)
 //           }).catch(err => {
 //             console.log(err)
-//             runLogger.error(`D为 ${nid} 的image更新成功，出错信息：`, err.message)
+//             Log.exception(`D为 ${nid} 的image更新成功，出错信息：`, err.message)
 //           }))
 //         }
 //

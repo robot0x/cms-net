@@ -26,7 +26,7 @@ const Promise = require('bluebird')
  *
  */
 class Reader {
-  constructor (file = './data/ajson.2') {
+  constructor (file = './data/ajson.3') {
     this.file = path.normalize(file)
   }
   read (file = this.file) {
@@ -44,7 +44,6 @@ class Reader {
               // .filter(content => /zhuankan|zhuanti/.test(content))
               .map(content => {
                 if (!content) return
-                // 这个脚本填充 article_meta 和 image表
                 let article = null
                 try {
                   article = JSON.parse(content)

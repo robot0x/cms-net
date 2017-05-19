@@ -3,7 +3,6 @@ const express = require('express')
 const router = require('./router')
 const middleware = require('./middleware')
 const config = require('./package').config
-const Log = require('./src/utils/Log')
 const app = express()
 // http日志中间件
 app.use(middleware.log())

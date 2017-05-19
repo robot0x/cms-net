@@ -10,7 +10,6 @@
 // let url = 'http://z.diaox2.com/view/app/?m=show&id=8740'
 // let url = 'http://z.diaox2.com/view/app/?m=show&id=9649'
 const Log = require('../utils/Log')
-const runLogger = Log.getLogger('cms_run')
 const Reader = require('./Reader')
 const Downloader = require('./Downloader')
 const Parser = require('./Parser')
@@ -47,9 +46,9 @@ reader.read().then(contents => {
         // console.log(`${index}：${url}`)
       })
       .catch(e => {
-        runLogger.error(e)
+        Log.exception(e)
       })
   } catch (e) {
-    runLogger.error(e)
+    Log.exception(e)
   }
 })
