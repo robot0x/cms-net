@@ -15,10 +15,20 @@ class ContentTable extends Table {
     }
     return content
   }
+
+  /**
+   * 根据文章id获取一条数据
+   */
+  async getByIds (ids) {
+    let sql = `SELECT aid AS id, content FROM ${this.table} WHERE aid in (${ids.join(',')})`
+    let data = await this.exec(sql)
+    console.log('sql:', sql)
+    return data
+  }
 }
 
 // const contentTable = new ContentTable()
-// contentTable.getById(1).then(content => {
+// contentTable.getByIds([1, 2]).then(content => {
 //   console.log(content)
 // })
 

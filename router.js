@@ -11,6 +11,8 @@ const recommend = require(`${SRC}/api/recommend`) // 推荐结果接口
 const search = require(`${SRC}/api/search`) // 文章搜索。按照title搜索，按照date搜索
 const Show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，按照date搜索
 const show = new Show()
+const ids = require(`${SRC}/api/ids`) // 拿出所有在库文章的id
+const content = require(`${SRC}/api/content`) // 根据id拿出文章的content，content去除了所有html标签和markdown标识
 const getMetas = require(`${SRC}/api/meta`) // meta接口
 const apimode = require(`${SRC}/api/apimode`) // apimode接口
 const MetaTable = require(`${SRC}/db/MetaTable`)
@@ -205,6 +207,41 @@ router.get('/show', async(req, res) => {
     pageNotFound(res)
   }
 })
+
+// 拿出所有在库文章的id，可以按照指定条件排序
+router.get('/ids', async(req, res) => {
+  console.log('命中ids接口 。。。')
+  ids(req.body.orderby).then(result => writeJSON(result, res, 'ids')).catch(e => happyEnd(e, res))
+})
+
+// 拿出所有在库文章的content，可以按照指定条件排序
+router.get('/content', async(req, res) => {
+  console.log('命中GET content接口 。。。')
+  let {
+    id
+  } = req.body
+  if (id && /\d+/.test(id)) {
+    console.log('id is:', id)
+    content(id).then(result => writeJSON(result, res)).catch(e => happyEnd(e, res))
+  } else {
+    writeJSON(null, res)
+  }
+})
+
+// 拿出所有在库文章的content，可以按照指定条件排序
+router.post('/content', async(req, res) => {
+  try {
+    let {ids} = req.body
+    if (Utils.isValidArray(ids)) {
+      content(ids).then(result => writeJSON(result, res)).catch(e => happyEnd(e, res))
+    } else {
+      writeJSON(null, res)
+    }
+  } catch (e) {
+    happyEnd(e, res)
+  }
+})
+
 
 // const showReg = /\/show\/(\d+)/
 // router.get(showReg, async(req, res) => {

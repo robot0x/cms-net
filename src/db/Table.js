@@ -102,6 +102,8 @@ class Table {
     return this.getByCond(`aid = ${id}`)
   }
 
+
+
   /**
    * 根据传入的条件获取数据
    */
@@ -128,7 +130,7 @@ class Table {
   }
 
   deleteByCond (cond) {
-    return DB.exec(`DELETE from ${this.table} ${addWhere(cond)}`)
+    return DB.exec(`DELETE from ${this.table} ${DB.addWhere(cond)}`)
   }
 
   deleteById (id) {
@@ -136,7 +138,7 @@ class Table {
   }
 
   update (data, cond) {
-    return DB.exec(`UPDATE ${this.table} set ? ${addWhere(cond)}`, data)
+    return DB.exec(`UPDATE ${this.table} set ? ${DB.addWhere(cond)}`, data)
   }
 
   exec (sql, data) {

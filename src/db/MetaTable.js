@@ -36,7 +36,20 @@ class MetaTable extends Table {
       'last_update_time'
     )
   }
-
+  async getAllIds (orderBy = '') {
+    if (orderBy) {
+      orderBy = ` ORDER BY ${orderBy} `
+    }
+    const sql = `SELECT id FROM ${this.table} ${orderBy}`
+    console.log('sql:', sql)
+    const idlist = await this.exec(sql)
+    if (!Utils.isValidArray(idlist)) return null
+    const ids = []
+    for (let row of idlist) {
+      ids.push(row.id)
+    }
+    return ids
+  }
   async getBySource (source) {
     return await this.getByCond({
       author: source
@@ -100,6 +113,9 @@ class MetaTable extends Table {
 }
 
 // const metaTable = new MetaTable()
+// metaTable.getAllIds('timetopublish').then(data => {
+//   console.log(data)
+// })
 // metaTable.getCtypeById(1).then(data => console.log('ctype:', data))
 // metaTable.getAidsBySource('ZRJ').then(data => console.log('aids:', data))
 // metaTable.getBuylinkById(1).then(data => console.log('buylink:', data))

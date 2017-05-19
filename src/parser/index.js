@@ -177,6 +177,13 @@ class Parser {
     return this.htmlToData(this.$('#container'))
   }
 
+  getText () {
+    this.$ = cheerio.load(`<div id="text-container">${this.getHTML()}<div>`, {
+      decodeEntities: false
+    })
+    return this.$('#text-container').text()
+  }
+
   getHTML () {
     this.marked.setOptions(this.options)
     // let isPromise = !!this.options.promise

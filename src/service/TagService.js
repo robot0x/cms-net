@@ -82,6 +82,8 @@ class TagService {
     useCtype = false
   ) {
     // const { tagNameTable, tagIndexTable, metaTable } = this
+    // tagNmaeTable tag的元数据表
+    // tagIndexTable 文章关联的tag表
     const { tagNameTable, tagIndexTable, limit } = this
     try {
       let item = await tagNameTable.getByTid(this.tid)
