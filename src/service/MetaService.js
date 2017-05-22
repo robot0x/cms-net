@@ -263,7 +263,7 @@ class MetaService {
     const { metaTable, contentTable, imageTable, authorTable } = this
     // async函数返回的就是promise，所以无需再包一promise
     // return new Promise(async (resolve, reject) => {
-    let meta, images, content
+    // let meta, images, content
     try {
       let meta = await metaTable
         .setColumns([
@@ -329,7 +329,7 @@ class MetaService {
             resolve(null)
           }
           try {
-            const { state, data } = JSON.parse(body.body)
+            const { data } = JSON.parse(body.body)
             const skus = data[Utils.toLongId(id)]
             // 如果只有1个sku且这个sku的status为1（即已经发布了），则把SKU页作为购买页
             if (

@@ -36,6 +36,11 @@ class MetaTable extends Table {
       'last_update_time'
     )
   }
+  async getTitles (id) {
+    const sql = `SELECT title, share_title, wx_title, wb_title FROM ${this.table} WHERE id=${id}`
+    const list = await this.exec(sql)
+    return Utils.getFirst(list)
+  }
   async getAllIds (orderBy = '') {
     if (orderBy) {
       orderBy = ` ORDER BY ${orderBy} `

@@ -1,10 +1,13 @@
 // const DB = require('../db/DB')
 const MetaTable = require('../db/MetaTable')
 const metaTable = new MetaTable()
+const ImageTable = require('../db/ImageTable')
+const imageTable = new ImageTable()
 const Parser = require('../parser')
 const parser = new Parser()
 const Log = require('../utils/Log')
 const Utils = require('../utils/Utils')
+// const DB = require('../db/DB')
 const ContentTable = require('../db/ContentTable')
 const contentTable = new ContentTable()
 const MetaService = require('../service/MetaService')
@@ -87,9 +90,7 @@ class Show {
     ret.metas = metas
     return ret
   }
-  parseZK (id, markdown) {
-    
-  }
+
   /**
    * @param {number} id
    * @memberof Show
@@ -171,7 +172,7 @@ class Show {
       parser.markdown = content
       let goods = await recommend(id)
       goods = goods.map(good => {
-        console.log(good.type)
+        // console.log(good.type)
         return {
           image: good.thumb,
           title: good.title,
@@ -196,17 +197,28 @@ class Show {
       return null
     }
   }
+  async genShareData (id, trueM) {
+    const ret = Object.create(null)
+    const titles = await metaTable.getTitles(id)
+    const coverex = Utils.getFirst(await imageTable.getThumbImagesUrl(id))
+    ret.url = `https://c.diaox2.com/view/app/?m=${trueM}&id=${id}`
+    ret.image = coverex
+    return Object.assign(ret, titles)
+  }
   /**
    * @param {number} id
    * @memberof Show
    * 根据id拿到ctype，然后在路由到取相应数据的方法
    */
   async getZKAndZTAndArticleData (id) {
+    console.log('getZKAndZTAndArticleData exec ....')
     const ctype = await metaTable.getCtypeById(id)
     const trueM = Utils.ctypeToM(ctype)
-    console.log('trueM:', trueM)
+    // console.log('trueM:', trueM)
     let data = null
-    console.log('trueM:', trueM)
+    // console.log('trueM:', trueM)
+    const buylink = await metaService.getBuylink(id)
+    console.log('buylink:', buylink)
     switch (trueM) {
       case 'show': // 正文页渲染 firstpage/goodthing/activity/exprience
         data = await this.getArticleData(id, ctype)
@@ -218,6 +230,12 @@ class Show {
         data = await this.getZTData(id, ctype)
         break
     }
+    data.has_buy_link = false
+    if (buylink) {
+      data.buylink = buylink
+      data.has_buy_link = true
+    }
+    data.share_data = await this.genShareData(id, trueM)
     // console.log(data)
     return data
   }
