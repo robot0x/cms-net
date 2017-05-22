@@ -97,6 +97,7 @@ class ZKParser extends Parser {
 
   getBuylinkById (id) {
     let { buylinks } = this
+    if (!buylinks) return
     for (let buylink of buylinks) {
       if (buylink.cid == id) {
         return buylink.link

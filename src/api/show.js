@@ -87,6 +87,9 @@ class Show {
     ret.metas = metas
     return ret
   }
+  parseZK (id, markdown) {
+    
+  }
   /**
    * @param {number} id
    * @memberof Show

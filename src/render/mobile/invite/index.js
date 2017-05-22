@@ -19,6 +19,7 @@ class InviteRender extends Render {
   }
 
   getRenderData (uid = this.uid) {
+    if (!uid) return
     return new Promise((resolve, reject) => {
       request(
         {
@@ -62,7 +63,7 @@ class InviteRender extends Render {
   }
 }
 
-const inviter = new InviteRender()
-inviter.setUid(42).rende()
+// const inviter = new InviteRender()
+// inviter.setUid(42).rende()
 
 module.exports = InviteRender

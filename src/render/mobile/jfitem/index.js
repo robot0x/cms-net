@@ -25,6 +25,7 @@ class JfitemRender extends Render {
   }
 
   getRenderData (gid = this.gid) {
+    if (!gid) return
     return new Promise((resolve, reject) => {
       request(
         {
@@ -73,9 +74,9 @@ class JfitemRender extends Render {
   }
 }
 
-const jfitem = new JfitemRender()
-jfitem.setGid(102).rende().then(data => {
+// const jfitem = new JfitemRender()
+// jfitem.setGid(102).rende().then(data => {
   // console.log(data)
-})
+// })
 
 module.exports = JfitemRender

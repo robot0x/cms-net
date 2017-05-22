@@ -178,10 +178,18 @@ class Parser {
   }
 
   getText () {
-    this.$ = cheerio.load(`<div id="text-container">${this.getHTML()}<div>`, {
-      decodeEntities: false
-    })
-    return this.$('#text-container').text()
+    let html = null
+    try {
+      html = this.getHTML()
+      this.$ = cheerio.load(`<div id="text-container">${html}<div>`, {
+        decodeEntities: false
+      })
+      return this.$('#text-container').text()
+    } catch (error) {
+      console.log(error)
+      Log.exception(error)
+      return ''
+    }
   }
 
   getHTML () {

@@ -47,7 +47,7 @@ const {
   // appRender, // app渲染接口
   // fbRender, // flipborad渲染接口
 } = renders
-
+const numnberReg = /^\d+$/
 async function showAndZKAndZTRouter (m, id, pageType, req, res) {
   if (/show/.test(m)) {
     mShowRender.setPageType(pageType).setId(id).rende().then(doc => writeDoc(doc, res, pageType === 'share' ? 'showShare' : 'show')).catch(e => happyEnd(e, res))
@@ -78,7 +78,7 @@ router.get('/', async(req, res) => {
   if (m && (m = m.trim().toLowerCase())) {
     // firstpage/goodthing/exprience/zk/zt
     if (/show|z(k|t)/.test(m)) {
-      if (id && /\d+/.test(id)) {
+      if (id && numnberReg.test(id)) {
         // showAndZKAndZTRouter(id, 'inapp', req, res)
         const ctype = await metaTable.getCtypeById(id)
         const trueM = Utils.ctypeToM(ctype)
@@ -113,7 +113,7 @@ router.get('/', async(req, res) => {
       //   pageNotFound(res)
       // }
     } else if (/tag/i.test(m)) {
-      if (tid && /\d+/.test(tid)) {
+      if (tid && numnberReg.test(tid)) {
         if ('apimode' in req.body) {
           apimode(tid).then(result => writeJSON(result, res, 'apimode')).catch(e => happyEnd(e, res))
         } else {
@@ -123,14 +123,14 @@ router.get('/', async(req, res) => {
         pageNotFound(res)
       }
     } else if (/buy/i.test(m)) {
-      if (aid && /\d+/.test(aid)) {
+      if (aid && numnberReg.test(aid)) {
         console.log('购买页路由被命中，aid为', aid)
         mBuyRender.setAid(aid).rende().then(doc => writeDoc(doc, res, 'buy')).catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
       }
     } else if (/sku/i.test(m)) {
-      if (sid && /\d+/.test(sid)) {
+      if (sid && numnberReg.test(sid)) {
         mSkuRender.setSid(sid).rende().then(doc => writeDoc(doc, res, 'sku')).catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
@@ -142,7 +142,7 @@ router.get('/', async(req, res) => {
         pageNotFound(res)
       }
     } else if (/jfitem/i.test(m)) {
-      if (gid && /\d+/.test(gid)) {
+      if (gid && numnberReg.test(gid)) {
         mJfitemRender.setPageType('inapp').setGid(gid).rende().then(doc => writeDoc(doc, res, 'jfitem')).catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
@@ -152,14 +152,14 @@ router.get('/', async(req, res) => {
       mJfMallRender.setPageType('inapp').rende().then(doc => writeDoc(doc, res, 'jfmall')).catch(e => happyEnd(e, res))
     } else if (/metaband/i.test(m)) {
       console.log('文章列表条html路由命中 ....')
-      if (id && /\d+/.test(id)) {
+      if (id && numnberReg.test(id)) {
         mMetabandRender.setId(id).rende().then(doc => writeDoc(doc, res, 'metaband')).catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
       }
     } else if (/meta/i.test(m)) {
       console.log('meta接口的路由被命中：', id)
-      if (id && /\d+/.test(id)) {
+      if (id && numnberReg.test(id)) {
         getMetas(id).then(meta => writeJSON(meta, res, 'meta_get')).catch(e => happyEnd(e, res))
         // metaService.getRawMetas(id).then(meta => writeJSON(meta, res))
       } else {
@@ -167,14 +167,14 @@ router.get('/', async(req, res) => {
       }
     } else if (/relsearch/i.test(m)) {
       console.log('相关搜索接口的路由被命中：', id)
-      if (id && /\d+/.test(id)) {
+      if (id && numnberReg.test(id)) {
         relsearch(id).then(result => writeJSON(result, res, 'relsearch')).catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
       }
     } else if (/recommend/i.test(m)) {
       console.log('推荐结果接口的路由被命中ID为', id)
-      if (id && /\d+/.test(id)) {
+      if (id && numnberReg.test(id)) {
         recommend(id).then(result => writeJSON(result, res, 'recommend')).catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
@@ -197,11 +197,11 @@ router.get('/show', async(req, res) => {
   src, // ?src=
   tid // ?tid=
 } = req.body
-  if (id && /\d+/.test(id)) {
+  if (id && numnberReg.test(id)) {
     show.setType('show').getData(id).then(result => writeJSON(result, res, 'app_show')).catch(e => happyEnd(e, res))
   } else if (src && src.trim()) {
     show.setType('author').getData(src).then(result => writeJSON(result, res, 'app_show')).catch(e => happyEnd(e, res))
-  } else if (tid && /\d+/.test(tid)) {
+  } else if (tid && numnberReg.test(tid)) {
     show.setType('tag').getData(tid).then(result => writeJSON(result, res, 'app_show')).catch(e => happyEnd(e, res))
   } else {
     pageNotFound(res)
@@ -220,7 +220,7 @@ router.get('/content', async(req, res) => {
   let {
     id
   } = req.body
-  if (id && /\d+/.test(id)) {
+  if (id && numnberReg.test(id)) {
     console.log('id is:', id)
     content(id).then(result => writeJSON(result, res)).catch(e => happyEnd(e, res))
   } else {
@@ -248,7 +248,7 @@ router.post('/content', async(req, res) => {
 //   let match = req.originalUrl.match(showReg)
 //   let id = Utils.toShortId(match[1])
 //   console.log('APP内渲染接口被命中 ....', id)
-//   if (id && /\d+/.test(id)) {
+//   if (id && numnberReg.test(id)) {
 //     show.setType('show').getData(id).then(result => writeJSON(result, res, 'app_show')).catch(e => happyEnd(e, res))
 //     // show(id).then()
 //   } else {
@@ -272,7 +272,7 @@ router.post('/content', async(req, res) => {
 // router.get(tagReg, async(req, res) => {
 //   let match = req.originalUrl.match(tagReg)
 //   let tid = match[1]
-//   if (tid && /\d+/.test(tid)) {
+//   if (tid && numnberReg.test(tid)) {
 //     show.setType('tag').getData(tid).then(result => writeJSON(result, res, 'app_show')).catch(e => happyEnd(e, res))
 //     // show(id).then()
 //   } else {
@@ -286,7 +286,7 @@ router.get(longidReg, async(req, res) => {
   let match = req.originalUrl.match(longidReg)
   let id = Utils.toShortId(match[1])
   console.log('share页路由被命中 ....', id)
-  if (id && /\d+/.test(id)) {
+  if (id && numnberReg.test(id)) {
     const trueM = Utils.ctypeToM(await metaTable.getCtypeById(id))
     showAndZKAndZTRouter(trueM, id, 'share', req, res)
   } else {
