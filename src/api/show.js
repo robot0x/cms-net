@@ -246,6 +246,17 @@ class Show {
       data.has_buy_link = true
     }
     data.skus = await this._getSkus(id)
+    data.skus = data.skus.map(sku => {
+      try {
+        sku.images = JSON.parse(sku.images)
+        sku.tags = JSON.parse(sku.tags)
+        sku.sales = JSON.parse(sku.sales)
+        sku.revarticles = JSON.parse(sku.revarticles)
+        return sku
+      } catch (error) {
+        return sku
+      }
+    })
     // console.log('data.skus:', data.skus)
     data.share_data = await this.genShareData(id, trueM)
     // console.log(data)
