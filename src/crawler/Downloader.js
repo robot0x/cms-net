@@ -2,7 +2,7 @@
  * @Author: liyanfeng
  * @Date: 2017-04-18 14:44:46
  * @Last Modified by: liyanfeng
- * @Last Modified time: 2017-05-18 21:17:49
+ * @Last Modified time: 2017-05-23 11:23:20
  *  为了减轻服务器的压力，要使异步任务顺序化，而不是近1W个url一次性地请求完
  *  请求完一个url，并成功返回结果，才接着请求下一个url
  */
@@ -30,6 +30,7 @@ class Downloader {
       request(url, (err, response, body) => {
         try {
           if (!err && response.statusCode === 200) {
+            // console.log(body)
             // console.log(`下载${url}完毕 ....`)
             return resolve(body)
           } else {

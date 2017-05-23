@@ -1,7 +1,7 @@
 const Parser = require('../../../parser')
+const Utils = require('../../../utils/Utils')
 // const request = require('request')
 // const Promise = require('bluebird')
-// const Utils = require('../../../utils/Utils')
 /**
  * CMS markdown 解析器
  * 读取文章原始markdown文本
@@ -26,8 +26,31 @@ class ShowParser extends Parser {
       </div>
       </div>
       `
-    renderer.heading = (text, level) => {
-      return `<h${level}>${text}</h${level}>`
+    // renderer.heading = (text, level) => {
+    //   return `<h${level}>${text}</h${level}>`
+    // }
+
+    renderer.heading = (content, level) => {
+      const {isAnchor, anchor, text} = Utils.anchorHandler(content)
+      let ret = ''
+      if (isAnchor) {
+        // console.log('ShowParser.anchor:', anchor)
+        ret = `<h${level} id="${anchor}">${text}</h${level}>`
+      } else {
+        ret = `<h${level}>${text}</h${level}>`
+      }
+      return ret
+    }
+
+    renderer.paragraph = (content) => {
+      const {isAnchor, anchor, text} = Utils.anchorHandler(content)
+      let ret = ''
+      if (isAnchor) {
+        ret = `<p id="${anchor}">${text}</p>`
+      } else {
+        ret = `<p>${text}</p>`
+      }
+      return ret
     }
     renderer.codespan = text => `<p class="lift">${text}</p>`
     /**
@@ -40,10 +63,21 @@ class ShowParser extends Parser {
      *   5. span
      */
     renderer.link = (href, title, text) => {
-      if (/^\d+$/.test(href)) {
-        href = `//c.diaox2.com/view/app/?m=show&id=${href}`
+      let reg = /^\d+(#\w+)?$/
+      let match = href.match(reg)
+      let openMethod = '_blank'
+      // 1234#youdiao
+      if (match) {
+        let hash = match[1]
+        if (hash) {
+          href = hash
+          openMethod = '_self'
+        } else {
+          href = `//c.diaox2.com/view/app/?m=show&id=${href}`
+        }
       }
-      return `<a target="_blank" href="${href}">${text || href}</a>`
+      // console.log(href)
+      return `<a target="${openMethod}" href="${href}">${text || href}</a>`
     }
 
     // renderer.code = (text, type) => {

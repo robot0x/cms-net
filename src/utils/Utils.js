@@ -4,6 +4,31 @@ const moment = require('moment')
 
 class Utils {
   /**
+   * @static
+   * @param {string} text
+   * @returns {object} {isAnchor: boolean, text: string}
+   * @memberof Utils
+   * 输入一段文本，按照约定好的markdown anchor语法，输出对象
+   * 比如 "aanchor 这是一段儿文本" 输出 {isAnchor: true, anchor:'anchor', text: '这是一段儿文本'}
+   *      "a锚点 这是一段儿文本" 输出 {isAnchor: true, anchor:'锚点', text: '这是一段儿文本'}
+   *      "a锚点 a呵呵 这是一段儿文本" 输出 {isAnchor: true, anchor:'锚点', text: 'a呵呵 这是一段儿文本'}
+   *      "这是一段儿文本" 输出 {isAnchor: false, anchor:'', text: '这是一段儿文本'}
+   */
+  static anchorHandler (text) {
+    if (!text) return text
+    const anchorReg = /^a(.+?)\s+/i
+    const match = text.match(anchorReg)
+    const ret = Object.create(null)
+    ret.isAnchor = false
+    ret.anchor = ''
+    if (match) {
+      ret.isAnchor = true
+      ret.anchor = match[1]
+    }
+    ret.text = text.replace(anchorReg, '')
+    return ret
+  }
+  /**
    * @param {string} markdown
    * @returns {array} cidlist
    * @memberof Utils
@@ -257,7 +282,9 @@ class Utils {
     let ret = ''
     if (/null|diaox2\.com|s2\.a\.dx2rd\.com|42\.96\.166\.118/.test(host)) {
       hash = hash || ''
-      let viewAppReg = /view\/app\/\?m=\w+&id=(\d+)?(?:&ch=goodthing)?/i
+      // /view/app/?m=show&id=2
+      // /view/app/?m=show&amp;id=2 没有考虑到这种情况
+      let viewAppReg = /view\/app\/\?m=\w+(?:&|&amp;)id=(\d+)?(?:&ch=goodthing)?/i
       let cmsDDReg = /cms\/diaodiao\/articles\/\w+\/\d+_(\d+)?\.html/i
       let pcSiteReg = /article\/(\d+)\.html/i
       let shareReg = /share\/(\d+)\.html/i
@@ -277,7 +304,7 @@ class Utils {
         isSku = true
       }
       if (ret && !isSku) {
-        ret += ' ' + hash
+        ret += '' + hash
       }
     }
     return ret || src
@@ -337,6 +364,7 @@ class Utils {
 // console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=show&id=9625#a'))
 // console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=show&id=9625#111'))
 // console.log(Utils.normalize('/view/app/sku/8060.html'))
+// console.log(Utils.normalize('/view/app/?m=show&amp;id=9833#kepu'))
 
 // const lcids = [4294967297, 41201621280121, 39423504819163, 39423504819163, '', NaN, 41205916247418, 3563]
 // const lcid = 4647154615354

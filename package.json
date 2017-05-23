@@ -14,7 +14,8 @@
     "start": "pm2 start cms-net.js",
     "restart": "pm2 restart cms-net",
     "nstart": "node cms-net.js",
-    "dev": "NODE_ENV=dev nodemon cms-net.js"
+    "dev": "NODE_ENV=dev nodemon cms-net.js",
+    "crawler": "NODE_ENV=dev node ./src/crawler/index.js"
   },
   "keywords": [
     "有调",

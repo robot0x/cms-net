@@ -20,7 +20,6 @@ class ShowRender extends Render {
   constructor (id) {
     super()
     this.setId(id)
-
     this.parser = new Parser()
   }
   /**
@@ -48,6 +47,7 @@ class ShowRender extends Render {
     this.template = this.readTemplate(tempFile)
     return this
   }
+  
   async getRelsearchWords (id = this.id) {
     let searchWords = await relsearch(id)
     if (!Utils.isValidArray(searchWords)) return null

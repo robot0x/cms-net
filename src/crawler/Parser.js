@@ -1,5 +1,4 @@
 const cheerio = require('cheerio')
-const html = require('../test/htmlString')
 const _ = require('lodash')
 const Utils = require('../utils/Utils')
 // const Log = require('../utils/Log')
@@ -113,109 +112,6 @@ class Parser {
     return markdown
   }
 
-  getShowMeta () {
-    const { $, type } = this
-    let title = $('.goodsheading h1').text()
-    let author_info = $('#author_info')
-    let source = ''
-    if (author_info.length) {
-      author_info = author_info[0]
-      if (
-        author_info && author_info.attribs && author_info.attribs['data-href']
-      ) {
-        [, source] = author_info.attribs['data-href'].split('src=')
-      }
-    }
-    let ctype = 0
-    switch (type) {
-      case 'goodthing':
-        ctype = 1
-        break
-      case 'firstpage':
-        ctype = 2
-        break
-      case 'activity':
-        ctype = 4
-        break
-      case 'experience':
-        ctype = 5
-        break
-    }
-    return {
-      id: this.id,
-      ctype,
-      title,
-      status: 1, // 已发布
-      // create_time: '',
-      // last_update_by: '',
-      // user: '',
-      // lock_by: '',
-      // last_update_by: '',
-      author: decodeURI(source)
-    }
-  }
-
-  getZKMeta () {
-    // console.log('getZKMeta exec ....')
-    // console.log('this.zkMeta: 145', this.zkMeta);
-    return this.zkMeta
-  }
-
-  getZTMeta () {
-    return this.ztMeta
-  }
-
-  setImage (img, type = 4) {
-    // INSERT INTO image set aid=4925, url='//content.image.alimmdn.com/cms/sites/default/files/20160107/zk/qqq2.jpg', used=1, type=4, extension_name='jpg', width=640, height=416;
-    let ret = null
-    if (img) {
-      let { attribs } = img
-      // 优先取不带参数的data-big，并且当文档还没有ready时，取道的有可能是占位图
-      let src = attribs['data-big'] || attribs['src']
-      let width = +(attribs['data-w'] || attribs['width']) || 0
-      let height = +(attribs['data-h'] || attribs['height']) || 0
-      // 经过昨晚的测试发现：有些width和height为-1
-      // 所以硬编码成 width 和 height
-      if (width < 0) {
-        width = 596
-      }
-
-      if (height < 0) {
-        height = 596
-      }
-
-      ret = {
-        aid: this.id,
-        url: Utils.removeProtocolHead(src),
-        type,
-        used: 1,
-        extension_name: Utils.getFileExtension(src),
-        // size: '', // 目前我们先不管历史老文章内图片的size，新的文章自会有的
-        width,
-        height
-        // create_time: '' // 目前还无法拿到
-      }
-    }
-    return ret
-  }
-
-  getShowImages () {
-    let getImgs = (container, type = 4) =>
-      Array.from(container.find('img')).map(img => this.setImage(img, type))
-    return [
-      ...getImgs(this.$('.cycle-slideshow'), 1),
-      ...getImgs(this.$('.content'))
-    ]
-  }
-
-  getZKImages () {
-    return this.zkImages
-  }
-
-  getZTImages () {
-    return this.ztImages
-  }
-
   /**
    * [this.parse 输入一段html，输出对象的markdown]
    * @param  {jQuery Object}   [container]    [要处理的html的跟容器]
@@ -257,6 +153,7 @@ class Parser {
       // type = tag/text/commond ...
       // name = p/a/span/div ... 如果type是text，则name为undefined
       let { attribs, name } = child
+      let id = null
       name = this.getName(child)
       if (!name) continue
       let text = this.onlyHasOneTextChild(child)
@@ -264,12 +161,15 @@ class Parser {
       if (text !== null) {
         innerText = $child.text().replace(/\n*/, '')
       }
+      if (attribs) {
+        id = attribs.id
+      }
       // console.log('59:', name)
       if (name === 'p') {
         if (text !== null) {
-          md += `${blockquotePrefix}${innerText}\n\n`
+          md += `${id ? 'a' + id + ' ' : ''}${blockquotePrefix}${innerText}\n\n`
         } else {
-          md += `${blockquotePrefix}${this.getShowMarkdown($child, false)}\n\n`
+          md += `${id ? 'a' + id + ' ' : ''}${blockquotePrefix}${this.getShowMarkdown($child, false)}\n\n`
         }
       } else if (name === 'text') {
         // console.log(innerText)
@@ -279,15 +179,15 @@ class Parser {
         }
       } else if (name === 'h2') {
         if (text !== null) {
-          md += `## ${innerText}\n\n`
+          md += `## ${id ? 'a' + id + ' ' : ''}${innerText}\n\n`
         } else {
-          md += `## ${this.getShowMarkdown($child, false)}\n\n`
+          md += `## ${id ? 'a' + id + ' ' : ''}${this.getShowMarkdown($child, false)}\n\n`
         }
       } else if (name === 'h3') {
         if (text !== null) {
-          md += `### ${innerText}\n\n`
+          md += `### ${id ? 'a' + id + ' ' : ''}${innerText}\n\n`
         } else {
-          md += `### ${this.getShowMarkdown($child, false)}\n\n`
+          md += `### ${id ? 'a' + id + ' ' : ''}${this.getShowMarkdown($child, false)}\n\n`
         }
       } else if (name === 'ul') {
         // 如果ul在blockquote中，则相对于其下的li，其ptype为blockquote，否则才为ul
@@ -337,6 +237,8 @@ class Parser {
         }
       } else if (name === 'a') {
         // console.log('a标签内的文本是：', innerText)
+        // console.log('处理之前a标签的href为：', attribs.href)
+        // console.log('处理之后a标签的href为：', Utils.normalize(attribs.href))
         md += `[${innerText}](${Utils.normalize(attribs.href)})`
       } else if (name === 'img') {
         md += `![${attribs.alt}](${attribs['data-big'] || attribs.src})`
@@ -407,28 +309,18 @@ class Parser {
     let { m } = this
     let ret = {}
     let markdown = null
-    let meta = null
-    let images = null
     switch (m.toLowerCase()) {
       case 'show':
-        meta = this.getShowMeta()
         markdown = this.getShowMarkdown(this.$('.content')) // 解析 goodthing\firstpage\experience类型的markdown
-        images = this.getShowImages()
         break
       case 'zk':
         markdown = this.getZKMarkdown() // 解析 专刊的markdown
-        meta = this.getZKMeta()
-        images = this.getZKImages()
         break
       case 'zt':
         markdown = this.getZTMarkdown() // 解析 专题的markdown
-        meta = this.getZTMeta()
-        images = this.getZTImages()
         break
     }
     ret.markdown = markdown
-    ret.meta = meta
-    ret.images = images
     return ret
   }
 

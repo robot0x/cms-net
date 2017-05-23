@@ -18,12 +18,12 @@ const TagService = require('../service/TagService')
 const tagService = new TagService()
 const request = require('request')
 const recommend = require('./recommend')
+const Promise = require('bluebird')
 class Show {
   setType (type) {
     this.type = type
     return this
   }
- 
   /**
    * @param {number} id
    * @memberof Show
@@ -197,6 +197,16 @@ class Show {
       return null
     }
   }
+  // 拿出文章关联的所有sku
+  async _getSkus (id) {
+    let skus = null
+    const result = await Promise.promisify(request)(
+      'http://s5.a.dx2rd.com:3000/v1/articlesku/' + id
+    )
+    let { data } = JSON.parse(result.body)
+    skus = data[Utils.toLongId(id)]
+    return skus
+  }
   async genShareData (id, trueM) {
     const ret = Object.create(null)
     const titles = await metaTable.getTitles(id)
@@ -218,7 +228,7 @@ class Show {
     let data = null
     // console.log('trueM:', trueM)
     const buylink = await metaService.getBuylink(id)
-    console.log('buylink:', buylink)
+    // console.log('buylink:', buylink)
     switch (trueM) {
       case 'show': // 正文页渲染 firstpage/goodthing/activity/exprience
         data = await this.getArticleData(id, ctype)
@@ -235,6 +245,8 @@ class Show {
       data.buylink = buylink
       data.has_buy_link = true
     }
+    data.skus = await this._getSkus(id)
+    // console.log('data.skus:', data.skus)
     data.share_data = await this.genShareData(id, trueM)
     // console.log(data)
     return data

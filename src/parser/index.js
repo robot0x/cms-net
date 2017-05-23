@@ -1,6 +1,7 @@
 const marked = require('marked')
 // const _ = require('lodash')
 const cheerio = require('cheerio')
+const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
 // const Promise = require('bluebird')
 /**
@@ -70,12 +71,21 @@ class Parser {
       for (let child of children) {
         let item = {}
         let { type, name, data, attribs } = child
+        let {id} = attribs
+        console.log('id:', id)
         // 只处理tag和text节点
         if (type === 'tag') {
           item.type = name
           let childNodes = child.childNodes
           if (name === 'a') {
-            item.url = attribs.href
+            const {href} = attribs
+            const id = Utils.normalize(href)
+            item.url = id
+            item.scheme = 'diaodiao'
+            if (href === id) {
+              item.url = Utils.removeProtocolHead(href)
+              item.scheme = /^https/i.test(href) ? 'https' : 'http'
+            }
           } else if (name === 'span' && attribs.style) {
             item.style = attribs.style
           }

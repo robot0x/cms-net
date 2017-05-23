@@ -6,10 +6,10 @@ const Log = require('../utils/Log')
 const DB = require('../db/DB')
 
 class Writer {
-  write (content) {
+  write (content, id) {
     // const { markdown, meta, images } = content
-    const { markdown, meta } = content
-    const { id } = meta
+    const { markdown } = content
+    // const { id } = meta
     // const batch = []
     // batch.push(
     DB.exec(

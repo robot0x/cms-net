@@ -31,18 +31,17 @@ reader.read().then(contents => {
     const urls = contents
       .filter(content => !!content)
       .map(content => content.url)
-    // console.log(urls)
     downloader.set(urls)
-
     downloader
       .download((html, url, index) => {
         const content = contents[index]
+        const {id} = content
         content.html = html
         // console.log('36:', html)
         parser.set(content)
         const ret = parser.parse()
         // console.log('39:', ret)
-        writer.write(ret)
+        writer.write(ret, id)
         // console.log(`${index}：${url}`)
       })
       .catch(e => {

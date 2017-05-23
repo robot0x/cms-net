@@ -26,8 +26,9 @@ const Promise = require('bluebird')
  *
  */
 class Reader {
-  constructor (file = './data/ajson.3') {
-    this.file = path.normalize(file)
+  constructor (file = 'ajson.4') {
+    // console.log(path.resolve('./src/crawler/data', file))
+    this.file = path.resolve('./src/crawler/data', file)
   }
   read (file = this.file) {
     // console.log('开始读取nidlist文件 ....')
