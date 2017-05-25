@@ -24,10 +24,8 @@ class BuyinfoService {
   async getRenderData (aid = this.aid) {
     try {
       // 根据规则拿购买链接，把meta表中的购买链接作为第二个参数，这样在条件命中时，我们就能少访问一次数据库
-      return {
-        meta: await this.metaService.getRawMetas(aid),
-        buyinfos: await this.buyinfoTable.getByAid(aid)
-      }
+      const [meta, buyinfos] = Promise.all([this.metaService.getRawMetas(aid), this.buyinfoTable.getByAid(aid)])
+      return { meta, buyinfos }
     } catch (e) {
       Log.exception(e)
       return null

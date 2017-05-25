@@ -71,8 +71,9 @@ class Parser {
       for (let child of children) {
         let item = {}
         let { type, name, data, attribs } = child
-        let {id} = attribs
-        console.log('id:', id)
+        attribs = attribs || {}
+        let anchor = attribs.id
+        console.log('anchor:', anchor)
         // 只处理tag和text节点
         if (type === 'tag') {
           item.type = name
@@ -82,7 +83,11 @@ class Parser {
             const id = Utils.normalize(href)
             item.url = id
             item.scheme = 'diaodiao'
-            if (href === id) {
+            // 9833#jieguo
+            if (/^\d+#.+$/.test(href)) {
+              item.url = href.substring(href.lastIndexOf('#'))
+              item.scheme = 'anchor'
+            } else if (/* 9833 */href === id && !/^\d+$/.test(id)) {
               item.url = Utils.removeProtocolHead(href)
               item.scheme = /^https/i.test(href) ? 'https' : 'http'
             }

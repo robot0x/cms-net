@@ -45,9 +45,11 @@ reader.read().then(contents => {
         // console.log(`${index}：${url}`)
       })
       .catch(e => {
+        console.log(e)
         Log.exception(e)
       })
   } catch (e) {
+    console.log(e)
     Log.exception(e)
   }
 })

@@ -156,7 +156,8 @@ class Show {
    * 根据id拿到firstpage/goodthing/activity/exprience类型的渲染数据
    */
   async getArticleData (id, ctype) {
-    Log.business('[API show showArticle] 输入参数为：', id)
+    console.log('[API show getArticleData] 输入参数为：', id)
+    Log.business(`[API show getArticleData] 输入参数为：${id}`)
     try {
       let content = await contentTable.getById(id)
       // (useBuylink = true, isShortId = false, useCoverex = false, useBanner = false, useSwipe = false , useImageSize = false)
@@ -171,16 +172,20 @@ class Show {
       let { swipe_image_url, title, price, author } = meta
       parser.markdown = content
       let goods = await recommend(id)
-      goods = goods.map(good => {
-        // console.log(good.type)
-        return {
-          image: good.thumb,
-          title: good.title,
-          ctype: Utils.typeToCtype(good.type),
-          article_id: Utils.toShortId(good.serverid)
-          // price: 239
-        }
-      })
+      if (goods) {
+        goods = goods.map(good => {
+          // console.log(good.type)
+          return {
+            image: good.thumb,
+            title: good.title,
+            ctype: Utils.typeToCtype(good.type),
+            article_id: Utils.toShortId(good.serverid)
+            // price: 239
+          }
+        })
+      } else {
+        goods = []
+      }
       return {
         ctype,
         header: {
@@ -205,7 +210,7 @@ class Show {
     )
     let { data } = JSON.parse(result.body)
     skus = data[Utils.toLongId(id)]
-    return skus
+    return skus || []
   }
   async genShareData (id, trueM) {
     const ret = Object.create(null)
@@ -221,13 +226,13 @@ class Show {
    * 根据id拿到ctype，然后在路由到取相应数据的方法
    */
   async getZKAndZTAndArticleData (id) {
-    console.log('getZKAndZTAndArticleData exec ....')
+    console.log('getZKAndZTAndArticleData exec ....', id)
     const ctype = await metaTable.getCtypeById(id)
     const trueM = Utils.ctypeToM(ctype)
-    // console.log('trueM:', trueM)
+    console.log('trueM:', trueM)
     let data = null
     // console.log('trueM:', trueM)
-    const buylink = await metaService.getBuylink(id)
+    // const buylink = await metaService.getBuylink(id)
     // console.log('buylink:', buylink)
     switch (trueM) {
       case 'show': // 正文页渲染 firstpage/goodthing/activity/exprience
@@ -240,11 +245,11 @@ class Show {
         data = await this.getZTData(id, ctype)
         break
     }
-    data.has_buy_link = false
-    if (buylink) {
-      data.buylink = buylink
-      data.has_buy_link = true
-    }
+    // data.has_buy_link = false
+    // if (buylink) {
+    //   data.buylink = buylink
+    //   data.has_buy_link = true
+    // }
     data.skus = await this._getSkus(id)
     data.skus = data.skus.map(sku => {
       try {
@@ -257,9 +262,7 @@ class Show {
         return sku
       }
     })
-    // console.log('data.skus:', data.skus)
     data.share_data = await this.genShareData(id, trueM)
-    // console.log(data)
     return data
   }
   getReadcound (aids) {

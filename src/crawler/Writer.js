@@ -13,7 +13,10 @@ class Writer {
     // const batch = []
     // batch.push(
     DB.exec(
-      `INSERT INTO diaodiao_article_content set aid=${id}, content=${DB.escape(markdown)}`
+      `
+      INSERT INTO diaodiao_article_content set aid=${id}, content=${DB.escape(markdown)}
+      ON DUPLICATE KEY UPDATE content = ${DB.escape(markdown)}
+      `
     ).then(() => {
       console.log(`ID为${id}的文章入库成功 ....`)
     }).catch(err => {

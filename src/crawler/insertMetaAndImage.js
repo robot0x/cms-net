@@ -5,9 +5,10 @@ const Log = require('../utils/Log')
 // const Promise = require('bluebird')
 const Utils = require('../utils/Utils')
 const DB = require('../db/DB')
+const path = require('path')
 
 const lineReader = require('readline').createInterface({
-  input: require('fs').createReadStream('./data/ajson.3'),
+  input: require('fs').createReadStream(path.resolve('./src/crawler/data', 'ajson.5')),
   output: process.stdout,
   terminal: false
 })
@@ -137,8 +138,42 @@ lineReader.on('line', json => {
   } else {
     titlecolor = 0
   }
+  // `INSERT INTO
+  //     ${articleContentTable.table} (${articleContentTable.columnsStr})
+  //   VALUES
+  //     (${id}, '${content}')
+  //   ON DUPLICATE KEY
+  //   UPDATE
+  //     content = '${content}'`
   // console.log(`the author is ${author}`)
-  let sql = `INSERT INTO diaodiao_article_meta SET id=${nid}, title=${title}, ctype=${type}, timetopublish=${timetopublish}, buylink=${buylink}, price=${price}, titlecolor=${titlecolor}, titleex=${titleex}, create_time=${DB.escape(new Date(created * 1000))}, last_update_time=${DB.escape(new Date(changed * 1000))}, author=${author}`
+  let sql = `
+  INSERT INTO 
+    diaodiao_article_meta 
+  SET 
+    id=${nid}, 
+    title=${title}, 
+    ctype=${type}, 
+    timetopublish=${timetopublish}, 
+    buylink=${buylink}, 
+    price=${price}, 
+    titlecolor=${titlecolor}, 
+    titleex=${titleex}, 
+    create_time=${DB.escape(new Date(created * 1000))}, 
+    last_update_time=${DB.escape(new Date(changed * 1000))}, 
+    author=${author}
+  ON DUPLICATE KEY
+  UPDATE
+    title=${title}, 
+    ctype=${type}, 
+    timetopublish=${timetopublish}, 
+    buylink=${buylink}, 
+    price=${price}, 
+    titlecolor=${titlecolor}, 
+    titleex=${titleex}, 
+    create_time=${DB.escape(new Date(created * 1000))}, 
+    last_update_time=${DB.escape(new Date(changed * 1000))}, 
+    author=${author}
+  `
   // 目前的问题，timetopublish有将近100篇为0
   // 所有的buylink字段为空
   // batch.push(
@@ -160,7 +195,6 @@ lineReader.on('line', json => {
     .concat(setImage(32, banner))
 
   for (let image of images) {
-    // batch.push(
     DB.exec(
       `
       INSERT INTO
@@ -186,7 +220,6 @@ lineReader.on('line', json => {
         console.log(err)
         Log.exception(`D为 ${nid} 的image更新成功，出错信息：`, err.message)
       })
-    // )
   }
 
   // Promise.all(batch).then(() => {

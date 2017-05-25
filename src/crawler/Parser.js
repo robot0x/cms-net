@@ -1,6 +1,7 @@
 const cheerio = require('cheerio')
 const _ = require('lodash')
 const Utils = require('../utils/Utils')
+const html = require('./9833.html')
 // const Log = require('../utils/Log')
 /**
  * 段落与段落之间 用 \n\n 隔开，若一个 \n 则还是在一个p标签里
@@ -28,7 +29,6 @@ class Parser {
   constructor (content) {
     this.set(content)
   }
-
   set (content) {
     // console.log('32:', content)
     if (!_.isEmpty(content)) {
@@ -40,6 +40,39 @@ class Parser {
       this.m = m // 根据不同的m来选择相应的解析markdown的方法
       this.$ = cheerio.load(this.html, { decodeEntities: false })
     }
+  }
+  setImage (img, type = 4) {
+    // INSERT INTO image set aid=4925, url='//content.image.alimmdn.com/cms/sites/default/files/20160107/zk/qqq2.jpg', used=1, type=4, extension_name='jpg', width=640, height=416;
+    let ret = null
+    if (img) {
+      let { attribs } = img
+      // 优先取不带参数的data-big，并且当文档还没有ready时，取道的有可能是占位图
+      let src = attribs['data-big'] || attribs['src']
+      let width = +(attribs['data-w'] || attribs['width']) || 0
+      let height = +(attribs['data-h'] || attribs['height']) || 0
+      // 经过昨晚的测试发现：有些width和height为-1
+      // 所以硬编码成 width 和 height
+      if (width < 0) {
+        width = 596
+      }
+
+      if (height < 0) {
+        height = 596
+      }
+
+      ret = {
+        aid: this.id,
+        url: Utils.removeProtocolHead(src),
+        type,
+        used: 1,
+        extension_name: Utils.getFileExtension(src),
+        // size: '', // 目前我们先不管历史老文章内图片的size，新的文章自会有的
+        width,
+        height
+        // create_time: '' // 目前还无法拿到
+      }
+    }
+    return ret
   }
 
   getZKMarkdown () {
@@ -370,12 +403,12 @@ class Parser {
   }
 }
 
-// const parser = new Parser({
-//   id: 1035,
-//   m: 'show',
-//   type: 'goodthing',
-//   html
-// })
-// console.log(parser.parse())
+const parser = new Parser({
+  id: 9833,
+  m: 'show',
+  type: 'firstpage',
+  html
+})
+console.log(parser.parse())
 
 module.exports = Parser

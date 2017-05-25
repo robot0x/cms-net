@@ -47,7 +47,6 @@ class ShowRender extends Render {
     this.template = this.readTemplate(tempFile)
     return this
   }
-  
   async getRelsearchWords (id = this.id) {
     let searchWords = await relsearch(id)
     if (!Utils.isValidArray(searchWords)) return null
@@ -77,11 +76,12 @@ class ShowRender extends Render {
         author,
         images
       } = await new MetaService().getRenderData(id, true)
+      console.log('images:', images.length)
       let { title, ctype, timetopublish, price, has_buylink, buylink } = meta
       let relwords = await this.getRelsearchWords()
       // 在此处进行ctype判断
       parser.markdown = content // markdown is a setter like method `setMarkdown`
-      let body = await parser.getHTML()
+      let body = parser.getHTML()
       body = imageHandler(body, images)
       //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
       let cover = images.filter(img => {
