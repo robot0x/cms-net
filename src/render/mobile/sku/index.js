@@ -5,6 +5,7 @@ const MetaService = require('../../../service/MetaService')
 const request = require('request')
 const Promise = require('bluebird')
 const Log = require('../../../utils/Log')
+const metaService = new MetaService()
 /**
  * 渲染：
  *  1. SKU页
@@ -29,7 +30,6 @@ class SkuRender extends Render {
     let { sid, parser, version } = this
     if (!sid) return
     try {
-      let metaService = new MetaService()
       const result = await Promise.promisify(request)(
         `http://s5.a.dx2rd.com:3000/v1/getfullsku/${sid}`
       )

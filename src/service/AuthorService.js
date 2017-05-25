@@ -28,21 +28,16 @@ class AuthorService {
     const { authorTable, metaTable, metaService, source } = this
     try {
       // let source = '+0'
-      let author = await authorTable.getBySource(source)
-      let aids = await metaTable.getAidsBySource(source)
+      let [author, aids] = await Promise.all([authorTable.getBySource(source), metaTable.getAidsBySource(source)])
       let defaultSource = '有调机器人'
       if (!author || !Utils.isValidArray(aids)) {
-        author = await authorTable.getBySource(defaultSource)
-        aids = await metaTable.getAidsBySource(defaultSource)
+        [author, aids] = await Promise.all([authorTable.getBySource(defaultSource), metaTable.getAidsBySource(defaultSource)])
       }
       // 如果aids的长度为1，则返回的是对象而不是对象数组形式，需要处理一下
       let metas = await metaService.getRawMetas(aids, false, true)
       if (metas && !Utils.isValidArray(metas)) {
         metas = [metas]
       }
-      console.log('author:', author)
-      console.log('aids:', aids)
-      console.log('metas:', metas)
       if (metas) {
         metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
       }

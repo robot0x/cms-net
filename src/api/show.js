@@ -3,7 +3,7 @@ const MetaTable = require('../db/MetaTable')
 const metaTable = new MetaTable()
 const ImageTable = require('../db/ImageTable')
 const imageTable = new ImageTable()
-const Parser = require('../parser')
+const Parser = require('../render/mobile/show/parser')
 const parser = new Parser()
 const Log = require('../utils/Log')
 const Utils = require('../utils/Utils')
@@ -159,9 +159,9 @@ class Show {
     console.log('[API show getArticleData] 输入参数为：', id)
     Log.business(`[API show getArticleData] 输入参数为：${id}`)
     try {
-      let content = await contentTable.getById(id)
-      // (useBuylink = true, isShortId = false, useCoverex = false, useBanner = false, useSwipe = false , useImageSize = false)
-      let meta = await metaService.getRawMetas(
+      let [content, meta] = await Promise.all([
+        contentTable.getById(id),
+        metaService.getRawMetas(
         id,
         false,
         true,
@@ -169,6 +169,8 @@ class Show {
         false,
         true
       )
+      ])
+      // (useBuylink = true, isShortId = false, useCoverex = false, useBanner = false, useSwipe = false , useImageSize = false)
       let { swipe_image_url, title, price, author } = meta
       parser.markdown = content
       let goods = await recommend(id)
@@ -214,8 +216,9 @@ class Show {
   }
   async genShareData (id, trueM) {
     const ret = Object.create(null)
-    const titles = await metaTable.getTitles(id)
-    const coverex = Utils.getFirst(await imageTable.getThumbImagesUrl(id))
+    let [titles, coverex] = await Promise.all([metaTable.getTitles(id), imageTable.getThumbImagesUrl(id)])
+    // const titles = await metaTable.getTitles(id)
+    coverex = Utils.getFirst(coverex)
     ret.url = `https://c.diaox2.com/view/app/?m=${trueM}&id=${id}`
     ret.image = coverex
     return Object.assign(ret, titles)
@@ -230,19 +233,23 @@ class Show {
     const ctype = await metaTable.getCtypeById(id)
     const trueM = Utils.ctypeToM(ctype)
     console.log('trueM:', trueM)
-    let data = null
+    // let data = null
+    let promises = []
     // console.log('trueM:', trueM)
     // const buylink = await metaService.getBuylink(id)
     // console.log('buylink:', buylink)
     switch (trueM) {
       case 'show': // 正文页渲染 firstpage/goodthing/activity/exprience
-        data = await this.getArticleData(id, ctype)
+        promises.push(this.getArticleData(id, ctype))
+        // data = await this.getArticleData(id, ctype)
         break
       case 'zk': // 专刊页渲染
-        data = await this.getZKData(id, ctype)
+        promises.push(this.getZKData(id, ctype))
+        // data = await this.getZKData(id, ctype)
         break
       case 'zt': // 专刊页渲染
-        data = await this.getZTData(id, ctype)
+        promises.push(this.getZTData(id, ctype))
+        // data = await this.getZTData(id, ctype)
         break
     }
     // data.has_buy_link = false
@@ -250,8 +257,11 @@ class Show {
     //   data.buylink = buylink
     //   data.has_buy_link = true
     // }
-    data.skus = await this._getSkus(id)
-    data.skus = data.skus.map(sku => {
+    promises.push(this._getSkus(id))
+    promises.push(this.genShareData(id, trueM))
+    let [data, skus, shareData] = await Promise.all(promises)
+    // data.skus = await this._getSkus(id)
+    data.skus = skus.map(sku => {
       try {
         sku.images = JSON.parse(sku.images)
         sku.tags = JSON.parse(sku.tags)
@@ -262,7 +272,7 @@ class Show {
         return sku
       }
     })
-    data.share_data = await this.genShareData(id, trueM)
+    data.share_data = shareData
     return data
   }
   getReadcound (aids) {

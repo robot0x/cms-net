@@ -53,9 +53,15 @@ class Utils {
     }
     return ret
   }
+  static removeAliImageSuffix (url, suffix = '@200w_200h_1e%7C200x200-5rc') {
+    if (/content\.image\.alimmdn\.com/i.test(url) && url.indexOf(suffix) !== -1) {
+      return url.substring(0, url.lastIndexOf('@'))
+    }
+    return url
+  }
   // 如果是阿里云图，则加上后缀，否则不用处理
   static addAliImageSuffix (url, suffix = '@200w_200h_1e%7C200x200-5rc') {
-    if (/content\.image\.alimmdn\.com/i.test(url)) {
+    if (/content\.image\.alimmdn\.com/i.test(url) && url.indexOf(suffix) === -1) {
       url += '@200w_200h_1e%7C200x200-5rc'
     }
     return url
@@ -351,7 +357,7 @@ class Utils {
     return extensionName
   }
 }
-
+console.log(Utils.removeAliImageSuffix('//content.image.alimmdn.com/sku/1494687634em_pic_jpg.jpeg@200w_200h_1e%7C200x200-5rc'))
 // console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=show&id=9625'))
 // console.log(Utils.normalize('http://c.diaox2.com/share/41339060233625.html?from=timeline&isappinstalled=1'))
 // console.log(Utils.normalize('http://c.diaox2.com/share/41339060233625.html'))

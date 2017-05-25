@@ -1,5 +1,5 @@
 const marked = require('marked')
-// const _ = require('lodash')
+const _ = require('lodash')
 const cheerio = require('cheerio')
 const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
@@ -49,6 +49,47 @@ class Parser {
   setOptions (options = {}) {
     this.options = Object.assign(this.defaultOptions, options)
   }
+  getName (child) {
+    let { name, attribs, type } = child
+    if (type === 'text') {
+      return 'text'
+    } else if (type === 'tag') {
+      let className = attribs.class
+      try {
+        if (name === 'p') {
+          if (_.isEmpty(attribs)) {
+            name = 'p'
+          } else if (className) {
+            if (className.indexOf('lift2') !== -1) {
+              name = 'lift2'
+            } else if (className.indexOf('lift') !== -1) {
+              name = 'lift'
+            } else if (className.indexOf('editorhead') !== -1) {
+              name = 'editorhead'
+            } else if (className.indexOf('editorcontent') !== -1) {
+              name = 'editorcontent'
+            }
+          }
+        } else if (name === 'div') {
+          const className = attribs.class
+          if (className) {
+            if (className.indexOf('quotebox') !== -1) {
+              name = 'blockquote'
+            } else if (className.indexOf('articlecard') !== -1) {
+              name = 'sku'
+            }
+          } else {
+            name = null
+          }
+        }
+      } catch (e) {
+        console.log(e)
+        name = null
+      }
+    }
+    // 可能还有其他的节点，所以我们无法假设只有tag节点和text节点
+    return name
+  }
   /**
    * [htmlToData 输入一段html文本，输出一段对应的数据片段]
    * @param  {[jQuery Object]}  container
@@ -70,16 +111,19 @@ class Parser {
       children = Array.from(children)
       for (let child of children) {
         let item = {}
-        let { type, name, data, attribs } = child
-        attribs = attribs || {}
-        let anchor = attribs.id
-        console.log('anchor:', anchor)
+        let { type, data, attribs } = child
+        let $child = this.$(child)
+        let name = this.getName(child)
+        // console.log('name:', name)
+        // attribs = attribs || {}
+        // let anchor = attribs.id
+        // console.log('anchor:', anchor)
         // 只处理tag和text节点
         if (type === 'tag') {
           item.type = name
           let childNodes = child.childNodes
           if (name === 'a') {
-            const {href} = attribs
+            const { href } = attribs
             const id = Utils.normalize(href)
             item.url = id
             item.scheme = 'diaodiao'
@@ -87,14 +131,50 @@ class Parser {
             if (/^\d+#.+$/.test(href)) {
               item.url = href.substring(href.lastIndexOf('#'))
               item.scheme = 'anchor'
-            } else if (/* 9833 */href === id && !/^\d+$/.test(id)) {
+            } else if (/* 9833 */ href === id && !/^\d+$/.test(id)) {
               item.url = Utils.removeProtocolHead(href)
               item.scheme = /^https/i.test(href) ? 'https' : 'http'
             }
           } else if (name === 'span' && attribs.style) {
             item.style = attribs.style
+          } else if (name === 'sku') {
+            try {
+              let title = $child.find('.articletitle').text()
+              let image = $child.find('.articleimg')[0].attribs['src']
+              let price = $child.find('.brand').text()
+              item.type = name
+              item.title = title
+              item.price = price
+              item.image = image
+            } catch (error) {
+              Log.exception(error)
+              console.log(error)
+            }
+          } else if (name === 'editorhead') {
+            item.type = name
+            item.value = $child.text()
+          } else if (name === 'editorcontent') {
+            item.type = name
+            item.value = this.htmlToData(this.$(child), false)
+          } else if (name === 'lift') {
+            try {
+              item.type = name
+              console.log($child.find('em').text())
+              item.value = $child.find('em').text()
+            } catch (error) {
+              Log.exception(error)
+              console.log(error)
+            }
+          } else if (name === 'lift2') {
+            try {
+              item.type = name
+              item.value = $child.text()
+            } catch (error) {
+              Log.exception(error)
+              console.log(error)
+            }
           }
-          const doms = Array.from(this.$(child).children())
+          const doms = Array.from($child.children())
           // 若child下有且仅有一个文本节点，则直接把文本节点值赋予value
           if (childNodes.length === 1 && childNodes[0].type === 'text') {
             item.value = childNodes[0].data
@@ -107,7 +187,7 @@ class Parser {
             item.url = imgAttr.src
             item.width = imgAttr.width || ''
             item.height = imgAttr.height || ''
-          } else {
+          } else if (name !== 'sku') {
             // 若含有其他节点，则递归调用htmlToData
             item.value = this.htmlToData(this.$(child), false)
           }

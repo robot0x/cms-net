@@ -8,7 +8,7 @@ const request = require('request')
 const Promise = require('bluebird')
 const relsearch = require('../../../api/relsearch')
 const Log = require('../../../utils/Log')
-
+const metaService = new MetaService()
 /**
  * 渲染：
  *  1. 首页 goodthing (ctype = 1)    http://c.diaox2.com/view/app/?m=show&id=9669
@@ -70,15 +70,19 @@ class ShowRender extends Render {
     const { parser, id } = this
     if (!id) return
     try {
+      let [metaObj, relwords] = await Promise.all([
+        metaService.getRenderData(id, true),
+        this.getRelsearchWords()
+      ])
       let {
         content,
         meta,
         author,
         images
-      } = await new MetaService().getRenderData(id, true)
+      } = metaObj
       console.log('images:', images.length)
       let { title, ctype, timetopublish, price, has_buylink, buylink } = meta
-      let relwords = await this.getRelsearchWords()
+      // let relwords = await this.getRelsearchWords()
       // 在此处进行ctype判断
       parser.markdown = content // markdown is a setter like method `setMarkdown`
       let body = parser.getHTML()

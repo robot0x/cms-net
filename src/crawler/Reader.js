@@ -26,7 +26,7 @@ const Promise = require('bluebird')
  *
  */
 class Reader {
-  constructor (file = 'ajson.5') {
+  constructor (file = '9861.ajson') {
     // console.log(path.resolve('./src/crawler/data', file))
     this.file = path.resolve('./src/crawler/data', file)
   }

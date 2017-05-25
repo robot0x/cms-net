@@ -48,10 +48,19 @@ class ZKRender extends Render {
       let buylinks = []
       // 先读diaodiao_buyinfo表
       // 根据文章id获取其buylink
+      let promises = []
       for (let cid of cids) {
-        let buylink = await metaService.getBuylink(cid)
+        // 并行去拿buylink，提高响应时间
+        promises.push(metaService.getBuylink(cid))
+      }
+      let bls = await Promise.all(promises)
+      for (let i = 0, len = cids.length; i < len; i++) {
+        let buylink = bls[i]
+        let cid = cids[i]
+        // let buylink = await metaService.getBuylink(cid)
         buylinks.push({ cid, link: Utils.convertSkuUrl(buylink, cid) })
       }
+
       let body = parser.setBuylinks(buylinks).getHTML()
       // console.log(`ID为${id}的专刊引用的文章ID列表为：`,cids)
       // body = imageHandler(body, images)

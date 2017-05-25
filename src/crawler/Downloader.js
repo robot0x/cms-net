@@ -2,7 +2,7 @@
  * @Author: liyanfeng
  * @Date: 2017-04-18 14:44:46
  * @Last Modified by: liyanfeng
- * @Last Modified time: 2017-05-23 11:23:20
+ * @Last Modified time: 2017-05-25 20:13:17
  *  为了减轻服务器的压力，要使异步任务顺序化，而不是近1W个url一次性地请求完
  *  请求完一个url，并成功返回结果，才接着请求下一个url
  */
@@ -68,5 +68,15 @@ class Downloader {
     this.download(handler)
   }
 }
-
+/**
+ * function asyncOneByOne (arr) {
+ *  let asyncArr = arr.map((it) => new Promise((resolve, reject) => it(resolve)))
+ *  let it = asyncArr[Symbol.iterator]()
+ *  function go (item) {
+ *   if(item.done) return
+ *   return item.value().then(() => go(it.next()))
+ *  }
+ *  go(it.next())
+ * }
+ */
 module.exports = Downloader
