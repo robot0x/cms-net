@@ -5,7 +5,8 @@ const scpFile = path.resolve('./src/crawler/data', `ajson.${moment().format('YYY
 // const fs = require('fs')
 const run = require('./index')
 const run2 = require('./insertMetaAndImage')
-const scpCmd = `scp work@s3.a.dx2rd.com:~/view2/app/ajson ${scpFile}`
+const isDebug = process.env.NODE_ENV === 'dev'
+const scpCmd = isDebug ? `scp work@s3.a.dx2rd.com:~/view2/app/ajson ${scpFile}` : `cp ~/view2/app/ajson ${scpFile}`
 exec(scpCmd, (err, stdout, stderr) => {
   if (err) {
     console.log('get weather api error:', stderr)
