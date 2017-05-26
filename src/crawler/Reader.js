@@ -31,9 +31,10 @@ class Reader {
     this.file = path.resolve('./src/crawler/data', file)
   }
   read (file = this.file) {
+    console.log('开始读取文件，读取的文件为：', file)
     // console.log('开始读取nidlist文件 ....')
     return new Promise((resolve, reject) => {
-      fs.readFile(this.file, 'utf8', (err, text) => {
+      fs.readFile(file, 'utf8', (err, text) => {
         if (err) {
           console.log(err)
           reject(err)

@@ -23,33 +23,41 @@ const parser = new Parser()
 // 持久化
 const writer = new Writer()
 
-reader.read().then(contents => {
-  // console.log(contents)
-  try {
-    // console.log(contents.map(content => content.url))
-    // 文件下载器
-    const urls = contents
-      .filter(content => !!content)
-      .map(content => content.url)
-    downloader.set(urls)
-    downloader
-      .download((html, url, index) => {
-        const content = contents[index]
-        const {id} = content
-        content.html = html
-        // console.log('36:', html)
-        parser.set(content)
-        const ret = parser.parse()
-        // console.log('39:', ret)
-        writer.write(ret, id)
-        // console.log(`${index}：${url}`)
-      })
-      .catch(e => {
-        console.log(e)
-        Log.exception(e)
-      })
-  } catch (e) {
-    console.log(e)
-    Log.exception(e)
-  }
-})
+function run (file) {
+  console.log('run exec .... the file is ', file)
+  reader.read(file).then(contents => {
+    console.log(contents)
+    try {
+      // console.log(contents.map(content => content.url))
+      // 文件下载器
+      const urls = contents
+        .filter(content => !!content)
+        .map(content => content.url)
+      downloader.set(urls)
+      downloader
+        .download((html, url, index) => {
+          const content = contents[index]
+          const { id } = content
+          if (id >= 10500) {
+            return Log.exception(`[crawler/index.js] 增量更新的文章有ID大于10500的，ID为${id}`)
+          }
+          content.html = html
+          // console.log('36:', html)
+          parser.set(content)
+          const ret = parser.parse()
+          // console.log('39:', ret)
+          writer.write(ret, id)
+          // console.log(`${index}：${url}`)
+        })
+        .catch(e => {
+          console.log(e)
+          Log.exception(e)
+        })
+    } catch (e) {
+      console.log(e)
+      Log.exception(e)
+    }
+  })
+}
+
+module.exports = run

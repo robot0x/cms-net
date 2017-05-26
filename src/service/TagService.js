@@ -118,7 +118,7 @@ class TagService {
       // 此数组已经有顺序，顺序是按照timetopublish从大到小排列
       const metas = await DB.exec(metaSql)
       let sliceAids = null
-      // 这儿有逻辑错误，不应该截断aids，应该阶段有顺序的metas
+      // 这儿有逻辑错误，不应该截断aids，应该截断有顺序的metas
       if (limit !== -1) {
         sliceAids = metas.slice(0, limit).map(meta => meta.id)
       } else {

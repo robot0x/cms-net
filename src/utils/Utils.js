@@ -377,9 +377,9 @@ class Utils {
 // console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=show&id=9625#111'))
 // console.log(Utils.normalize('/view/app/sku/8060.html'))
 // console.log(Utils.normalize('/view/app/?m=show&amp;id=9833#kepu'))
-console.log(Utils.normalize('http://c.diaox2.com/view/app/sku/1232131/8509.html'))
-console.log(Utils.normalize('http://c.diaox2.com/view/app/sku/8509.html'))
-console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=sku&sid=1120'))
+// console.log(Utils.normalize('http://c.diaox2.com/view/app/sku/1232131/8509.html'))
+// console.log(Utils.normalize('http://c.diaox2.com/view/app/sku/8509.html'))
+// console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=sku&sid=1120'))
 
 // const lcids = [4294967297, 41201621280121, 39423504819163, 39423504819163, '', NaN, 41205916247418, 3563]
 // const lcid = 4647154615354

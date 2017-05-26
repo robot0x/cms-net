@@ -12,6 +12,7 @@ class Writer {
     // const { id } = meta
     // const batch = []
     // batch.push(
+    // 增量更新
     DB.exec(
       `
       INSERT INTO diaodiao_article_content set aid=${id}, content=${DB.escape(markdown)}

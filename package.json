@@ -16,7 +16,9 @@
     "nstart": "node cms-net.js",
     "dev": "NODE_ENV=dev nodemon cms-net.js",
     "crawler": "NODE_ENV=dev node ./src/crawler/index.js",
-    "crawler2": "NODE_ENV=dev node ./src/crawler/insertMetaAndImage.js"
+    "crawler2": "NODE_ENV=dev node ./src/crawler/insertMetaAndImage.js",
+    "sync2":"NODE_ENV=dev node ./src/crawler/sync.js",
+    "sync":"node ./src/crawler/sync.js"
   },
   "keywords": [
     "有调",
