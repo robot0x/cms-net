@@ -433,13 +433,13 @@ class Parser {
   }
 }
 
-const parser = new Parser({
-  id: 6107,
-  m: 'show',
-  type: 'firstpage',
-  html
-})
-console.log(parser.parse())
+// const parser = new Parser({
+//   id: 6107,
+//   m: 'show',
+//   type: 'firstpage',
+//   html
+// })
+// console.log(parser.parse())
 // parser.parse()
 
 module.exports = Parser

@@ -264,10 +264,12 @@ class Utils {
   }
   /**
    * 如果输入的是我们自己的链接
-   *   形如：/view/app/?m=show&id=9625    返回 9625
-   *   形如：diaox2.com/article/9625.html 返回 9625
-   *   形如：cms/diaodiao/articles/9625#1 返回 9625 #1
-   *
+   *   形如：/view/app/?m=show&id=9625                              返回 9625
+   *   形如：diaox2.com/article/9625.html                           返回 9625
+   *   形如：cms/diaodiao/articles/9625#1                           返回 9625#1
+   *   形如：http://c.diaox2.com/view/app/sku/8509.html             返回 8509
+   *   形如：http://c.diaox2.com/view/app/sku/12312312312/8509.html 返回 8509
+   *   形如：http://c.diaox2.com/view/app/?m=sku&sid=8509           返回 8509
    *  其他url原样返回
    */
   static normalize (src) {
@@ -294,7 +296,11 @@ class Utils {
       let cmsDDReg = /cms\/diaodiao\/articles\/\w+\/\d+_(\d+)?\.html/i
       let pcSiteReg = /article\/(\d+)\.html/i
       let shareReg = /share\/(\d+)\.html/i
-      let skuReg = /view\/app\/sku\/(\d+)\.html/i
+      // let skuReg = /view\/app\/sku(?:\/\d+)?\/(\d+)\.html/i
+      // 'http://c.diaox2.com/view/app/sku/1232131/8509.html'
+      // 'http://c.diaox2.com/view/app/sku/8509.html'
+      // 'http://c.diaox2.com/view/app/?m=sku&sid=1120'
+      let skuReg = /view\/app\/(?:sku(?:\/\d+)?\/(\d+)\.html|\?m=sku&sid=(\d+))/i
       let match = null
       let isSku = false
       if ((match = src.match(viewAppReg))) {
@@ -306,7 +312,7 @@ class Utils {
       } else if ((match = src.match(shareReg))) {
         ret = match[1] & 0xffffff
       } else if ((match = src.match(skuReg))) {
-        ret = match[1]
+        ret = match[1] || match[2]
         isSku = true
       }
       if (ret && !isSku) {
@@ -357,7 +363,7 @@ class Utils {
     return extensionName
   }
 }
-console.log(Utils.removeAliImageSuffix('//content.image.alimmdn.com/sku/1494687634em_pic_jpg.jpeg@200w_200h_1e%7C200x200-5rc'))
+// console.log(Utils.removeAliImageSuffix('//content.image.alimmdn.com/sku/1494687634em_pic_jpg.jpeg@200w_200h_1e%7C200x200-5rc'))
 // console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=show&id=9625'))
 // console.log(Utils.normalize('http://c.diaox2.com/share/41339060233625.html?from=timeline&isappinstalled=1'))
 // console.log(Utils.normalize('http://c.diaox2.com/share/41339060233625.html'))
@@ -371,6 +377,9 @@ console.log(Utils.removeAliImageSuffix('//content.image.alimmdn.com/sku/14946876
 // console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=show&id=9625#111'))
 // console.log(Utils.normalize('/view/app/sku/8060.html'))
 // console.log(Utils.normalize('/view/app/?m=show&amp;id=9833#kepu'))
+console.log(Utils.normalize('http://c.diaox2.com/view/app/sku/1232131/8509.html'))
+console.log(Utils.normalize('http://c.diaox2.com/view/app/sku/8509.html'))
+console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=sku&sid=1120'))
 
 // const lcids = [4294967297, 41201621280121, 39423504819163, 39423504819163, '', NaN, 41205916247418, 3563]
 // const lcid = 4647154615354

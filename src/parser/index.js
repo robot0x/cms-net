@@ -142,7 +142,9 @@ class Parser {
               let title = $child.find('.articletitle').text()
               let image = $child.find('.articleimg')[0].attribs['src']
               let price = $child.find('.brand').text()
+              let id = Utils.normalize($child[0].attribs['data-href'])
               item.type = name
+              item.id = id
               item.title = title
               item.price = price
               item.image = image
