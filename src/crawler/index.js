@@ -14,6 +14,7 @@ const Reader = require('./Reader')
 const Downloader = require('./Downloader')
 const Parser = require('./Parser')
 const Writer = require('./Writer')
+const path = require('path')
 // 读取器
 const reader = new Reader()
 // 下载器
@@ -24,9 +25,9 @@ const parser = new Parser()
 const writer = new Writer()
 
 function run (file) {
-  console.log('run exec .... the file is ', file)
+  // console.log('run exec .... the file is ', file)
   reader.read(file).then(contents => {
-    console.log(contents)
+    // console.log(contents)
     try {
       // console.log(contents.map(content => content.url))
       // 文件下载器
@@ -59,5 +60,5 @@ function run (file) {
     }
   })
 }
-
+// run(path.resolve('./src/crawler/data', 'ajson.5'))
 module.exports = run

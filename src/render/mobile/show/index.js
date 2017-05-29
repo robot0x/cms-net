@@ -1,6 +1,7 @@
 const Render = require('../../')
 const Utils = require('../../../utils/Utils')
 const imageHandler = require('./imageHandler')
+const skuHandler = require('./skuHandler')
 const Parser = require('./parser')
 const MetaService = require('../../../service/MetaService')
 const moment = require('moment')
@@ -80,13 +81,16 @@ class ShowRender extends Render {
         author,
         images
       } = metaObj
-      console.log('images:', images.length)
+      author = author || {}
+      // console.log('images:', images.length)
       let { title, ctype, timetopublish, price, has_buylink, buylink } = meta
       // let relwords = await this.getRelsearchWords()
       // 在此处进行ctype判断
       parser.markdown = content // markdown is a setter like method `setMarkdown`
       let body = parser.getHTML()
       body = imageHandler(body, images)
+      body = await skuHandler(body)
+      // console.log(body)
       //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
       let cover = images.filter(img => {
         return (img.type & 2) === 2
@@ -97,10 +101,9 @@ class ShowRender extends Render {
       const swipes = images.filter(img => {
         return (img.type & 16) === 16
       })
-      thumb = Utils.getFirst(thumb)
-      cover = Utils.getFirst(cover)
+      thumb = Utils.getFirst(thumb) || {}
+      cover = Utils.getFirst(cover) || {}
       let shouldUsedSku = null
-
       // 如果是好物页，拿出所有的sku，并取出第一个，赋值给页面的 g_ab 变量，由前端js在页面底部插入这条sku
       if (ctype == 2) {
         const skus = await this._getSkus()
@@ -142,6 +145,7 @@ class ShowRender extends Render {
         version: this.version
       })
     } catch (e) {
+      console.log(e)
       Log.exception(e)
       return null
     }

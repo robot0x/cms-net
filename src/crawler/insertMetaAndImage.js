@@ -223,6 +223,7 @@ function run2 (file) {
   })
 }
 
+// run2(path.resolve('./src/crawler/data', 'ajson.5'))
 module.exports = run2
 
 // fs.readFile('./data/ajson', 'utf8', (err, text) => {

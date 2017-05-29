@@ -1,7 +1,6 @@
 const url = require('url')
 const appConfig = require('../../config/app')
 const moment = require('moment')
-
 class Utils {
   /**
    * @static
@@ -40,28 +39,102 @@ class Utils {
    *  => 3053
    * 根据cidlist，拿matalist
    */
-  static getCidByMarkdown (markdown) {
-    const idReg = /id[:：]\s*(\d+)\s*title[:：]/
-    const allCardReg = /```card[\s\S]+?```/ig
+  // static getCidByMarkdown (markdown) {
+  //   const zkarticlesReg = /zkarticles\s+(.+)/
+  //   let match = markdown.match(zkarticlesReg)
+  //   let ids = []
+  //   if (match || match[1]) {
+  //     ids = match[1].split(/\s+/)
+  //     ids = ids.filter(id => /^\d+$/.test(id)).map(id => Number(id))
+  //   }
+  //   return ids
+  // }
+  static getZtDataByParseMarkdown (markdown) {
+    const ztdescReg = /^ztdesc\s+/
+    const ztdescReg2 = /^ztdesc[\s\S]+?\s+/ig
+    const allCardReg = /```ztarticle[\s\S]+?```/ig
+    const idReg = /id[:：]\s*(\d+)\s+/
+    const descReg = /desc[:：]\s*(.+)\s*/
+    const ztdesc = Utils.getFirst(markdown.match(ztdescReg2)).replace(ztdescReg, '').trim()
+    let ret = Object.create(null)
+    ret.ztdesc = ztdesc
+    ret.article = Object.create(null)
     const allCardMarkdown = markdown.match(allCardReg)
-    const ret = []
     for (let cardMarkdown of allCardMarkdown) {
       let id = cardMarkdown.match(idReg)
+      let desc = cardMarkdown.match(descReg) || ['', '']
       if (Utils.isValidArray(id)) {
-        ret.push(Number(id[1]))
+        // ret.push(Number(id[1]))
+        ret.article[id[1]] = desc[1]
       }
     }
     return ret
   }
+  /**
+   * @static
+   * @param {any} markdown
+   * @returns
+   * @memberof Utils
+   * {
+   * zkdesc: '无论是单身狗还是一对汪，一年之中总有那么几个周末想窝在家中，望望天花板，剥剥手指甲，吃吃小食，',
+     article: {
+      '1047': '无论是数九寒冬还是炎热酷暑，总是需要一桶冰淇淋来填补我们百无聊赖的心。',
+      '1138': '除了嘎嘣脆的爆米花，鸡蛋仔也是个不错的选择啊。',
+      '1229': '当然了，如果你心灵手巧，瞧不上那些没有营养的小零食，那你就入手一个蒸锅。',
+      '1598': '嘴巴空虚寂寞冷怎么办？吃嘎嘣脆的爆米花啊。',
+      '2197': '女生嘛，即便宅在家里，还是要注意各种营养。',
+      '2717': '男生嘛，肯定要来瓶啤酒潇洒一下，尤其是那口感细腻的啤酒花，绝对不能少。' 
+     }
+    }
+   */
+  static getZkDataByParseMarkdown (markdown) {
+    const zkdescReg = /^zkdesc\s+/
+    const zkdescReg2 = /^zkdesc[\s\S]+?\s+/ig
+    const allCardReg = /```zkarticle[\s\S]+?```/ig
+    const idReg = /id[:：]\s*(\d+)\s+/
+    const descReg = /desc[:：]\s*(.+)\s*/
+    const zkdesc = Utils.getFirst(markdown.match(zkdescReg2)).replace(zkdescReg, '').trim()
+    let ret = Object.create(null)
+    ret.zkdesc = zkdesc
+    ret.article = Object.create(null)
+    const allCardMarkdown = markdown.match(allCardReg)
+    for (let cardMarkdown of allCardMarkdown) {
+      let id = cardMarkdown.match(idReg)
+      let desc = cardMarkdown.match(descReg) || ['', '']
+      if (Utils.isValidArray(id)) {
+        // ret.push(Number(id[1]))
+        ret.article[id[1]] = desc[1]
+      }
+    }
+    return ret
+  }
+  // static getCidByMarkdown (markdown) {
+  //   const idReg = /id[:：]\s*(\d+)\s+/
+  //   const allCardReg = /```zkarticle[\s\S]+?```/ig
+  //   const allCardMarkdown = markdown.match(allCardReg)
+  //   console.log(allCardMarkdown)
+  //   const ret = []
+  //   for (let cardMarkdown of allCardMarkdown) {
+  //     let id = cardMarkdown.match(idReg)
+  //     if (Utils.isValidArray(id)) {
+  //       ret.push(Number(id[1]))
+  //     }
+  //   }
+  //   return ret
+  // }
   static removeAliImageSuffix (url, suffix = '@200w_200h_1e%7C200x200-5rc') {
-    if (/content\.image\.alimmdn\.com/i.test(url) && url.indexOf(suffix) !== -1) {
+    if (
+      /content\.image\.alimmdn\.com/i.test(url) && url.indexOf(suffix) !== -1
+    ) {
       return url.substring(0, url.lastIndexOf('@'))
     }
     return url
   }
   // 如果是阿里云图，则加上后缀，否则不用处理
   static addAliImageSuffix (url, suffix = '@200w_200h_1e%7C200x200-5rc') {
-    if (/content\.image\.alimmdn\.com/i.test(url) && url.indexOf(suffix) === -1) {
+    if (
+      /content\.image\.alimmdn\.com/i.test(url) && url.indexOf(suffix) === -1
+    ) {
       url += '@200w_200h_1e%7C200x200-5rc'
     }
     return url
@@ -72,7 +145,7 @@ class Utils {
    */
   static genTimetopublishInterval (col = 'timetopublish') {
     // 从 [20141108, 明天) 的数据，即截止到今天
-    return ` (${col} BETWEEN 20141108 AND ${Number(moment()
+    return ` (${col} BETWEEN 20141106 AND ${Number(moment()
         .add(1, 'days')
         .format('YYYYMMDD'))}) `
   }
@@ -363,6 +436,21 @@ class Utils {
     return extensionName
   }
 }
+// console.log(
+//   Utils.getCidByMarkdown(
+//     `zkdesc 无论是单身狗还是一对汪，一年之中总有那么几个周末想窝在家中，望望天花板，剥剥手指甲，吃吃小食，看看电视，度过一天。所以啊，小食很重要，样样不能少！怎么做？且听我慢慢道来。
+
+// \`\`\`zkarticle
+//         id: 2717
+//         desc: 男生嘛，肯定要来瓶啤酒潇洒一下，尤其是那口感细腻的啤酒花，绝对不能少。别再依靠土掉渣的晃动酒瓶子，来弄点儿少得可怜的啤酒花。试试电动打泡器，分分钟尽情享用爽口的啤酒。
+//        \`\`\
+// \`\`\`zkarticle
+//         id: 2197
+//         desc: 女生嘛，即便宅在家里，还是要注意各种营养。买几袋鲜奶，用上酸奶机，自己做个天然酸奶。周末便能窝在沙发上，边喝酸奶边看真人秀啦！
+//        \`\`\
+// `
+//   )
+// )
 // console.log(Utils.removeAliImageSuffix('//content.image.alimmdn.com/sku/1494687634em_pic_jpg.jpeg@200w_200h_1e%7C200x200-5rc'))
 // console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=show&id=9625'))
 // console.log(Utils.normalize('http://c.diaox2.com/share/41339060233625.html?from=timeline&isappinstalled=1'))

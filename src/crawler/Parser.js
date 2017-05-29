@@ -79,31 +79,34 @@ class Parser {
     let { $ } = this
     let markdown = ''
     let header = $('#head')
-    let title = header.find('#headtitle p').text()
-    let eds = header.find('.headdesc').text()
-    let img = header.find('.direct').get(0)
-    const zkImages = (this.zkImages = [])
-    this.zkMeta = { id: this.id, title, ctype: 4 }
-    zkImages.push(this.setImage(img, 1))
+    // let title = header.find('#headtitle p').text()
+    let zkdesc = header.find('.headdesc').text()
+    // let img = header.find('.direct').get(0)
+    // const zkImages = (this.zkImages = [])
+    // this.zkMeta = { id: this.id, title, ctype: 4 }
+    // zkImages.push(this.setImage(img, 1))
     // markdown += `# ${title}\n\n`
-    markdown += `\`\`\`zk
-        title: ${title}
-        desc: ${eds}
-        image: ![](${img.attribs.src})
-      \`\`\`\n`
+    markdown += `zkdesc ${zkdesc}\n\n`
+    // markdown += `\`\`\`zk
+    //     title: ${title}
+    //     desc: ${eds}
+    //     image: ![](${img.attribs.src})
+    //   \`\`\`\n`
     let zkcards = Array.from($('.card'))
+    // let zkarticles = 'zkarticles '
     for (let card of zkcards) {
       const $card = $(card)
-      const title = $card.find('.title').text()
-      const img = $card.find('img')[0]
-      if (!title) continue
-      markdown += `\`\`\`card
-        id: ${Utils.normalize(card.attribs['data-href'])}
-        title: ${title}
+      // const title = $card.find('.title').text()
+      // const img = $card.find('img')[0]
+      // if (!title) continue
+      let id = Utils.normalize(card.attribs['data-href'])
+      if (!id) continue
+      // zkarticles += `${id} `
+      markdown += `\`\`\`zkarticle
+        id: ${id}
         desc: ${$card.find('.desc').text()}
-        image: ![](${img.attribs.src})
        \`\`\`\n`
-      zkImages.push(this.setImage(img))
+      // zkImages.push(this.setImage(img))
     }
     // console.log(markdown)
     return markdown
@@ -113,33 +116,38 @@ class Parser {
     let { $ } = this
     let markdown = ''
     let header = $('.headdesc')
-    let title = header.find('h2').text()
-    let title2 = header.find('p').text()
-    const ztImages = (this.ztImages = [])
-    this.ztMeta = { id: this.id, title, ctype: 5 }
+    // let title = header.find('h2').text()
+    let desc = header.find('p').text()
+    // const ztImages = (this.ztImages = [])
+    // this.ztMeta = { id: this.id, title, ctype: 5 }
     // markdown += `# ${title} \n\n`
     // if(title2){
     //   markdown += `## ${title2} \n\n`
     // }
-    markdown += `\`\`\`zt
-      title: ${title}
-      desc: ${title2}
-    \`\`\`\n`
+    markdown += `ztdesc ${desc}\n\n`
+    // markdown += `\`\`\`zt
+    //   title: ${title}
+    //   desc: ${title2}
+    // \`\`\`\n`
     let ztcards = Array.from($('.ztcard'))
     for (let card of ztcards) {
       const $card = $(card)
-      const title = $card.find('.p1').text()
-      const img = $card.find('.ztleft img')[0]
+      // const title = $card.find('.p1').text()
+      // const img = $card.find('.ztleft img')[0]
       const longId = $card.find('.ztright .p3')[0].attribs['data-id']
-      if (!title) continue
-      // `\`\`\` 必须在一行，否则会出错
-      markdown += `\`\`\`card
-        id: ${longId & 0xffffff}
-        title: ${title}
+      // if (!title) continue
+      markdown += `\`\`\`ztarticle
+        id: ${Utils.toShortId(longId)}
         desc: ${$card.find('.p2').text()}
-        image: ![](${img.attribs.src})
        \`\`\`\n`
-      ztImages.push(this.setImage(img))
+      // `\`\`\` 必须在一行，否则会出错
+      // markdown += `\`\`\`card
+      //   id: ${longId & 0xffffff}
+      //   title: ${title}
+      //   desc: ${$card.find('.p2').text()}
+      //   image: ![](${img.attribs.src})
+      //  \`\`\`\n`
+      // ztImages.push(this.setImage(img))
     }
     return markdown
   }
@@ -300,19 +308,20 @@ class Parser {
           md += `lift ${this.getShowMarkdown($child, false)}\n\n`
         }
       } else if (name === 'sku') {
+        md += `sku ${Utils.normalize(attribs['data-href'])}\n\n`
         // console.log($child)
-        let title = $child.find('.articletitle').text()
-        let image = $child.find('.articleimg')[0].attribs['src']
-        let price = $child.find('.brand').text()
+        // let title = $child.find('.articletitle').text()
+        // let image = $child.find('.articleimg')[0].attribs['src']
+        // let price = $child.find('.brand').text()
         // console.log()
         // console.log($child.find('.articletitle').text())
         // console.log($child.find('.brand').text())
-        md += `\`\`\`sku
-        id: ${Utils.normalize(attribs['data-href'])}
-        title: ${title}
-        price: ${price}
-        image: ![](${Utils.removeAliImageSuffix(image)})
-       \`\`\`\n`
+      //   md += `\`\`\`sku
+      //   id: ${Utils.normalize(attribs['data-href'])}
+      //   title: ${title}
+      //   price: ${price}
+      //   image: ![](${Utils.removeAliImageSuffix(image)})
+      //  \`\`\`\n`
         // md += `\`\`\`sku\n ${Utils.normalize(attribs['data-href'])}\n\`\`\`\n\n`
         // if (text !== null) {
         //   md += `\`\`\`sku\n ${innerText}\n\`\`\`\n\n`

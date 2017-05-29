@@ -24,6 +24,36 @@ class Show {
     this.type = type
     return this
   }
+  findSkuBySid (skus, sid) {
+    for (let sku of skus) {
+      if (sku.sid == sid) {
+        return sku
+      }
+    }
+  }
+  async getSkusBySids (sids) {
+    console.log('sids:', sids)
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          url: 'http://s5.a.dx2rd.com:3000/v1/getsimplesku/',
+          method: 'POST',
+          json: true,
+          headers: { 'content-type': 'application/json' },
+          body: { sids }
+        },
+        (error, response, body) => {
+          if (error) reject(error)
+          if (response.statusCode === 200) {
+            console.log('skus:', JSON.stringify(body.data))
+            resolve(body.data)
+          } else {
+            reject('接口返回错误的状态吗', response.statusCode)
+          }
+        }
+      )
+    })
+  }
   /**
    * @param {number} id
    * @memberof Show
@@ -31,65 +61,105 @@ class Show {
    */
   async getZKData (id, ctype) {
     Log.business('[API show showZK] 输入参数为：', id)
-    const markdown = await contentTable.getById(id)
-    if (!markdown) return null
-    const allCardReg = /```card[\s\S]+?```/ig
-    const zkReg = /```zk[\s\S]+?```/ig
-    const allCardMarkdown = markdown.match(allCardReg)
-    let zkMarkdown = markdown.match(zkReg)
-    if (!Utils.isValidArray(zkMarkdown)) return null
-    zkMarkdown = Utils.getFirst(zkMarkdown)
-    console.log(zkMarkdown)
-    const idReg = /id[:：]\s*(\d+)\s*title[:：]/
-    const titleReg = /title[:：]\s*(.+)\s*desc[:：]/
-    const descReg = /desc[:：]\s*(.+)\s*image[:：]/
-    const imageReg = /image[:：]\s*!\[.*\]\((?:https?)?(?:\/\/)?(.+)\s*\)\s*/
-    let title = zkMarkdown.match(titleReg)
-    let desc = zkMarkdown.match(descReg)
-    let image = zkMarkdown.match(imageReg)
-    if (Utils.isValidArray(title)) {
-      title = title[1]
-    }
-    if (Utils.isValidArray(desc)) {
-      desc = desc[1]
-    }
-    if (Utils.isValidArray(image)) {
-      image = image[1]
-    }
     const ret = Object.create(null)
-    ret.title = title
-    ret.desc = desc
-    ret.image = image
-    let metas = []
-    for (let cardMarkdown of allCardMarkdown) {
-      let card = Object.create(null)
-      let cardId = cardMarkdown.match(idReg)
-      let cardTitle = cardMarkdown.match(titleReg)
-      let cardDesc = cardMarkdown.match(descReg)
-      let cardImage = cardMarkdown.match(imageReg)
-      if (Utils.isValidArray(cardId)) {
-        cardId = cardId[1]
+    try {
+      let [markdown, meta] = await Promise.all([
+        contentTable.getById(id),
+        metaService.getRawMetas(id)
+      ])
+      if (!markdown) return null
+      let data = Utils.getZkDataByParseMarkdown(markdown)
+      let title = meta.title[0]
+      let image = meta.cover_image_url
+      let desc = data.zkdesc
+      ret.title = title
+      ret.desc = desc
+      ret.image = image
+      let cids = Object.keys(data.article)
+      let rawMetas = await metaService.getRawMetas(cids, true, true)
+      let metas = []
+      for (let cid of cids) {
+        let card = Object.create(null)
+        cid = Number(cid)
+        card.id = cid
+        let cardMeta = Utils.getFirst(rawMetas.filter(rawMeta => rawMeta.nid === cid))
+        if (!cardMeta) continue
+        console.log(cardMeta)
+        card.title = cardMeta.title[0]
+        card.desc = data.article[cid]
+        card.image = cardMeta.cover_image_url
+        card.buylink = cardMeta.buylink
+        metas.push(card)
       }
-      if (Utils.isValidArray(cardTitle)) {
-        cardTitle = cardTitle[1]
-      }
-      if (Utils.isValidArray(cardDesc)) {
-        cardDesc = cardDesc[1]
-      }
-      if (Utils.isValidArray(cardImage)) {
-        cardImage = cardImage[1]
-      }
-      card.id = Number(cardId)
-      card.title = cardTitle
-      card.desc = cardDesc
-      card.image = cardImage
-      card.buylink = await metaService.getBuylink(cardId)
-      metas.push(card)
+      ret.ctype = meta.ctype
+      ret.metas = metas
+    } catch (error) {
+      Log.exception(error)
+      console.log(error)
     }
-    ret.ctype = ctype
-    ret.metas = metas
     return ret
   }
+  // async getZKData (id, ctype) {
+  //   Log.business('[API show showZK] 输入参数为：', id)
+  //   const markdown = await contentTable.getById(id)
+  //   if (!markdown) return null
+  //   const allCardReg = /```card[\s\S]+?```/ig
+  //   const zkReg = /```zk[\s\S]+?```/ig
+  //   const allCardMarkdown = markdown.match(allCardReg)
+  //   let zkMarkdown = markdown.match(zkReg)
+  //   if (!Utils.isValidArray(zkMarkdown)) return null
+  //   zkMarkdown = Utils.getFirst(zkMarkdown)
+  //   console.log(zkMarkdown)
+  //   const idReg = /id[:：]\s*(\d+)\s*title[:：]/
+  //   const titleReg = /title[:：]\s*(.+)\s*desc[:：]/
+  //   const descReg = /desc[:：]\s*(.+)\s*image[:：]/
+  //   const imageReg = /image[:：]\s*!\[.*\]\((?:https?)?(?:\/\/)?(.+)\s*\)\s*/
+  //   let title = zkMarkdown.match(titleReg)
+  //   let desc = zkMarkdown.match(descReg)
+  //   let image = zkMarkdown.match(imageReg)
+  //   if (Utils.isValidArray(title)) {
+  //     title = title[1]
+  //   }
+  //   if (Utils.isValidArray(desc)) {
+  //     desc = desc[1]
+  //   }
+  //   if (Utils.isValidArray(image)) {
+  //     image = image[1]
+  //   }
+  //   const ret = Object.create(null)
+  //   ret.title = title
+  //   ret.desc = desc
+  //   ret.image = image
+  //   let metas = []
+  //   for (let cardMarkdown of allCardMarkdown) {
+  //     let card = Object.create(null)
+  //     let cardId = cardMarkdown.match(idReg)
+  //     let cardTitle = cardMarkdown.match(titleReg)
+  //     let cardDesc = cardMarkdown.match(descReg)
+  //     let cardImage = cardMarkdown.match(imageReg)
+  //     if (Utils.isValidArray(cardId)) {
+  //       cardId = cardId[1]
+  //     }
+  //     if (Utils.isValidArray(cardTitle)) {
+  //       cardTitle = cardTitle[1]
+  //     }
+  //     if (Utils.isValidArray(cardDesc)) {
+  //       cardDesc = cardDesc[1]
+  //     }
+  //     if (Utils.isValidArray(cardImage)) {
+  //       cardImage = cardImage[1]
+  //     }
+  //     card.id = Number(cardId)
+  //     card.title = cardTitle
+  //     card.desc = cardDesc
+  //     card.image = cardImage
+  //     card.buylink = await metaService.getBuylink(cardId)
+  //     metas.push(card)
+  //   }
+  //   ret.ctype = ctype
+  //   ret.metas = metas
+  //   return ret
+  // }
 
   /**
    * @param {number} id
@@ -161,19 +231,26 @@ class Show {
     try {
       let [content, meta] = await Promise.all([
         contentTable.getById(id),
-        metaService.getRawMetas(
-        id,
-        false,
-        true,
-        false,
-        false,
-        true
-      )
+        metaService.getRawMetas(id, false, true, false, false, true)
       ])
       // (useBuylink = true, isShortId = false, useCoverex = false, useBanner = false, useSwipe = false , useImageSize = false)
       let { swipe_image_url, title, price, author } = meta
       parser.markdown = content
-      let goods = await recommend(id)
+      let contents = parser.getData()
+      let sids = contents.map(content => {
+        if (content.type === 'sku') {
+          return content.id
+        }
+      })
+      let skus, goods
+      if (Utils.isValidArray(sids)) {
+        [skus, goods] = await Promise.all([
+          this.getSkusBySids(sids),
+          recommend(id)
+        ])
+      } else {
+        goods = await recommend(id)
+      }
       if (goods) {
         goods = goods.map(good => {
           // console.log(good.type)
@@ -188,6 +265,19 @@ class Show {
       } else {
         goods = []
       }
+
+      if (skus) {
+        contents = contents.map(content => {
+          if (content.type === 'sku') {
+            let sku = this.findSkuBySid(skus, content.id)
+            content.title = sku.title
+            content.price = sku.price_str
+            content.image = Utils.getFirst(sku.images).url
+          }
+          return content
+        })
+      }
+
       return {
         ctype,
         header: {
@@ -196,10 +286,11 @@ class Show {
           banners: swipe_image_url,
           author: { url: author.pic, value: author.name }
         },
-        contents: parser.getData(),
+        contents,
         goods
       }
     } catch (e) {
+      console.log(e)
       Log.exception(e)
       return null
     }
@@ -216,7 +307,10 @@ class Show {
   }
   async genShareData (id, trueM) {
     const ret = Object.create(null)
-    let [titles, coverex] = await Promise.all([metaTable.getTitles(id), imageTable.getThumbImagesUrl(id)])
+    let [titles, coverex] = await Promise.all([
+      metaTable.getTitles(id),
+      imageTable.getThumbImagesUrl(id)
+    ])
     // const titles = await metaTable.getTitles(id)
     coverex = Utils.getFirst(coverex)
     ret.url = `https://c.diaox2.com/view/app/?m=${trueM}&id=${id}`
@@ -245,7 +339,6 @@ class Show {
         break
       case 'zk': // 专刊页渲染
         promises.push(this.getZKData(id, ctype))
-        // data = await this.getZKData(id, ctype)
         break
       case 'zt': // 专刊页渲染
         promises.push(this.getZTData(id, ctype))
@@ -290,7 +383,7 @@ class Show {
         (error, response, body) => {
           if (error) reject(error)
           if (response.statusCode === 200) {
-            const {res} = body
+            const { res } = body
             const keys = Object.keys(res)
             const ret = Object.create(null)
             keys.forEach(key => {
@@ -328,7 +421,7 @@ class Show {
       introduction: data.author.intro,
       sub_text: data.author.value
     }
-    const {metas} = data
+    const { metas } = data
     if (!Utils.isValidArray(metas)) return
     const aids = metas.slice(0, 20).map(meta => meta.nid)
     const readCounts = await this.getReadcound(aids)
@@ -364,7 +457,7 @@ class Show {
         }
       }
     }
-    const {metas} = data
+    const { metas } = data
     const aids = metas.slice(0, 20).map(meta => meta.id)
     const readCounts = await this.getReadcound(aids)
     for (let meta of metas) {

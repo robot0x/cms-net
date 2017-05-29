@@ -1,6 +1,6 @@
 const Render = require('../../')
 const Utils = require('../../../utils/Utils')
-// const imageHandler = require('./imageHandler')
+const articleHandler = require('./articleHandler')
 const Parser = require('./parser')
 const MetaService = require('../../../service/MetaService')
 const Log = require('../../../utils/Log')
@@ -44,8 +44,11 @@ class ZTRender extends Render {
       let { content, meta, images } = await new MetaService().getRenderData(id)
       // console.log('zt markdown 37:', content)
       parser.markdown = content // markdown is a setter like method `setMarkdown`
-      let body = parser.getHTML()
-      // body = imageHandler(body, images)
+      let {title} = meta
+      let body = parser
+      .setTitle(title)
+      .getHTML()
+      body = await articleHandler(body, content)
       //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
       let cover = images.filter(img => {
         return (img.type & 2) === img.type
@@ -62,7 +65,7 @@ class ZTRender extends Render {
 
       return this.getDoc(this.template, {
         id,
-        title: meta.title,
+        title,
         body,
         swipes,
         thumb,
