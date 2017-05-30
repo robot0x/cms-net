@@ -184,6 +184,9 @@ function run2 (file) {
     DB.exec(
       `DELETE FROM diaodiao_article_image WHERE aid = ${nid}`
     ).then(data => {
+      if (data.affectedRows === 0) {
+        console.log(`ID is ${nid}`, data)
+      }
       const images = []
         .concat(setImage(1, pics))
         .concat(setImage(2, coverimage))
@@ -212,17 +215,20 @@ function run2 (file) {
     `
         )
           .then(data => {
-            console.log(`ID为 ${nid} 的image更新成功 ....`)
+            // console.log(`ID为 ${nid} 的image更新成功 ....`)
           })
           .catch(err => {
             console.log(err)
             Log.exception(`D为 ${nid} 的image更新成功，出错信息：`, err.message)
           })
       }
+    }).catch(err => {
+      console.log(err)
+      Log.exception(`D为 ${nid} 的image更新失败，出错信息：`, err.message)
     })
   })
 }
-
+// run2()
 // run2(path.resolve('./src/crawler/data', 'ajson.5'))
 module.exports = run2
 
