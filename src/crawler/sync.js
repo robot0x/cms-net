@@ -36,14 +36,16 @@ exec(scpCmd, (err, stdout, stderr) => {
           array.push(list[index])
         }
         let uniqFile = `${scpFile}.uniq`
-        fs.writeFile(uniqFile, array.join('\n'), ENCODING, err => {
-          if (err) {
-            console.log(err)
-          } else {
-            // run(uniqFile)
-            run2(uniqFile)
-          }
-        })
+        fs.writeFileSync(uniqFile, array.join('\n'), ENCODING)
+        run2(uniqFile)
+        // fs.writeFile(uniqFile, array.join('\n'), ENCODING, err => {
+        //   if (err) {
+        //     console.log(err)
+        //   } else {
+        //     // run(uniqFile)
+        //     run2(uniqFile)
+        //   }
+        // })
       }
     })
   }
