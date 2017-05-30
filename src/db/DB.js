@@ -103,17 +103,16 @@ class DB {
   static exec (sql, data) {
     return new Promise((resolve, reject) => {
       DB.pool.getConnection((err, connection) => {
-        connection.release()
         //  DB.poolCluster.getConnection(CMS, DIAODIAO, function(err, connection) {
         if (err) {
           reject(err)
           Log.exception(err)
         } else {
           connection.query(sql, data, (error, rows) => {
+            connection.release()
             Log.business(
               `[DB.exe] ${sql} ${data ? `with ${JSON.stringify(data)}` : ''}\nfetch rows's length is ${rows.length} `
             )
-            // connection.release()
             if (error) {
               console.log(error)
               Log.exception(error)
