@@ -3,6 +3,8 @@ const Parser = require('./parser')
 const Utils = require('../../../utils/Utils')
 const DB = require('../../../db/DB')
 const Log = require('../../../utils/Log')
+// const ImageTable = require('../../../db/ImageTable')
+// const imageTable = new ImageTable()
 /**
  * 渲染：
  *  1. RSS聚合页 http://c.diaox2.com/view/app/?m=rss&type=firstpage
@@ -55,9 +57,10 @@ class RssRender extends Render {
       }
     }
     if (!Utils.isValidArray(ctypes)) return
-    // const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, meta.ctype, meta.timetopublish, CONCAT('//',image.url) AS thumb_image_url FROM diaodiao_article_meta as meta, diaodiao_article_image AS image WHERE meta.id = image.aid AND meta.ctype IN (${ctypes.join(',')}) AND image.type & 8 = 8 AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
+    const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, meta.ctype, meta.timetopublish, CONCAT('//',image.url) AS thumb_image_url FROM diaodiao_article_meta as meta, diaodiao_article_image AS image WHERE meta.id = image.aid AND meta.ctype IN (${ctypes.join(',')}) AND image.type & 8 = 8 AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
     // TODO: 数据重复bug
-    const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, meta.ctype, meta.timetopublish, CONCAT('//',image.url) AS thumb_image_url FROM diaodiao_article_meta as meta WHERE meta.ctype IN (${ctypes.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
+    // const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, meta.ctype, meta.timetopublish, CONCAT('//',image.url) AS thumb_image_url FROM diaodiao_article_meta as meta WHERE meta.ctype IN (${ctypes.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
+    // const thumb = await imageTable.getSpecialImagesUrl()
     // console.log('[RssRender.getRenderData] sql:', sql);
     const metas = await DB.exec(sql)
     return { name, metas }

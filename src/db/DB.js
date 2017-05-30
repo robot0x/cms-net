@@ -110,9 +110,11 @@ class DB {
         } else {
           connection.query(sql, data, (error, rows) => {
             connection.release()
-            Log.business(
+            if (rows) {
+              Log.business(
               `[DB.exe] ${sql} ${data ? `with ${JSON.stringify(data)}` : ''}\nfetch rows's length is ${rows.length} `
-            )
+              )
+            }
             if (error) {
               console.log(error)
               Log.exception(error)
