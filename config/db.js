@@ -23,7 +23,7 @@ const dbConfig = isDebug
   : {
     cms: {
       host: 'rds7bz3av7bz3av.mysql.rds.aliyuncs.com',
-        //  reader是只读帐号，渲染相关的都是只需要读就可以了
+      //  reader是只读帐号，渲染相关的都是只需要读就可以了
       // 'user': 'reader',
       // 'password': 'reader',
       user: 'diaodiao',
