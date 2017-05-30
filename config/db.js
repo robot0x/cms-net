@@ -28,7 +28,7 @@ const dbConfig = isDebug
     database: 'diaodiao',
     charset: 'utf8mb4',
     multipleStatement: true,
-    connectionLimit: 50
+    connectionLimit: 20
   }
 console.log(`isDebug:${isDebug}\nuse: ${JSON.stringify(dbConfig)}`)
 module.exports = dbConfig
