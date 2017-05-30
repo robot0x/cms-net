@@ -14,7 +14,7 @@ const Reader = require('./Reader')
 const Downloader = require('./Downloader')
 const Parser = require('./Parser')
 const Writer = require('./Writer')
-const path = require('path')
+// const path = require('path')
 // 读取器
 const reader = new Reader()
 // 下载器
