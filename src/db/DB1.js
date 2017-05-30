@@ -2,6 +2,9 @@ const dbConfig = require('../../config/db')
 const mysql = require('mysql')
 const _ = require('lodash')
 const Log = require('../utils/Log')
+const CMS = 'cms'
+// const DIAODIAO = 'diaodiao'
+
 /**
  * 提供基础的与数据库相关的工具方法
  */
@@ -75,33 +78,18 @@ class DB {
   /**
    * 根据配置初始化连接池
    */
-  static initPool (dbConfig) {
-    return mysql.createPool(dbConfig)
+  static initPoolCluster (config) {
+    const poolCluster = mysql.createPoolCluster()
+    // poolCluster.add(DIAODIAO, dbConfig[DIAODIAO])
+    poolCluster.add(CMS, dbConfig[CMS])
+    DB.poolCluster = poolCluster
   }
-
-  /**
-   * 从连接池中取出一个连接
-   */
-  // static getConnection () {
-  //   return DB.pool.getConnection()
-  // }
-
-  /**
-   * 释放一个连接到连接池中
-   */
-  // static releaseConnection (connection) {
-  //   return DB.pool.releaseConnection(connection)
-  // }
-
-  /**
-   * 执行单条sql语句，单条语句的话，没有必要执行事务
-   */
   /**
    * 执行单条sql语句，单条语句的话，没有必要执行事务
    */
   static exec (sql, data) {
     return new Promise((resolve, reject) => {
-      DB.pool.getConnection(function (err, connection) {
+      DB.poolCluster.getConnection(CMS, function (err, connection) {
         //  DB.poolCluster.getConnection(CMS, DIAODIAO, function(err, connection) {
         if (err) {
           reject(err)
@@ -125,5 +113,6 @@ class DB {
     })
   }
 }
-DB.pool = DB.initPool(dbConfig)
+
+DB.initPoolCluster()
 module.exports = DB
