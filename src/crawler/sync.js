@@ -21,7 +21,7 @@ exec(scpCmd, (err, stdout, stderr) => {
       if (err) {
         console.log(err)
       } else {
-        run(scpFile)
+        // run(scpFile)
         run2(scpFile)
         // // 数据去重，只取最后一个
         // let list = text.trim().split(/\n/)
