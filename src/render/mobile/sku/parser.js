@@ -6,7 +6,6 @@ class SkuParser {
     return this
   }
   getRevarticleHTML (metas) {
-    console.log('[SkuParser.getRevarticleHTML] metas:', metas)
     if (!Array.isArray(metas)) {
       metas = [metas]
     }

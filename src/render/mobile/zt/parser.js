@@ -50,7 +50,6 @@ class ZTParser extends Parser {
       if (Utils.isValidArray(desc)) {
         desc = desc[1]
       }
-      console.log('parser.js id is', id)
       if (/ztarticle/i.test(type)) {
         return `<div class="articlecard ztcard" data-href="//c.diaox2.com/view/app/?m=show&id=${id}">
                       <div class="ztleft">

@@ -37,10 +37,7 @@ module.exports = (html, images) => {
       // if (image.url == 'content.image.alimmdn.com/cms/sites/default/files/20170512/firstpage/ConsumerReportsHealthInlineCanyoutrustSPF.png') {
       //   console.log('true .....')
       // }
-      // console.log(image.url)
       let {attribs} = img
-      console.log(img.className)
-      // console.log(img)
       if ($(img).hasClass('articleimg')) {
         continue
       }

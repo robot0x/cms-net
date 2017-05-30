@@ -10,7 +10,6 @@ const findSkuBySid = (skus, sid) => {
   }
 }
 const getSkusBySids = sids => {
-  console.log('sids:', sids)
   return new Promise((resolve, reject) => {
     request(
       {
@@ -23,7 +22,6 @@ const getSkusBySids = sids => {
       (error, response, body) => {
         if (error) reject(error)
         if (response.statusCode === 200) {
-          console.log('skus:', JSON.stringify(body.data))
           resolve(body.data)
         } else {
           reject('接口返回错误的状态吗', response.statusCode)
@@ -48,7 +46,6 @@ module.exports = async html => {
     const $skuDom = $(skuDom)
     let sku = findSkuBySid(skus, sid)
     let src = Utils.addAliImageSuffix(Utils.getFirst(sku.images).url)
-    console.log(src)
     $skuDom.find('.articleimg').attr('src', src)
     $skuDom.find('.articletitle').text(sku.title)
     $skuDom.find('.brand').text(sku.price_str)

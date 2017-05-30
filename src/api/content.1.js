@@ -2,7 +2,7 @@
  * @Author: liyanfeng
  * @Date: 2017-05-19 16:49:25
  * @Last Modified by: liyanfeng
- * @Last Modified time: 2017-05-19 17:48:15
+ * @Last Modified time: 2017-05-30 15:57:25
  */
 const Parser = require('../parser')
 const parser = new Parser()
@@ -14,14 +14,12 @@ async function content (ids) {
   if (/^\d+$/.test(ids)) {
     ret = Object.create(null)
     const cont = await contentTable.getById(ids)
-    console.log(cont)
     parser.markdown = cont
     ret.id = Number(ids)
     ret.content = parser.getText()
   } else {
     ret = []
     const conts = await contentTable.getByIds(Utils.toShortId(ids))
-    console.log('conts:', conts)
     for (let cont of conts) {
       parser.markdown = cont.content
       ret.push({

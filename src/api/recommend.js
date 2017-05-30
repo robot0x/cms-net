@@ -55,10 +55,8 @@ async function recommend (id) {
     } else {
       // 从热门里拿时，不用 like，直接拿最新一条的热门（timestamp最大的）
       let sql = `SELECT hot_goodthing_list FROM diaodiao_hot_goodthing ORDER BY timestamp DESC LIMIT 1`
-      // console.log('sql:', sql);
       let results = await DB.exec(sql)
       Log.business(`[API recommend] ${sql}\nfetch data is ${results} `)
-      // console.log(results)
       // let results = await DB.exec(`SELECT hot_goodthing_list FROM diaodiao_hot_goodthing WHERE hot_goodthing_list LIKE '%${id}%' ORDER  BY timestamp DESC`)
       // let ids = null
       let result = null

@@ -38,7 +38,6 @@ class SkuRender extends Render {
         throw Error('调用getfullsku接口失败')
       }
       data = Utils.getFirst(data)
-      console.log(JSON.stringify(data))
       let { title, brand, sales, images, revarticles } = data
       images = images.map(image => {
         //  //  如果是阿里云图，则加上后缀，否则不用处理

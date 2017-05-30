@@ -27,7 +27,6 @@ module.exports = {
       // GET DELETE body为一个空行
       req.body = data
       // if (data && req.body) {
-      //   // console.log('cms 228:', req.body)
       //   varLogger.info(`[parseBody function] the data is ${req.body}`)
       // }
       next()
@@ -46,7 +45,6 @@ module.exports = {
         // req.body = null
       }
     } else if (['GET', 'DELETE'].indexOf(method) !== -1) {
-      // console.log('cms 210:', req.query);
       req.body = req.query
     }
     next() // 没有这一行，所有接口都会hang住

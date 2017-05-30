@@ -16,8 +16,6 @@ var findByUrl = (url, images) => {
  * @return {[type]}        [description]
  */
 module.exports = (html, images) => {
-  console.log('html:', html)
-  console.log('images:', images)
   const $ = cheerio.load(`<div id="container">${html}</div>`,{ decodeEntities: false })
   const container = $('#container')
   const imgs = Array.from(container.find('img'))

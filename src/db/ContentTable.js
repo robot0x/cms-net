@@ -22,7 +22,7 @@ class ContentTable extends Table {
   async getByIds (ids) {
     let sql = `SELECT aid AS id, content FROM ${this.table} WHERE aid in (${ids.join(',')})`
     let data = await this.exec(sql)
-    console.log('sql:', sql)
+    // console.log('sql:', sql)
     return data
   }
 }

@@ -46,7 +46,6 @@ class MetaTable extends Table {
       orderBy = ` ORDER BY ${orderBy} `
     }
     const sql = `SELECT id FROM ${this.table} ${orderBy}`
-    console.log('sql:', sql)
     const idlist = await this.exec(sql)
     if (!Utils.isValidArray(idlist)) return null
     const ids = []
@@ -63,7 +62,6 @@ class MetaTable extends Table {
 
   async getRecordsByCond (col, cond) {
     const sql = `SELECT ${col} FROM ${this.table} WHERE ${cond}`
-    console.log('sql:', sql)
     const list = await this.exec(sql)
     const records = []
     for (let item of list) {
@@ -81,14 +79,12 @@ class MetaTable extends Table {
   }
 
   getAidsBySource (source) {
-    console.log('source:', source)
     return this.getAidsByCond(` author = ${super.escape(source)} `)
     // return this.getRecordsByCond('id' ,`author = ${super.escape(source)}`)
   }
 
   async getCtypeById (id) {
     let ctypes = await this.getRecordsByCond('ctype', `id = ${id}`)
-    // console.log('ctypes:', ctypes)
     return Utils.getFirst(ctypes)
     // let data =  await this.exec(`SELECT ctype FROM ${this.table} WHERE id = ${id}`)
     // let meta = Utils.getFirst(data)
@@ -100,7 +96,6 @@ class MetaTable extends Table {
   }
 
   async getMetas (ids) {
-    // console.log(ids)
     let data = null
     try {
       if (Utils.isValidArray(ids)) {
@@ -119,7 +114,6 @@ class MetaTable extends Table {
 
 // const metaTable = new MetaTable()
 // metaTable.getAllIds('timetopublish').then(data => {
-//   console.log(data)
 // })
 // metaTable.getCtypeById(1).then(data => console.log('ctype:', data))
 // metaTable.getAidsBySource('ZRJ').then(data => console.log('aids:', data))

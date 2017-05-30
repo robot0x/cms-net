@@ -161,7 +161,6 @@ class Parser {
           } else if (name === 'lift') {
             try {
               item.type = name
-              console.log($child.find('em').text())
               item.value = $child.find('em').text()
             } catch (error) {
               Log.exception(error)

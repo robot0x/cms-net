@@ -35,9 +35,7 @@ module.exports = async (html, ids) => {
         $(articleDom).remove()
         continue
       }
-      console.log(meta)
       const $articleDom = $(articleDom)
-      console.log(meta.cover_image_url)
       $articleDom.find('.title').text(meta.title[0])
       $articleDom.find('.direct').attr('src', meta.cover_image_url)
     }

@@ -39,7 +39,6 @@ module.exports = async (html, markdown) => {
         continue
       }
       const $articleDom = $(articleDom)
-      console.log(meta.cover_image_url)
       $articleDom.find('.p1').text(meta.title[0])
       $articleDom.find('.p2').text(data.article[id])
       $articleDom.find('img').attr('src', meta.thumb_image_url)

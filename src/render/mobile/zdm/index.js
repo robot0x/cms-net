@@ -36,7 +36,6 @@ class ZDMRender extends Render {
       if (goods_cid) {
         data.goods_cid = [+goods_cid]
       }
-      console.log(body)
       request(
         {
           url: 'http://api.diaox2.com/v4/zdm_activity',
@@ -67,8 +66,6 @@ class ZDMRender extends Render {
       if (!data) return
       data = JSON.stringify(data).replace(/^\{/, '').replace(/\}$/, '')
       if (!data) return
-      console.log(data)
-      console.log('pageType:', this.type)
       return this.getDoc(this.template, {
         data,
         // data: s.join(','),

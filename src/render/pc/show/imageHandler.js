@@ -21,7 +21,6 @@ module.exports = (html, images) => {
   })
   const container = $('#container')
   const imgs = Array.from(container.find('img'))
-  console.log(images)
   for (let img of imgs) {
     let image = findByUrl(Utils.removeProtocolHead(img.attribs.src), images)
     if (image) {

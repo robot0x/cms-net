@@ -86,7 +86,6 @@ class ZKRender extends Render {
           .setTitleex(titleex)
           .getHTML()
       body = await articleHandler(body, cids)
-      console.log(body)
       return this.getDoc(this.template, {
         id,
         title,

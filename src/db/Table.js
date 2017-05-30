@@ -16,7 +16,6 @@ class Table {
    * orderByCol：排序字段
    */
   constructor (table, columns, format, orderByCol) {
-    // console.log('[Table initial ....]');
     this.init(table, columns, format, orderByCol)
   }
 
@@ -125,7 +124,6 @@ class Table {
       limitStr = ` LIMIT ${pagination.offset || 0}, ${pagination.limit} `
     }
     const sql = `SELECT ${this.columnsStr} FROM ${this.table} ${DB.addWhere(cond)} ${orderBy} ${limitStr}`
-    console.log('table 87', sql)
     return DB.exec(sql)
   }
 
@@ -142,7 +140,6 @@ class Table {
   }
 
   exec (sql, data) {
-    // console.log(`[Table exec] sql is ${sql}`);
     return DB.exec(sql, data)
   }
 

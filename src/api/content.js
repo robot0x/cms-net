@@ -2,7 +2,7 @@
  * @Author: liyanfeng
  * @Date: 2017-05-19 16:49:25
  * @Last Modified by: liyanfeng
- * @Last Modified time: 2017-05-20 23:40:07
+ * @Last Modified time: 2017-05-30 15:57:33
  * 根据id返回纯文本的接口：
  *  纯文本是指用户能看到的文本，即去掉标签和markdown标记的文本
  * 返回的纯文本分为3种：
@@ -40,14 +40,11 @@ async function content (ids) {
   IN
     (${ids.join(',')})
     `
-  // console.log('sql:', sql)
   const results = await DB.exec(sql)
-  // console.log('results:', results)
   // const ret = []
   for (let result of results) {
     let res = Object.create(null)
     let {ctype} = result
-    console.log('ctype22:', ctype)
     res.id = result.id
     res.ctype = ctype
     const {content} = result
