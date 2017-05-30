@@ -4,7 +4,7 @@ const _ = require('lodash')
 const Log = require('../utils/Log')
 const CMS = 'cms'
 // const DIAODIAO = 'diaodiao'
-console.log('[DB.js] dbConfig:', dbConfig)
+
 /**
  * 提供基础的与数据库相关的工具方法
  */
@@ -83,14 +83,12 @@ class DB {
     // poolCluster.add(DIAODIAO, dbConfig[DIAODIAO])
     poolCluster.add(CMS, dbConfig[CMS])
     DB.poolCluster = poolCluster
-    console.log('[DB.initPoolCluster]:', poolCluster)
   }
   /**
    * 执行单条sql语句，单条语句的话，没有必要执行事务
    */
   static exec (sql, data) {
     return new Promise((resolve, reject) => {
-      console.log('[DB.exec] poolCluster:', DB.poolCluster)
       DB.poolCluster.getConnection(CMS, function (err, connection) {
         //  DB.poolCluster.getConnection(CMS, DIAODIAO, function(err, connection) {
         if (err) {
@@ -101,7 +99,6 @@ class DB {
             Log.business(
               `[DB.exe] ${sql} ${data ? `with ${JSON.stringify(data)}` : ''}\nfetch rows's length is ${rows.length} `
             )
-            console.log('[DB.exec] connection:', connection)
             connection.release()
             if (error) {
               console.log(error)

@@ -211,12 +211,12 @@ function run2 (file) {
             console.log(`ID为 ${nid} 的image更新成功 ....`)
           })
           .catch(err => {
-            // console.log(err)
+            console.log(err)
             Log.exception(`D为 ${nid} 的image更新成功，出错信息：`, err.message)
           })
       }
     }).catch(err => {
-      // console.log(err)
+      console.log(err)
       Log.exception(`D为 ${nid} 的image更新失败，出错信息：`, err.message)
     })
   })
