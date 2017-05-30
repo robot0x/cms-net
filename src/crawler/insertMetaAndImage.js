@@ -1,8 +1,4 @@
-// const fs = require('fs')
-// const Table = require('../db/Table')
-// const table = new Table('article_meta', ['aid', 'content'])
 const Log = require('../utils/Log')
-// const Promise = require('bluebird')
 const Utils = require('../utils/Utils')
 const DB = require('../db/DB')
 const path = require('path')
@@ -184,9 +180,6 @@ function run2 (file) {
     DB.exec(
       `DELETE FROM diaodiao_article_image WHERE aid = ${nid}`
     ).then(data => {
-      if (data.affectedRows === 0) {
-        console.log(`ID is ${nid}`, data)
-      }
       const images = []
         .concat(setImage(1, pics))
         .concat(setImage(2, coverimage))
@@ -215,7 +208,7 @@ function run2 (file) {
     `
         )
           .then(data => {
-            // console.log(`ID为 ${nid} 的image更新成功 ....`)
+            console.log(`ID为 ${nid} 的image更新成功 ....`)
           })
           .catch(err => {
             console.log(err)
