@@ -115,8 +115,4 @@ class DB {
 }
 
 DB.initPoolCluster()
-// var a = '天天都需要你\'s爱'
-// var str = `我想说的是：${DB.escape(a)}`
-// console.log(str)
-
 module.exports = DB
