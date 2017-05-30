@@ -109,15 +109,14 @@ class Parser {
         children = contain.childNodes
       }
       children = Array.from(children)
+      // 不递归的元素
+      let notRecursion = ['sku', 'lift', 'blockquote']
       for (let child of children) {
         let item = {}
         let { type, data, attribs } = child
+        if (!type) continue
         let $child = this.$(child)
         let name = this.getName(child)
-        // console.log('name:', name)
-        // attribs = attribs || {}
-        // let anchor = attribs.id
-        // console.log('anchor:', anchor)
         // 只处理tag和text节点
         if (type === 'tag') {
           item.type = name
@@ -128,7 +127,8 @@ class Parser {
             item.url = id
             item.scheme = 'diaodiao'
             // 9833#jieguo
-            if (/^\d+#.+$/.test(href)) {
+            // #jieguo
+            if (/^(\d+)?#.+$/.test(href)) {
               item.url = href.substring(href.lastIndexOf('#'))
               item.scheme = 'anchor'
             } else if (/* 9833 */ href === id && !/^\d+$/.test(id)) {
@@ -174,6 +174,10 @@ class Parser {
               Log.exception(error)
               console.log(error)
             }
+          } else if (name === 'blockquote') {
+            // console.log($child.find('.box-inner'))
+            item.type = name
+            item.value = this.htmlToData($child.find('.box-inner'), true)
           }
           const doms = Array.from($child.children())
           // 若child下有且仅有一个文本节点，则直接把文本节点值赋予value
@@ -188,7 +192,7 @@ class Parser {
             item.url = imgAttr.src
             item.width = imgAttr.width || ''
             item.height = imgAttr.height || ''
-          } else if (name !== 'sku') {
+          } else if (notRecursion.indexOf(name) === -1) {
             // 若含有其他节点，则递归调用htmlToData
             item.value = this.htmlToData(this.$(child), false)
           }
@@ -196,62 +200,30 @@ class Parser {
           item.type = type
           item.value = data
         }
-        contents.push(item)
+        if (!_.isEmpty(item)) {
+          contents.push(item)
+        }
       }
     } catch (error) {
       Log.exception(error)
     }
     return contents
-    // const contents = []
-    // let children = null
-    // const contain = container.get(0)
-    // // 如果是第一次调用 或者 ul/ol等，则取所有的dom节点
-    // // 因为第一次或这是ul/ol，忽略下面除了dom节点以外的内容，
-    // // 我们认为下面都是dom节点
-    // if (root || /ul|ol/.test(contain.name)) {
-    //   children = container.children()
-    // } else {
-    //   // 否则取所有的节点，包括文本节点
-    //   children = contain.childNodes
-    // }
-    // children = Array.from(children)
-    // for (let child of children) {
-    //   let item = {}
-    //   let {type, name, data, attribs} = child
-    //   // 只处理tag和text节点
-    //   if (type === 'tag') {
-    //     item.type = name
-    //     let childNodes = child.childNodes
-    //     let isImg = false
-    //     if (name === 'img') {
-    //       item.value = attribs.alt || ''
-    //       item.url = attribs.src
-    //       item.width = attribs.width || ''
-    //       item.height = attribs.height || ''
-    //       isImg = true
-    //      } else if (name === 'a') {
-    //        item.url = attribs.href
-    //      } else if (name === 'span' && attribs.style) {
-    //        item.style = attribs.style
-    //      }
-    //     // 若child下有且仅有一个文本节点，则直接把文本节点值赋予value
-    //     if (childNodes.length === 1 && childNodes[0].type === 'text') {
-    //       item.value = childNodes[0].data
-    //     } else if (!isImg) {
-    //       // 若含有其他节点，则递归调用htmlToData
-    //       item.value = this.htmlToData(this.$(child), false)
-    //     }
-    //   } else if (type === 'text') {
-    //     item.type = type
-    //     item.value = data
-    //   }
-    //   contents.push(item)
-    // }
-    // return contents
   }
 
   set markdown (markdown) {
     this._markdown = markdown
+  }
+
+  get markdown () {
+    return this._markdown
+  }
+
+  set html (html) {
+    this._html = html
+  }
+
+  get html () {
+    return this._html
   }
 
   getRenderer () {
@@ -262,12 +234,8 @@ class Parser {
     this.renderer = renderer
   }
 
-  get markdown () {
-    return this._markdown
-  }
-
   getData () {
-    this.$ = cheerio.load(`<div id="container">${this.getHTML()}<div>`, {
+    this.$ = cheerio.load(`<div id="container">${this.html}<div>`, {
       decodeEntities: false
     })
     return this.htmlToData(this.$('#container'))
@@ -290,17 +258,8 @@ class Parser {
 
   getHTML () {
     this.marked.setOptions(this.options)
-    // let isPromise = !!this.options.promise
-    // if(isPromise) {
-    //   console.log('isPromise：', isPromise)
-    //   return Promise.promisify(this.marked)(this.markdown)
-    //   // return this.marked(this.markdown, function (err, content) {
-    //   //   console.log(content)
-    //   // })
-    // } else {
-    // console.log('isPromise：', isPromise)
-    return this.marked(this.markdown)
-    // }
+    this.html = this.marked(this.markdown)
+    return this.html
   }
 
   getAll () {

@@ -33,7 +33,7 @@ const getSkusBySids = sids => {
 /**
  * [对html内的sku标签进行处理，加上]
  */
-module.exports = async html => {
+module.exports = async (html, addAliImageArg = true) => {
   const $ = cheerio.load(`<div id="container">${html}</div>`, {
     decodeEntities: false
   })
@@ -45,7 +45,10 @@ module.exports = async html => {
     let sid = skuDom.attribs['data-sid']
     const $skuDom = $(skuDom)
     let sku = findSkuBySid(skus, sid)
-    let src = Utils.addAliImageSuffix(Utils.getFirst(sku.images).url)
+    let src = Utils.getFirst(sku.images).url
+    if (addAliImageArg) {
+      src = Utils.addAliImageSuffix(src)
+    }
     $skuDom.find('.articleimg').attr('src', src)
     $skuDom.find('.articletitle').text(sku.title)
     $skuDom.find('.brand').text(sku.price_str)

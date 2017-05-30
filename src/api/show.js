@@ -4,6 +4,8 @@ const metaTable = new MetaTable()
 const ImageTable = require('../db/ImageTable')
 const imageTable = new ImageTable()
 const Parser = require('../render/mobile/show/parser')
+const imageHandler = require('../render/mobile/show/imageHandler')
+const skuHandler = require('../render/mobile/show/skuHandler')
 const parser = new Parser()
 const Log = require('../utils/Log')
 const Utils = require('../utils/Utils')
@@ -57,6 +59,89 @@ class Show {
   /**
    * @param {number} id
    * @memberof Show
+   * 根据id拿到firstpage/goodthing/activity/exprience类型的渲染数据
+   */
+  async getArticleData (id, ctype) {
+    console.log('[API show getArticleData] 输入参数为：', id)
+    // Log.business(`[API show getArticleData] 输入参数为：${id}`)
+    try {
+      let [content, meta, images, goods] = await Promise.all([
+        contentTable.getById(id),
+        metaService.getRawMetas(id, false, true, false, false, true),
+        imageTable.getByAid(id),
+        recommend(id)
+      ])
+      // (useBuylink = true, isShortId = false, useCoverex = false, useBanner = false, useSwipe = false , useImageSize = false)
+      let { swipe_image_url, title, price, author } = meta
+      parser.markdown = content
+      let html = parser.getHTML()
+      // console.log(html)
+      // console.log(images)
+      html = imageHandler(html, images, false)
+      html = await skuHandler(html, false)
+      parser.html = html
+      // console.log(html)
+      let contents = parser.getData()
+      // let sids = contents.map(content => {
+      //   if (content.type === 'sku') {
+      //     return content.id
+      //   }
+      // }).filter(content => !!content)
+      // if (Utils.isValidArray(sids)) {
+      //   [skus, goods] = await Promise.all([
+      //     this.getSkusBySids(sids),
+      //     recommend(id)
+      //   ])
+      // } else {
+      //   goods = await recommend(id)
+      // }
+      // if (goods) {
+      //   goods = goods.map(good => {
+      //     // console.log(good.type)
+      //     return {
+      //       image: good.thumb,
+      //       title: good.title,
+      //       ctype: Utils.typeToCtype(good.type),
+      //       article_id: Utils.toShortId(good.serverid)
+      //       // price: 239
+      //     }
+      //   })
+      // } else {
+      //   goods = []
+      // }
+
+      // if (skus) {
+      //   contents = contents.map(content => {
+      //     if (content.type === 'sku') {
+      //       let sku = this.findSkuBySid(skus, content.id)
+      //       content.title = sku.title
+      //       content.price = sku.price_str
+      //       content.image = Utils.getFirst(sku.images).url
+      //     }
+      //     return content
+      //   })
+      // }
+
+      return {
+        ctype,
+        header: {
+          title: Utils.getFirst(title),
+          price: { type: 'price', value: price },
+          banners: swipe_image_url,
+          author: { url: author.pic, value: author.name }
+        },
+        contents,
+        goods
+      }
+    } catch (e) {
+      console.log(e)
+      Log.exception(e)
+      return null
+    }
+  }
+  /**
+   * @param {number} id
+   * @memberof Show
    * 根据id拿到专刊类型的渲染数据
    */
   async getZKData (id, ctype) {
@@ -82,13 +167,65 @@ class Show {
         let card = Object.create(null)
         cid = Number(cid)
         card.id = cid
-        let cardMeta = Utils.getFirst(rawMetas.filter(rawMeta => rawMeta.nid === cid))
+        let cardMeta = Utils.getFirst(
+          rawMetas.filter(rawMeta => rawMeta.nid === cid)
+        )
         if (!cardMeta) continue
         console.log(cardMeta)
         card.title = cardMeta.title[0]
         card.desc = data.article[cid]
         card.image = cardMeta.cover_image_url
         card.buylink = cardMeta.buylink
+        metas.push(card)
+      }
+      ret.ctype = meta.ctype
+      ret.metas = metas
+    } catch (error) {
+      Log.exception(error)
+      console.log(error)
+    }
+    return ret
+  }
+ /**
+   * @param {number} id
+   * @memberof Show
+   * 根据id拿到专题类型的渲染数据
+   */
+  async getZTData (id, ctype) {
+    // Log.business('[API show showZT] 输入参数为：', id)
+    console.log('[API show showZT] 输入参数为：', id)
+    const ret = Object.create(null)
+    try {
+      let [markdown, meta] = await Promise.all([
+        contentTable.getById(id),
+        metaService.getRawMetas(id)
+      ])
+      if (!markdown) return null
+      let data = Utils.getZtDataByParseMarkdown(markdown)
+      console.log(data)
+      console.log(meta)
+      let title = meta.title[0]
+      let image = meta.cover_image_url
+      let desc = data.ztdesc
+      ret.title = title
+      ret.desc = desc
+      ret.image = image
+      let cids = Object.keys(data.article)
+      let rawMetas = await metaService.getRawMetas(cids, true, true)
+      let metas = []
+      for (let cid of cids) {
+        let card = Object.create(null)
+        cid = Number(cid)
+        card.id = cid
+        let cardMeta = Utils.getFirst(
+          rawMetas.filter(rawMeta => rawMeta.nid === cid)
+        )
+        if (!cardMeta) continue
+        console.log(cardMeta)
+        card.title = cardMeta.title[0]
+        card.desc = data.article[cid]
+        // card.image = cardMeta.cover_image_url
+        // card.buylink = cardMeta.buylink
         metas.push(card)
       }
       ret.ctype = meta.ctype
@@ -166,135 +303,66 @@ class Show {
    * @memberof Show
    * 根据id拿到专题类型的渲染数据
    */
-  async getZTData (id, ctype) {
-    Log.business('[API show showZK] 输入参数为：', id)
-    const markdown = await contentTable.getById(id)
-    if (!markdown) return null
-    const allCardReg = /```card[\s\S]+?```/ig
-    const ztReg = /```zt[\s\S]+?```/ig
-    const allCardMarkdown = markdown.match(allCardReg)
-    let ztMarkdown = markdown.match(ztReg)
-    if (!Utils.isValidArray(ztMarkdown)) return null
-    ztMarkdown = Utils.getFirst(ztMarkdown)
-    const idReg = /id[:：]\s*(\d+)\s*title[:：]/
-    const titleReg = /title[:：]\s*(.+)\s*desc[:：]/
-    const descReg = /desc[:：]\s*(.+)\s*image[:：]/
-    const imageReg = /image[:：]\s*!\[.*\]\((?:https?)?(?:\/\/)?(.+)\s*\)\s*/
-    let title = ztMarkdown.match(titleReg)
-    let desc = ztMarkdown.match(descReg)
-    if (Utils.isValidArray(title)) {
-      title = title[1]
-    }
-    if (Utils.isValidArray(desc)) {
-      desc = desc[1]
-    }
-    const ret = Object.create(null)
-    ret.title = title
-    ret.desc = desc || ''
-    let metas = []
-    for (let cardMarkdown of allCardMarkdown) {
-      let card = Object.create(null)
-      let cardId = cardMarkdown.match(idReg)
-      let cardTitle = cardMarkdown.match(titleReg)
-      let cardDesc = cardMarkdown.match(descReg)
-      let cardImage = cardMarkdown.match(imageReg)
-      if (Utils.isValidArray(cardId)) {
-        cardId = cardId[1]
-      }
-      if (Utils.isValidArray(cardTitle)) {
-        cardTitle = cardTitle[1]
-      }
-      if (Utils.isValidArray(cardDesc)) {
-        cardDesc = cardDesc[1]
-      }
-      if (Utils.isValidArray(cardImage)) {
-        cardImage = cardImage[1]
-      }
-      card.id = Number(cardId)
-      card.title = cardTitle
-      card.desc = cardDesc
-      card.image = cardImage
-      metas.push(card)
-    }
-    ret.metas = metas
-    ret.ctype = ctype
-    return ret
-  }
-  /**
-   * @param {number} id
-   * @memberof Show
-   * 根据id拿到firstpage/goodthing/activity/exprience类型的渲染数据
-   */
-  async getArticleData (id, ctype) {
-    console.log('[API show getArticleData] 输入参数为：', id)
-    Log.business(`[API show getArticleData] 输入参数为：${id}`)
-    try {
-      let [content, meta] = await Promise.all([
-        contentTable.getById(id),
-        metaService.getRawMetas(id, false, true, false, false, true)
-      ])
-      // (useBuylink = true, isShortId = false, useCoverex = false, useBanner = false, useSwipe = false , useImageSize = false)
-      let { swipe_image_url, title, price, author } = meta
-      parser.markdown = content
-      let contents = parser.getData()
-      let sids = contents.map(content => {
-        if (content.type === 'sku') {
-          return content.id
-        }
-      })
-      let skus, goods
-      if (Utils.isValidArray(sids)) {
-        [skus, goods] = await Promise.all([
-          this.getSkusBySids(sids),
-          recommend(id)
-        ])
-      } else {
-        goods = await recommend(id)
-      }
-      if (goods) {
-        goods = goods.map(good => {
-          // console.log(good.type)
-          return {
-            image: good.thumb,
-            title: good.title,
-            ctype: Utils.typeToCtype(good.type),
-            article_id: Utils.toShortId(good.serverid)
-            // price: 239
-          }
-        })
-      } else {
-        goods = []
-      }
-
-      if (skus) {
-        contents = contents.map(content => {
-          if (content.type === 'sku') {
-            let sku = this.findSkuBySid(skus, content.id)
-            content.title = sku.title
-            content.price = sku.price_str
-            content.image = Utils.getFirst(sku.images).url
-          }
-          return content
-        })
-      }
-
-      return {
-        ctype,
-        header: {
-          title: Utils.getFirst(title),
-          price: { type: 'price', value: price },
-          banners: swipe_image_url,
-          author: { url: author.pic, value: author.name }
-        },
-        contents,
-        goods
-      }
-    } catch (e) {
-      console.log(e)
-      Log.exception(e)
-      return null
-    }
-  }
+  // async getZTData (id, ctype) {
+  //   Log.business('[API show showZK] 输入参数为：', id)
+  //   const ret = Object.create(null)
+  //   try {
+  //     const markdown = await contentTable.getById(id)
+  //     if (!markdown) return null
+  //     const allCardReg = /```card[\s\S]+?```/ig
+  //     const ztReg = /```zt[\s\S]+?```/ig
+  //     console.log(markdown)
+  //     const allCardMarkdown = markdown.match(allCardReg)
+  //     let ztMarkdown = markdown.match(ztReg)
+  //     if (!Utils.isValidArray(ztMarkdown)) return null
+  //     ztMarkdown = Utils.getFirst(ztMarkdown)
+  //     const idReg = /id[:：]\s*(\d+)\s*title[:：]/
+  //     const titleReg = /title[:：]\s*(.+)\s*desc[:：]/
+  //     const descReg = /desc[:：]\s*(.+)\s*image[:：]/
+  //     const imageReg = /image[:：]\s*!\[.*\]\((?:https?)?(?:\/\/)?(.+)\s*\)\s*/
+  //     let title = ztMarkdown.match(titleReg)
+  //     let desc = ztMarkdown.match(descReg)
+  //     if (Utils.isValidArray(title)) {
+  //       title = title[1]
+  //     }
+  //     if (Utils.isValidArray(desc)) {
+  //       desc = desc[1]
+  //     }
+  //     ret.title = title
+  //     ret.desc = desc || ''
+  //     let metas = []
+  //     for (let cardMarkdown of allCardMarkdown) {
+  //       let card = Object.create(null)
+  //       let cardId = cardMarkdown.match(idReg)
+  //       let cardTitle = cardMarkdown.match(titleReg)
+  //       let cardDesc = cardMarkdown.match(descReg)
+  //       let cardImage = cardMarkdown.match(imageReg)
+  //       if (Utils.isValidArray(cardId)) {
+  //         cardId = cardId[1]
+  //       }
+  //       if (Utils.isValidArray(cardTitle)) {
+  //         cardTitle = cardTitle[1]
+  //       }
+  //       if (Utils.isValidArray(cardDesc)) {
+  //         cardDesc = cardDesc[1]
+  //       }
+  //       if (Utils.isValidArray(cardImage)) {
+  //         cardImage = cardImage[1]
+  //       }
+  //       card.id = Number(cardId)
+  //       card.title = cardTitle
+  //       card.desc = cardDesc
+  //       card.image = cardImage
+  //       metas.push(card)
+  //     }
+  //     ret.metas = metas
+  //     ret.ctype = ctype
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  //   return ret
+  // }
+  
   // 拿出文章关联的所有sku
   async _getSkus (id) {
     let skus = null

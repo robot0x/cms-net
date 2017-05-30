@@ -23,7 +23,7 @@ var findByUrl = (url, images) => {
  * BUG: 2017-05-23 diaodiao_article_image 中的某些图片还是老的，diaodiao_article_content中引用的是新的，
  * 所以导致 findByUrl 找不到结果，导致图片没有加上width和height属性，导致图片超出页面范围
  */
-module.exports = (html, images) => {
+module.exports = (html, images, usePlaceholder = true) => {
   const $ = cheerio.load(`<div id="container">${html}</div>`, { decodeEntities: false })
   const container = $('#container')
   const imgs = Array.from(container.find('img'))
@@ -44,7 +44,9 @@ module.exports = (html, images) => {
       img.attribs.alt = image.alt
       img.attribs.width = attribs['data-w'] = image.width
       img.attribs.height = attribs['data-h'] = image.height
-      img.attribs.src = '//c.diaox2.com/cms/diaodiao/assets/pixel.gif'
+      if (usePlaceholder) {
+        img.attribs.src = '//c.diaox2.com/cms/diaodiao/assets/pixel.gif'
+      }
       img.attribs['data-big'] = '//' + image.url
       img.attribs['data-src'] = attribs['data-big'] + (image.extension_name == 'gif' ? '@768w_1l' : '')
       $(img).addClass('lazy')

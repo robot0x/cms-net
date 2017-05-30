@@ -113,10 +113,35 @@ class MetaService {
     // console.log('ids:', ids)
     // const metaAndAuthors = await DB.exec(`SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM diaodiao_article_meta AS meta ,diaodiao_author AS au where meta.author = au.source AND meta.id in (${ids.join(',')})`)
     // 取meta需要加上时间限制，timetopublish必须处在20141108和今天之间
-    const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.timetopublish, au.pic_uri, au.title AS author_name FROM diaodiao_article_meta AS meta ,diaodiao_author AS au WHERE meta.id in (${ids.join(',')}) AND meta.author = au.source AND ${Utils.genTimetopublishInterval('meta.timetopublish')}`
+    // 专刊类型的timetopublish都为0，要想拿专刊类型的meta，需要坐下兼容
+    const sql = `
+    SELECT 
+      meta.id AS nid, 
+      meta.title,
+      meta.titleex,
+      meta.titlecolor,
+      meta.ctype,
+      meta.price,
+      meta.buylink,
+      meta.timetopublish,
+      au.pic_uri,
+      au.title AS author_name
+    FROM 
+     diaodiao_article_meta AS meta ,
+     diaodiao_author AS au 
+    WHERE 
+     meta.id in (${ids.join(',')}) 
+    AND 
+     meta.author = au.source 
+    AND
+    (
+     ${Utils.genTimetopublishInterval('meta.timetopublish')}
+    OR 
+     ctype = 9
+    )
+    `
     // const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM diaodiao_article_meta AS meta LEFT JOIN author AS au ON meta.author = au.source`
     // const sql = `SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM diaodiao.article_meta AS meta LEFT JOIN diaodiao_author AS au ON meta.id in (${ids.join(',')}) and meta.author = au.source`
-    // console.log(sql)
     try {
       const metaAndAuthors = await DB.exec(sql)
       // console.log('metaAndAuthors:', metaAndAuthors);
@@ -180,7 +205,6 @@ class MetaService {
 
         meta.cover_image_url = cover_image.url || ''
         meta.thumb_image_url = thumb_image.url || ''
-
         let coverex_image = null
         let banner_image = null
         let swipe_images = null // 走马灯图，可能有多个
@@ -249,6 +273,7 @@ class MetaService {
       }
     } catch (e) {
       Log.exception(e)
+      console.log(e)
       return null
     }
   }
