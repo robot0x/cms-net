@@ -1,12 +1,13 @@
 const Log = require('../utils/Log')
 const Utils = require('../utils/Utils')
 const DB = require('../db/DB')
-const path = require('path')
+// const path = require('path')
 
 function run2 (file) {
   const lineReader = require('readline').createInterface({
     input: require('fs').createReadStream(
-      file || path.resolve('./src/crawler/data', 'ajson.5')
+      file
+      // || path.resolve('./src/crawler/data', 'ajson.5')
     ),
     output: process.stdout,
     terminal: false

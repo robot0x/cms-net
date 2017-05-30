@@ -40,7 +40,7 @@ exec(scpCmd, (err, stdout, stderr) => {
           if (err) {
             console.log(err)
           } else {
-            run(uniqFile)
+            // run(uniqFile)
             run2(uniqFile)
           }
         })
