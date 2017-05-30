@@ -28,6 +28,7 @@ const dbConfig = isDebug
     database: 'diaodiao',
     charset: 'utf8mb4',
     multipleStatement: true,
+    // 在服务器上会报错：Too many connections。故由50改为20
     connectionLimit: 20
   }
 console.log(`isDebug:${isDebug}\nuse: ${JSON.stringify(dbConfig)}`)
