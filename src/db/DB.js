@@ -76,7 +76,8 @@ class DB {
    * 根据配置初始化连接池
    */
   static initPool (dbConfig) {
-    return mysql.createPool(dbConfig)
+    DB.pool = mysql.createPool(dbConfig)
+    // return mysql.createPool(dbConfig)
   }
 
   /**
@@ -102,6 +103,7 @@ class DB {
   static exec (sql, data) {
     return new Promise((resolve, reject) => {
       DB.pool.getConnection((err, connection) => {
+        connection.release()
         //  DB.poolCluster.getConnection(CMS, DIAODIAO, function(err, connection) {
         if (err) {
           reject(err)
@@ -111,7 +113,6 @@ class DB {
             Log.business(
               `[DB.exe] ${sql} ${data ? `with ${JSON.stringify(data)}` : ''}\nfetch rows's length is ${rows.length} `
             )
-            DB.pool.releaseConnection(connection)
             // connection.release()
             if (error) {
               console.log(error)
@@ -126,5 +127,5 @@ class DB {
     })
   }
 }
-DB.pool = DB.initPool(dbConfig)
+DB.initPool(dbConfig)
 module.exports = DB
