@@ -22,22 +22,22 @@ exec(scpCmd, (err, stdout, stderr) => {
         console.log(err)
       } else {
         // 数据去重，只取最后一个
-        let list = text.trim().split(/\n/)
-        let map = new Map()
-        for (let i = 0, l = list.length; i < l; i++) {
-          let obj = JSON.parse(list[i])
-          map.set(obj.node.nid, i)
-        }
-        let array = []
-        let iterator = map.entries()
-        let entry = null
-        while ((entry = iterator.next().value)) {
-          let index = entry[1]
-          array.push(list[index])
-        }
-        let uniqFile = `${scpFile}.uniq`
-        fs.writeFileSync(uniqFile, array.join('\n'), ENCODING)
-        run2(uniqFile)
+        // let list = text.trim().split(/\n/)
+        // let map = new Map()
+        // for (let i = 0, l = list.length; i < l; i++) {
+        //   let obj = JSON.parse(list[i])
+        //   map.set(obj.node.nid, i)
+        // }
+        // let array = []
+        // let iterator = map.entries()
+        // let entry = null
+        // while ((entry = iterator.next().value)) {
+        //   let index = entry[1]
+        //   array.push(list[index])
+        // }
+        // let uniqFile = `${scpFile}.uniq`
+        // fs.writeFileSync(uniqFile, array.join('\n'), ENCODING)
+        run2(scpFile)
         // fs.writeFile(uniqFile, array.join('\n'), ENCODING, err => {
         //   if (err) {
         //     console.log(err)
