@@ -4,7 +4,7 @@ const _ = require('lodash')
 const Log = require('../utils/Log')
 const CMS = 'cms'
 // const DIAODIAO = 'diaodiao'
-
+console.log('[DB.js] dbConfig:', dbConfig)
 /**
  * 提供基础的与数据库相关的工具方法
  */
