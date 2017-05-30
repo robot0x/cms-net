@@ -17,7 +17,7 @@ exec(scpCmd, (err, stdout, stderr) => {
   if (err) {
     console.log('get weather api error:', stderr)
   } else {
-    run(scpFile)
+    // run(scpFile)
     run2(scpFile)
     // fs.readFile(scpFile, ENCODING, (err, text) => {
     //   if (err) {
