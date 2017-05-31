@@ -6,11 +6,14 @@ class BuyinfoTable extends Table {
     // super('article_content', ['aid', 'content'], null, null)
     super(
       'diaodiao_buyinfo',
-      ['buy_id', 'mart', 'link', 'price', 'intro', 'link_pc'],
+      ['buy_id', 'mart', 'link', 'price', 'intro', 'link_pc', 'aid'],
       null,
       null
     )
   }
+  // getByAid (id) {
+  //   return this.exec(`SELECT ${this.columnsStr} FROM ${this.table} WHERE buy_id = ${id}`)
+  // }
 }
 
 // const buyinfoTable = new BuyinfoTable()

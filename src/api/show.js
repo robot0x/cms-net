@@ -12,6 +12,8 @@ const Utils = require('../utils/Utils')
 // const DB = require('../db/DB')
 const ContentTable = require('../db/ContentTable')
 const contentTable = new ContentTable()
+const BuyinfoTable = require('../db/BuyinfoTable')
+const buyinfoTable = new BuyinfoTable()
 const MetaService = require('../service/MetaService')
 const metaService = new MetaService()
 const AuthorService = require('../service/AuthorService')
@@ -26,36 +28,36 @@ class Show {
     this.type = type
     return this
   }
-  findSkuBySid (skus, sid) {
-    for (let sku of skus) {
-      if (sku.sid == sid) {
-        return sku
-      }
-    }
-  }
-  async getSkusBySids (sids) {
-    console.log('sids:', sids)
-    return new Promise((resolve, reject) => {
-      request(
-        {
-          url: 'http://s5.a.dx2rd.com:3000/v1/getsimplesku/',
-          method: 'POST',
-          json: true,
-          headers: { 'content-type': 'application/json' },
-          body: { sids }
-        },
-        (error, response, body) => {
-          if (error) reject(error)
-          if (response.statusCode === 200) {
-            console.log('skus:', JSON.stringify(body.data))
-            resolve(body.data)
-          } else {
-            reject('接口返回错误的状态吗', response.statusCode)
-          }
-        }
-      )
-    })
-  }
+  // findSkuBySid (skus, sid) {
+  //   for (let sku of skus) {
+  //     if (sku.sid == sid) {
+  //       return sku
+  //     }
+  //   }
+  // }
+  // async getSkusBySids (sids) {
+  //   console.log('sids:', sids)
+  //   return new Promise((resolve, reject) => {
+  //     request(
+  //       {
+  //         url: 'http://s5.a.dx2rd.com:3000/v1/getsimplesku/',
+  //         method: 'POST',
+  //         json: true,
+  //         headers: { 'content-type': 'application/json' },
+  //         body: { sids }
+  //       },
+  //       (error, response, body) => {
+  //         if (error) reject(error)
+  //         if (response.statusCode === 200) {
+  //           console.log('skus:', JSON.stringify(body.data))
+  //           resolve(body.data)
+  //         } else {
+  //           reject('接口返回错误的状态吗', response.statusCode)
+  //         }
+  //       }
+  //     )
+  //   })
+  // }
   /**
    * @param {number} id
    * @memberof Show
@@ -75,9 +77,9 @@ class Show {
       let { swipe_image_url, title, price, author } = meta
       parser.markdown = content
       let html = parser.getHTML()
-      // console.log(html)
-      // console.log(images)
+      // 批处理文章内引用的图片，根据image表中的记录，给img标签赋值（width\height\alt等）
       html = imageHandler(html, images, false)
+      // 批处理文章内引用的sku，根据sid通过getsimplesku接口拿数据，然后更新与sku相关的标签
       html = await skuHandler(html, false)
       parser.html = html
       // console.log(html)
@@ -186,7 +188,7 @@ class Show {
     }
     return ret
   }
- /**
+  /**
    * @param {number} id
    * @memberof Show
    * 根据id拿到专题类型的渲染数据
@@ -362,7 +364,7 @@ class Show {
   //   }
   //   return ret
   // }
-  
+
   // 拿出文章关联的所有sku
   async _getSkus (id) {
     let skus = null
@@ -391,50 +393,96 @@ class Show {
    * 根据id拿到ctype，然后在路由到取相应数据的方法
    */
   async getZKAndZTAndArticleData (id) {
-    console.log('getZKAndZTAndArticleData exec ....', id)
-    const ctype = await metaTable.getCtypeById(id)
-    const trueM = Utils.ctypeToM(ctype)
-    console.log('trueM:', trueM)
-    // let data = null
-    let promises = []
-    // console.log('trueM:', trueM)
-    // const buylink = await metaService.getBuylink(id)
-    // console.log('buylink:', buylink)
-    switch (trueM) {
-      case 'show': // 正文页渲染 firstpage/goodthing/activity/exprience
-        promises.push(this.getArticleData(id, ctype))
-        // data = await this.getArticleData(id, ctype)
-        break
-      case 'zk': // 专刊页渲染
-        promises.push(this.getZKData(id, ctype))
-        break
-      case 'zt': // 专刊页渲染
-        promises.push(this.getZTData(id, ctype))
-        // data = await this.getZTData(id, ctype)
-        break
-    }
-    // data.has_buy_link = false
-    // if (buylink) {
-    //   data.buylink = buylink
-    //   data.has_buy_link = true
-    // }
-    promises.push(this._getSkus(id))
-    promises.push(this.genShareData(id, trueM))
-    let [data, skus, shareData] = await Promise.all(promises)
-    // data.skus = await this._getSkus(id)
-    data.skus = skus.map(sku => {
-      try {
-        sku.images = JSON.parse(sku.images)
-        sku.tags = JSON.parse(sku.tags)
-        sku.sales = JSON.parse(sku.sales)
-        sku.revarticles = JSON.parse(sku.revarticles)
-        return sku
-      } catch (error) {
-        return sku
+    try {
+      console.log('getZKAndZTAndArticleData exec ....', id)
+      const ctype = await metaTable.getCtypeById(id)
+      const trueM = Utils.ctypeToM(ctype)
+      console.log('trueM:', trueM)
+      // let data = null
+      let promises = []
+      // console.log('trueM:', trueM)
+      // const buylink = await metaService.getBuylink(id)
+      // console.log('buylink:', buylink)
+      switch (trueM) {
+        case 'show': // 正文页渲染 firstpage/goodthing/activity/exprience
+          promises.push(this.getArticleData(id, ctype))
+          // data = await this.getArticleData(id, ctype)
+          break
+        case 'zk': // 专刊页渲染
+          promises.push(this.getZKData(id, ctype))
+          break
+        case 'zt': // 专刊页渲染
+          promises.push(this.getZTData(id, ctype))
+          // data = await this.getZTData(id, ctype)
+          break
       }
-    })
-    data.share_data = shareData
-    return data
+      // data.has_buy_link = false
+      // if (buylink) {
+      //   data.buylink = buylink
+      //   data.has_buy_link = true
+      // }
+      promises.push(this._getSkus(id))
+      promises.push(this.genShareData(id, trueM))
+      let [data, skus, shareData] = await Promise.all(promises)
+      /**
+     * show_part: [
+            {
+                "channel": "淘宝",
+                "buy_link": "www.baidu.com",
+                "des": "软边白板已下架，此链接为铝边白板的链接",
+                "price": 233,
+                "id": 123,//skuID用于4.0需求sku失效用户可以进行反馈
+                "type":"link"//用于判断跳转类型 3x版本都为link
+            }
+        ],
+         pick_up_part: [
+            {
+                "channel": "淘宝",
+                "buy_link": "www.baidu.com",
+                "des": "软边白板已下架，此链接为铝边白板的链接",
+                "price": 233,
+                "id": 123,
+                "type":"link"
+            }
+         ]
+      在电商上线之前，pick_up_part 没有值
+      如果sku有且仅有一条数据，则把sales数组变形成上述show_part形式
+      否则的话，则从diaodiao_buylink表拿数据，把拿到的多条数据变形成show_part形式
+      电商上线之后，show_part是我们自己的电商连接，pick_up_part是除了我们自己之外的其他链接
+     */
+      data.sku = Object.create(null)
+      data.sku.pick_up_part = []
+      if (skus && skus.length === 1) {
+        let sku = Utils.getFirst(skus)
+        let { sid, sales } = sku
+        try {
+          data.sku.show_part = await this._toShowpart(JSON.parse(sales), sid, 'sku')
+        } catch (error) {
+          data.sku.show_part = []
+        }
+      } else {
+        const sales = await buyinfoTable.getByAid(id)
+        data.sku.show_part = await this._toShowpart(sales, null, 'buyinfo')
+      }
+      // data.skus = await this._getSkus(id)
+      // data.skus = skus.map(sku => {
+      //   try {
+      //     sku.images = JSON.parse(sku.images)
+      //     sku.tags = JSON.parse(sku.tags)
+      //     sku.sales = JSON.parse(sku.sales)
+      //     sku.revarticles = JSON.parse(sku.revarticles)
+      //     return sku
+      //   } catch (error) {
+      //     return sku
+      //   }
+      // })
+      data.share_data = shareData
+      return data
+    } catch (error) {
+      console.log(error)
+      Log.exception(error)
+      return null
+    }
   }
   getReadcound (aids) {
     if (!Utils.isValidArray(aids)) return {}
@@ -465,6 +513,46 @@ class Show {
         }
       )
     })
+  }
+  /**
+   *
+   *
+   * @param {any} sales
+   * @param {any} type
+   *
+   * @memberof Show
+  "channel": "淘宝",
+  "buy_link": "www.baidu.com",
+  "des": "软边白板已下架，此链接为铝边白板的链接",
+  "price": 233,
+  "id": 123,//skuID用于4.0需求sku失效用户可以进行反馈
+  "type":"link"//用于判断跳转类型 3x版本都为link
+  */
+  _toShowpart (sales, id, type) {
+    let showpart = []
+    for (let sale of sales) {
+      console.log('_toShowpart sale:', sale)
+      let ele = Object.create(null)
+      ele.tag = type
+      ele.type = 'link'
+      ele.channel = sale.mart
+      ele.des = sale.intro
+      ele.price = sale.price
+      ele.buy_link =
+        sale.link_m_cps ||
+        sale.link_pc_cps ||
+        sale.link_m_raw ||
+        sale.link_pc_raw
+      if (id) {
+        ele.id = id
+      }
+      if (type === 'buyinfo') {
+        ele.buy_link = sale.link || sale.link_pc
+        ele.id = sale.buy_id
+      }
+      showpart.push(ele)
+    }
+    return showpart
   }
   /**
    * @param {string} src
