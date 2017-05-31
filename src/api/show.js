@@ -97,21 +97,20 @@ class Show {
       // } else {
       //   goods = await recommend(id)
       // }
-      // if (goods) {
-      //   goods = goods.map(good => {
-      //     // console.log(good.type)
-      //     return {
-      //       image: good.thumb,
-      //       title: good.title,
-      //       ctype: Utils.typeToCtype(good.type),
-      //       article_id: Utils.toShortId(good.serverid)
-      //       // price: 239
-      //     }
-      //   })
-      // } else {
-      //   goods = []
-      // }
-
+      if (goods) {
+        goods = goods.map(good => {
+          // console.log(good.type)
+          return {
+            image: good.thumb,
+            title: good.title,
+            ctype: Utils.typeToCtype(good.type),
+            article_id: Utils.toShortId(good.serverid)
+            // price: 239
+          }
+        })
+      } else {
+        goods = []
+      }
       // if (skus) {
       //   contents = contents.map(content => {
       //     if (content.type === 'sku') {
