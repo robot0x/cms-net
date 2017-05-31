@@ -179,6 +179,7 @@ class Parser {
             item.type = name
             item.value = this.htmlToData($child.find('.box-inner'), true)
           }
+
           const doms = Array.from($child.children())
           // 若child下有且仅有一个文本节点，则直接把文本节点值赋予value
           if (childNodes.length === 1 && childNodes[0].type === 'text') {
@@ -192,6 +193,12 @@ class Parser {
             item.url = imgAttr.src
             item.width = imgAttr.width || ''
             item.height = imgAttr.height || ''
+          } else if (name === 'li' && doms.length === 1 && doms[0].name === 'p') {
+            // http://c.diaox2.com/view/app/?m=show&id=1120
+            // 上面这篇文章中，把由于p标签中的内容为"1. xxx" ，故解析成了 ol -> li
+            // 还当成li标签处理即可，无伤大雅
+            item.type = name
+            item.value = this.htmlToData($child.find('p'), false)
           } else if (notRecursion.indexOf(name) === -1) {
             // 若含有其他节点，则递归调用htmlToData
             item.value = this.htmlToData(this.$(child), false)
