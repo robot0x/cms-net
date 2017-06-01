@@ -78,11 +78,13 @@ DB.exec(
   ON DUPLICATE KEY UPDATE
    content = ${DB.escape(content)}
 `
-).then(data => {
-  console.log('pcollection的markdown数据插入成功 ...')
-}).catch(e => {
-  console.log(e)
-})
+)
+  .then(data => {
+    console.log('pcollection的markdown数据插入成功 ...')
+  })
+  .catch(e => {
+    console.log(e)
+  })
 
 DB.exec(
   `
@@ -93,9 +95,38 @@ DB.exec(
    title = '测评报告',
    ctype = 10,
    author = '有调机器人'
+  ON DUPLICATE KEY UPDATE
+   title = '测评报告',
+   ctype = 10,
+   author = '有调机器人'
 `
-).then(data => {
-  console.log('pcollection的meta数据插入成功 ...')
-}).catch(e => {
-  console.log(e)
+)
+  .then(data => {
+    console.log('pcollection的meta数据插入成功 ...')
+  })
+  .catch(e => {
+    console.log(e)
+  })
+DB.exec(`DELETE FROM diaodiao_article_image WHERE aid = ${ID}`).then(data => {
+  DB.exec(
+    `
+    INSERT INTO
+    diaodiao_article_image
+    SET
+    aid = ${ID},
+    url = 'content.image.alimmdn.com/cms/sites/default/files/20160823/pcollection/review_all.jpg',
+    used = 1,
+    type = 2,
+    extension_name = 'jpg',
+    size = 153860,
+    width = 1242,
+    height = 697
+  `
+  )
+    .then(data => {
+      console.log('pcollection的image数据插入成功 ...')
+    })
+    .catch(e => {
+      console.log(e)
+    })
 })
