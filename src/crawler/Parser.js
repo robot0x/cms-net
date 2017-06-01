@@ -296,17 +296,32 @@ class Parser {
           md += `${this.getShowMarkdown($child, false, 'blockquote')}\n\n`
         }
       } else if (name === 'lift2') {
-        if (text !== null) {
-          md += `lift2 ${innerText}\`\n\n`
-        } else {
-          md += `lift2 ${this.getShowMarkdown($child, false)}\n\n`
-        }
+        // if (text !== null) {
+        md += `lift2 ${innerText}\`\n\n`
+        // } else {
+          // md += `lift2 ${this.getShowMarkdown($child, false)}\n\n`
+        // }
       } else if (name === 'lift') {
-        if (text !== null) {
-          md += `lift ${innerText}\n\n`
-        } else {
-          md += `lift ${this.getShowMarkdown($child, false)}\n\n`
-        }
+        // if (text !== null) {
+        //   md += `lift ${innerText}\n\n`
+        // } else {
+          /**
+              此处有BUG，2017-06-01
+              应该直接找到lift下面的em，然后取innerText即可，而不要递归
+              因为递归会再次处理em，把内容变为 *这是lift的内容*
+              递归返回，再加上 `lift` 则markdown的内容变为：lift *这是lift的内容*
+              因为在解析markdown的自定义lift语法时，会自动加上em，然后 *这是lift的内容*
+              又解析成 em，会导致两层em
+              导致解析成的html变为
+              <p class="lift">
+               <em>
+                <em>这是lift的内容</em>
+               </em>
+              </p>
+           */
+          // md += `lift ${this.getShowMarkdown($child, false)}\n\n`
+        md += `lift ${$child.find('em').text()}\n\n`
+        // }
       } else if (name === 'sku') {
         md += `sku ${Utils.normalize(attribs['data-href'])}\n\n`
         // console.log($child)

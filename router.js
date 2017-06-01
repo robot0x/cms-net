@@ -36,6 +36,7 @@ const {
   mJfMallRender, // 积分商城页渲染器
   mZDMRender, // 值得买活动页渲染器
   mMetabandRender, // 值得买活动页渲染器
+  mPCollectionRender, // 测评集合页渲染器
 
   // p开头的为pc端渲染器
   pShowRender,
@@ -184,6 +185,8 @@ router.get('/', async(req, res) => {
       search.byDate(start, end).then(meta => writeJSON(meta, res, 'TR')).catch(e => happyEnd(e, res))
     } else if (/TS/i.test(m)) {
       search.byTitle(title).then(meta => writeJSON(meta, res, 'TS')).catch(e => happyEnd(e, res))
+    } else if (/pcollection/i.test(m)) {
+      
     } else {
       pageNotFound(res)
     }

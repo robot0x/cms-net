@@ -15,6 +15,7 @@ const MJfitemRender = require(`${mobileRenderDir}/jfitem/`) // 积分单品页
 const MJfMallRender = require(`${mobileRenderDir}/jfmall/`) // 积分商城页
 const MZDMRender = require(`${mobileRenderDir}/zdm/`) // 值得买活动页
 const MMetabandRender = require(`${mobileRenderDir}/metaband/`) // 文章列表条html,生成一条类似app内tag/author页上的文章条，直接返回html
+const MPCollectionRender = require(`${mobileRenderDir}/pcollection/`) // 测评集合页渲染
 // PC端渲染器类集合
 const PShowRender = require(`${pcRenderDir}/show/`) // 好物页
 const PZKRender = require(`${pcRenderDir}/zk/`) // 专刊
@@ -37,6 +38,7 @@ module.exports = {
   mJfMallRender: new MJfMallRender(),
   mZDMRender: new MZDMRender(),
   mMetabandRender: new MMetabandRender(),
+  mPCollectionRender: new MPCollectionRender(),
   // PC端渲染器组
   pShowRender: new PShowRender(),
   pZKRender: new PZKRender(),

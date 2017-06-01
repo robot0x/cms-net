@@ -117,6 +117,17 @@ class Parser {
         if (!type) continue
         let $child = this.$(child)
         let name = this.getName(child)
+        // 如果有id属性，则赋予给item的anchor属性，作为锚点
+        if (attribs) {
+          let {id} = attribs
+          if (id) {
+            item.anchor = id
+          }
+        }
+        // let {id} = attribs
+        // if (id) {
+        //   item.anchor = id
+        // }
         // 只处理tag和text节点
         if (type === 'tag') {
           item.type = name
@@ -161,6 +172,8 @@ class Parser {
           } else if (name === 'lift') {
             try {
               item.type = name
+              // console.log($child.find('em'))
+              // console.log($child)
               item.value = $child.find('em').text()
             } catch (error) {
               Log.exception(error)
