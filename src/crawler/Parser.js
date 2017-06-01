@@ -303,6 +303,7 @@ class Parser {
           md += `${this.getShowMarkdown($child, false, 'blockquote')}\n\n`
         }
       } else if (name === 'lift2') {
+        // console.log('lift2:', innerText)
         // if (text !== null) {
         md += `lift2 ${innerText}\`\n\n`
         // } else {
@@ -328,6 +329,7 @@ class Parser {
            */
           // md += `lift ${this.getShowMarkdown($child, false)}\n\n`
         md += `lift ${$child.find('em').text()}\n\n`
+        // console.log('lift:', $child.find('em').text())
         // }
       } else if (name === 'sku') {
         md += `sku ${Utils.normalize(attribs['data-href'])}\n\n`
@@ -421,9 +423,9 @@ class Parser {
           if (_.isEmpty(attribs)) {
             name = 'p'
           } else if (className) {
-            if (className.indexOf('lift2') !== -1) {
+            if (/^lift2$/i.test(className)) {
               name = 'lift2'
-            } else if (className.indexOf('lift') !== -1) {
+            } else if (/^lift$/i.test(className)) {
               name = 'lift'
             } else if (className.indexOf('editorhead') !== -1) {
               name = 'editorhead'

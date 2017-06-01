@@ -131,7 +131,7 @@ class ShowParser extends Parser {
     //   }
     //   return ret
     // }
-    renderer.codespan = text => `<p class="lift">${text}</p>`
+    // renderer.codespan = text => `<p class="lift">${text}</p>`
     /**
      * 在段落内，包含行内标签
      *  行内标签包括：
