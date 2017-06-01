@@ -1,9 +1,12 @@
 const DB = require('../../../db/DB')
+const Render = require('../../')
 const Utils = require('../../../utils/Utils')
 
-class PCollectionRender {
+class PCollectionRender extends Render {
   constructor () {
+    super()
     console.log('PCollectionRender 被实例化 ...')
+    this.template = this.readTemplate(__dirname + '/pcollection.ejs')
   }
   /**
     目录
@@ -162,7 +165,14 @@ class PCollectionRender {
   }
   async rende () {
     let data = await this.getRendeData()
-    console.log(data)
+    let {meta, contents} = data
+    console.log(contents)
+    return this.getDoc(this.template, {
+      meta,
+      contents,
+      prefix: this.prefix,
+      version: this.version
+    })
   }
 }
 // const pcr = new PCollectionRender()

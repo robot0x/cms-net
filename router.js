@@ -250,6 +250,10 @@ router.get('/', async (req, res) => {
         .then(meta => writeJSON(meta, res, 'TS'))
         .catch(e => happyEnd(e, res))
     } else if (/pcollection/i.test(m)) {
+      mPCollectionRender
+        .rende()
+        .then(doc => writeDoc(doc, res, 'pcollection'))
+        .catch(e => happyEnd(e, res))
     } else {
       pageNotFound(res)
     }

@@ -59,5 +59,5 @@ function run (file) {
     }
   })
 }
-run(require('path').resolve('./src/crawler/data', 'ajson.5'))
+run(require('path').resolve('./src/crawler/data', '6367.ajson'))
 module.exports = run

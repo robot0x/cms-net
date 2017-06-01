@@ -117,6 +117,7 @@ class Parser {
         if (!type) continue
         let $child = this.$(child)
         let name = this.getName(child)
+        const doms = Array.from($child.children())
         // 如果有id属性，则赋予给item的anchor属性，作为锚点
         if (attribs) {
           let {id} = attribs
@@ -133,13 +134,36 @@ class Parser {
           item.type = name
           let childNodes = child.childNodes
           if (name === 'a') {
+            /**
+             * a标签比较复杂，共有下列几种情况要处理：
+             *  1、a标签引用外部链接
+             *  2、a标签引用文章id
+             *  3、a标签为锚点
+             *  4、a标签内部有img标签
+             *  5、a标签引用测评集合页（7216 or pcollection）
+             */
             const { href } = attribs
             const id = Utils.normalize(href)
             item.url = id
             item.scheme = 'diaodiao'
+            // a标签下的图片处理 start
+            let imgDom = $child.find('img')[0]
+            if (imgDom) {
+              let imgAttr = imgDom.attribs
+              item.value = {
+                type: imgDom.name,
+                value: imgAttr.alt || '',
+                url: imgAttr.src,
+                width: imgAttr.width || '',
+                height: imgAttr.height || ''
+              }
+            }
+            // a标签下的图片处理 end
             // 9833#jieguo
             // #jieguo
-            if (/^(\d+)?#.+$/.test(href)) {
+            if (id === 'pcollection') {
+              item.url = 'pcollection'
+            } else if (/^(\d+)?#.+$/.test(href)) {
               item.url = href.substring(href.lastIndexOf('#'))
               item.scheme = 'anchor'
             } else if (/* 9833 */ href === id && !/^\d+$/.test(id)) {
@@ -191,11 +215,7 @@ class Parser {
             // console.log($child.find('.box-inner'))
             item.type = name
             item.value = this.htmlToData($child.find('.box-inner'), true)
-          }
-
-          const doms = Array.from($child.children())
-          // 若child下有且仅有一个文本节点，则直接把文本节点值赋予value
-          if (childNodes.length === 1 && childNodes[0].type === 'text') {
+          } else if (childNodes.length === 1 && childNodes[0].type === 'text') { // 若child下有且仅有一个文本节点，则直接把文本节点值赋予value
             item.value = childNodes[0].data
           } else if (doms.length === 1 && doms[0].name === 'img') {
             // 若含有其他节点，则递归调用htmlToData
@@ -214,7 +234,7 @@ class Parser {
             item.value = this.htmlToData($child.find('p'), false)
           } else if (notRecursion.indexOf(name) === -1) {
             // 若含有其他节点，则递归调用htmlToData
-            item.value = this.htmlToData(this.$(child), false)
+            item.value = this.htmlToData($child, false)
           }
         } else if (type === 'text') {
           item.type = type

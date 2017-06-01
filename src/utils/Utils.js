@@ -374,10 +374,14 @@ class Utils {
       // 'http://c.diaox2.com/view/app/sku/8509.html'
       // 'http://c.diaox2.com/view/app/?m=sku&sid=1120'
       let skuReg = /view\/app\/(?:sku(?:\/\d+)?\/(\d+)\.html|\?m=sku&sid=(\d+))/i
+      let pcollectionReg = /view\/app\/\?m=pcollection/i
       let match = null
       let isSku = false
       if ((match = src.match(viewAppReg))) {
         ret = match[1]
+        if (ret == 7216) {
+          ret = 'pcollection'
+        }
       } else if ((match = src.match(cmsDDReg))) {
         ret = match[1]
       } else if ((match = src.match(pcSiteReg))) {
@@ -386,7 +390,8 @@ class Utils {
         ret = match[1] & 0xffffff
       } else if ((match = src.match(skuReg))) {
         ret = match[1] || match[2]
-        isSku = true
+      } else if ((match = src.match(pcollectionReg))) {
+        ret = 'pcollection'
       }
       if (ret && !isSku) {
         ret += '' + hash
@@ -468,6 +473,10 @@ class Utils {
 // console.log(Utils.normalize('http://c.diaox2.com/view/app/sku/1232131/8509.html'))
 // console.log(Utils.normalize('http://c.diaox2.com/view/app/sku/8509.html'))
 // console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=sku&sid=1120'))
+// console.log(Utils.normalize('http://c.diaox2.com/view/app/?m=pcollection'))
+// console.log(Utils.normalize('/view/app/?m=pcollection'))
+// console.log(Utils.normalize('/view/app/?m=show&id=7216'))
+// console.log(Utils.normalize('view/app/?m=show&id=7216'))
 
 // const lcids = [4294967297, 41201621280121, 39423504819163, 39423504819163, '', NaN, 41205916247418, 3563]
 // const lcid = 4647154615354

@@ -279,7 +279,14 @@ class Parser {
         // console.log('a标签内的文本是：', innerText)
         // console.log('处理之前a标签的href为：', attribs.href)
         // console.log('处理之后a标签的href为：', Utils.normalize(attribs.href))
-        md += `[${innerText}](${Utils.normalize(attribs.href)})`
+        // 2017-06-01 开始支持a标签下有img，不然在文章引用测评集合页就不可以了
+        // 语法为 [1120 img: http://a.com/sadasda.jpg]
+        let img = $child.find('img')[0]
+        if (img) {
+          md += `[${innerText}](${Utils.normalize(attribs.href)} img: ${img.attribs['data-big'] || img.attribs.src})`
+        } else {
+          md += `[${innerText}](${Utils.normalize(attribs.href)})`
+        }
       } else if (name === 'img') {
         md += `![${attribs.alt}](${attribs['data-big'] || attribs.src})`
       } else if (name === 'span') {

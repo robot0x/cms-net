@@ -140,21 +140,68 @@ class ShowParser extends Parser {
      *   3. em
      *   4. del
      *   5. span
+     * a标签比较复杂，共有下列几种情况要处理：
+     *   1、a标签引用外部链接                          [](http://www.baidu.com)
+     *   2、a标签引用文章id                            [](1120)
+     *   3、a标签为锚点                                [](#youdiao) OR [](1120#youdiao)
+     *   4、a标签引用测评集合页（7216 or pcollection）  [](7216) OR [](pcollection)
+     *   5、a标签内部有img标签                         [](可能为上面某种形式 img: http://test.com/a.jpg)
+     *   测试：
+     *    输入 '' => ''
+     *    输入 http://www.baidu.com  => http://www.baidu.com
+     *    输入 1120                  => //c.diaox2.com/view/app/?m=show&id=1120
+     *    输入 1120#youdiao          => //c.diaox2.com/view/app/?m=show&id=1120#youdiao
+     *    输入 1120#有调             => //c.diaox2.com/view/app/?m=show&id=1120#有调
+     *    输入 #有调                 => #有调
+     *    输入 7216                  => //c.diaox2.com/view/app/?m=pcollection
+     *    输入 pcollection           => //c.diaox2.com/view/app/?m=pcollection
      */
-    renderer.link = (href, title, text) => {
-      let reg = /^\d+(#\w+)?$/
-      let match = href.match(reg)
-      let openMethod = '_blank'
-      // 1234#youdiao
-      if (match) {
-        let hash = match[1]
-        if (hash) {
-          href = hash
-          openMethod = '_self'
-        } else {
-          href = `//c.diaox2.com/view/app/?m=show&id=${href}`
-        }
+    renderer.link = (href, title = '', text = '') => {
+      if (!href || !href.trim()) return ''
+      const prefix = '//c.diaox2.com/view/app'
+      // 处理a标签内含有图片的语法 start
+      let imgReg = /\s*img:\s*/
+      let imgUrl = ''
+      if (imgReg.test(href)) {
+        [href, imgUrl] = href.split(imgReg)
+        text += `<img src="${imgUrl}">`
       }
+      let openMethod = '_blank'
+      let hashReg = /^(\d+)?(#.+)$/
+      let match = href.match(hashReg)
+      // let hash = null
+      // 处理a标签内含有图片的语法 end
+      if (/^\d+$/.test(href)) {
+        // 处理测评集合页 [这是测评集合页的链接](7216)
+        if (href == 7216) {
+          href = `${prefix}/?m=pcollection`
+        } else {
+          href = `${prefix}/?m=show&id=${href}`
+        }
+      } else if (/pcollection/i.test(href)) { // [这是测评集合页的链接](pcollection)
+        href = `${prefix}/?m=pcollection`
+      } else if (match) {
+        // 9833#youdiao 或 #youdiao
+        // href = hash
+        // 9833#youdiao
+        if (match[1]) {
+          href = `${prefix}/?m=show&id=${match[0]}`
+        } else {
+          href = match[2]
+        }
+        openMethod = '_self'
+      }
+      // 1234#youdiao
+      // if (match) {
+      //   openMethod = '_self'
+      //   // let hash = match[1]
+      //   // if (hash) {
+      //   //   href = hash
+      //   //   openMethod = '_self'
+      //   // } else {
+      //   //   href = `//c.diaox2.com/view/app/?m=show&id=${href}`
+      //   // }
+      // }
       // console.log(href)
       return `<a target="${openMethod}" href="${href}">${text || href}</a>`
     }
