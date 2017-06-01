@@ -2,8 +2,8 @@ const DB = require('../../../db/DB')
 const Utils = require('../../../utils/Utils')
 
 class PCollectionRender {
-  constructor() {
-      console.log('PCollectionRender 被实例化 ...')
+  constructor () {
+    console.log('PCollectionRender 被实例化 ...')
   }
   /**
     目录
@@ -155,7 +155,7 @@ class PCollectionRender {
     ret.meta = Object.create(null)
     ret.meta.id = res.id
     ret.meta.title = res.title
-    ret.meta.cover = res.url
+    ret.meta.cover = '//' + res.url
     ret.contents = await this.parse(res.content)
     // console.log(ret)
     return ret

@@ -271,7 +271,7 @@ router.get('/show', async (req, res) => {
         .getData(id)
         .then(result => writeJSON(result, res, 'app_show'))
         .catch(e => happyEnd(e, res))
-    } else if (id == 7216 || id == 'pcollection') {
+    } else if (id == 'pcollection') {
       console.log('pcollection 命中 ....')
       console.log(mPCollectionRender)
       mPCollectionRender
