@@ -171,7 +171,7 @@ class Parser {
               item.scheme = /^https/i.test(href) ? 'https' : 'http'
             }
             if (!item.value) {
-              item.value = this.htmlToData($child, false)
+              item.value = $child.text()
             }
           } else if (name === 'span' && attribs.style) {
             item.style = attribs.style
