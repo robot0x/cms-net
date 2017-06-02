@@ -36,9 +36,9 @@ const log4jsConfig = {
       category: 'http',
       type: 'file',
       filename: `${theAbsolutePathDirOfLogfiles}/http/access.log`,
-      // 当http日志文件超过200kb，会自动生成 http.log.1/http.log.2/ ... 以此类推
+      // 当http日志文件超过2G，会自动生成 access.log.1/access.log.2/ ... 以此类推
       // 后面的数字有 buckups 的大小决定
-      maxLogSize: 204800,
+      maxLogSize: 2147483648,
       backups: 10
     },
     {
