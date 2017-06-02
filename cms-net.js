@@ -2,8 +2,11 @@
 const express = require('express')
 const router = require('./router')
 const middleware = require('./middleware')
+const timeout = require('connect-timeout')
 const config = require('./package').config
 const app = express()
+// 设置20秒的超时时间，防止express执行一个长时间的认为不返回，hang住node主进程
+app.use(timeout(20000))
 // http日志中间件
 app.use(middleware.log())
 // GZIP中间件
