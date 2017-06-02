@@ -39,8 +39,9 @@ class ShowParser extends Parser {
       const { isAnchor, anchor, text } = Utils.anchorHandler(content)
       const edsReg = /^eds\s+/i
       const edsdescReg = /^edsdesc\s+/i
-      const liftReg = /^lift\s+/i
-      const lift2Reg = /^lift2\s+/i
+      // 和移动站的恰好是反过来的
+      const liftReg = /^lift2\s+/i
+      const lift2Reg = /^lift\s+/i
       const skuReg = /^sku\s+/i
       let ret = ''
       if (isAnchor) {
