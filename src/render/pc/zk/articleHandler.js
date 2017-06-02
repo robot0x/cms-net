@@ -25,9 +25,8 @@ module.exports = async (html, ids) => {
     const articleDoms = Array.from(container.find('.goodthing'))
     const metas = await metaService.getRawMetas(ids, false, true)
     for (let articleDom of articleDoms) {
-      // console.log(articleDom.attribs['data-href'])
       let meta = findMetaById(
-        Utils.normalize(articleDom.attribs['data-href']),
+        Utils.normalize($(articleDom).find('a')[0].attribs['href']),
         metas
       )
       // 如果meta不存在，就删除这个dom
@@ -36,8 +35,8 @@ module.exports = async (html, ids) => {
         continue
       }
       const $articleDom = $(articleDom)
-      $articleDom.find('.title').text(meta.title[0])
-      $articleDom.find('.direct').attr('src', meta.cover_image_url)
+      $articleDom.find('.goodthing-highlight').find('div').text(meta.title[0])
+      $articleDom.find('.img-container').find('img').attr('src', meta.cover_image_url)
     }
   } catch (error) {
     console.log(error)

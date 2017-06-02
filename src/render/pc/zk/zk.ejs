@@ -74,13 +74,24 @@
     <div class="content-area">
       <div class="content-box clearfix">
         <div class="article-area f-l">
-          <h1 class="article-title">
-              <p><%=title%></p>
-              <% if( titleex ) { %>
-                <a href="#goodthing" class="goodthing-count"><%=titleex %></a>
-							<% } %>
-            </h1>
-          <%-body %>
+          <%-header%>
+          <ul class="zs-box">
+            <li>
+              <a href="javascript:;">
+                <i class="icon icon-s"></i>
+                <span class="a-fav">...</span>
+              </a>
+            </li>
+            <li>
+              <a href="javascript:;">
+                <i class="icon icon-z"></i>
+                <span class="a-up">...</span>
+              </a>
+            </li>
+          </ul>
+          <ul class="goodthing-list clearfix">
+           <%-body %>
+          </ul>
           <%#
           <h1 class="article-title">
             <p>title</p>

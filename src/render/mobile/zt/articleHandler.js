@@ -25,7 +25,7 @@ module.exports = async (html, markdown) => {
     // console.log(markdown)
     const articleDoms = Array.from(container.find('.ztcard'))
     const data = Utils.getZtDataByParseMarkdown(markdown)
-    const ids = Object.keys(data.article)
+    const ids = data.ids
     const metas = await metaService.getRawMetas(ids, false, true)
     for (let articleDom of articleDoms) {
       let id = Utils.normalize(articleDom.attribs['data-href'])

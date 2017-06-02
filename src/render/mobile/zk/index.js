@@ -47,7 +47,7 @@ class ZKRender extends Render {
       //  对于专刊，我们要先取出所引用的所有文章id
       let data = Utils.getZkDataByParseMarkdown(content)
       if (!data) return
-      let cids = Object.keys(data.article)
+      let cids = data.ids
       let buylinks = []
       // 先读diaodiao_buyinfo表
       // 根据文章id获取其buylink

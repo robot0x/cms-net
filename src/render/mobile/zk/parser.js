@@ -17,9 +17,6 @@ class ZKParser extends Parser {
     const renderer = super.getRenderer()
     this.idReg = /id[:：]\s*(\d+)\s*/
     this.descReg = /desc[:：]\s*(.+)\s*/
-    // this.titleReg = /title[:：]\s*(.+)\s*desc[:：]/
-    // this.imageReg = /image[:：]\s*!\[.*\]\((?:https?)?(?:\/\/)?(.+)\s*\)\s*/
-
     // zkdesc 无论是单身狗还是一对汪，一年之中总有那么几个周末想窝在家中，望望天花板，剥剥手指甲，吃吃小食，看看电视，度过一天。所以啊，小食很重要，样样不能少！怎么做？且听我慢慢道来。
     // ```zkarticle
     //     id: 2717
@@ -57,6 +54,9 @@ class ZKParser extends Parser {
       if (Utils.isValidArray(desc)) {
         desc = desc[1]
       }
+      // console.log('title:', title)
+      // console.log('desc:', desc)
+      // console.log('image:', image)
       /**
        * 有购买链接：
        *  1. 先拿文章的

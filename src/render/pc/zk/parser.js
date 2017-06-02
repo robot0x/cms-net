@@ -15,16 +15,16 @@ class ZKParser extends Parser {
     super()
     //* ****************************************自定义markdown语法解析*****************************************
     const renderer = super.getRenderer()
+    this.header = ''
+    this.body = ''
     this.idReg = /id[:：]\s*(\d+)\s*/
     this.descReg = /desc[:：]\s*(.+)\s*/
-
+    // this.allCardReg = /```zkarticle[\s\S]+?```/ig
     // this.idReg = /id[:：]\s*(\d+)\s*title[:：]/
     // this.titleReg = /title[:：]\s*(.+)\s*desc[:：]/
     // this.descReg = /desc[:：]\s*(.+)\s*image[:：]/
     // this.imageReg = /image[:：]\s*!\[.*\]\((?:https?)?(?:\/\/)?(.+)\s*\)\s*/
-    // this.allCardReg = /```card[\s\S]+?```/ig
     // this.indexReg = /\`\`\`card\s+(\w+)\`\`\`/
-
     // zkdesc 无论是单身狗还是一对汪，一年之中总有那么几个周末想窝在家中，望望天花板，剥剥手指甲，吃吃小食，看看电视，度过一天。所以啊，小食很重要，样样不能少！怎么做？且听我慢慢道来。
     // ```zkarticle
     //     id: 2717
@@ -36,111 +36,130 @@ class ZKParser extends Parser {
     // ```
     renderer.paragraph = content => {
       const zkdescReg = /^zkdesc\s+/i
-      const { title, cover } = this
-      let ret = ''
+      const { title, cover, titleex } = this
       if (zkdescReg.test(content)) {
-        ret = `<div class="bottomshadow card" id="head">
-                  <div>
-                      <div class="mask" style="width: 720px; height: 468px;"></div>
-                      <img class="direct" src="//${cover.url}" data-w="640" data-h="416" style="width: 720px; height: 468px;">
-                      <div id="headtitle"><p>${title}</p></div>
+        this.header += `<h1 class="article-title">
+                  <p>${title}</p>
+                  <a href="#goodthing" class="goodthing-count">${titleex}</a>
+                </h1>
+                <div class="article-banner">
+                 <div class="article-banner-container">
+                    <ul class="banner-list loading">
+                      <li><img src="//${cover.url}" data-w="640" data-h="416" alt="" width="640" height="416"></li>
+                    </ul>
                   </div>
-                  <p class="headdesc">${content.replace(zkdescReg, '')}</p>
-              </div>
-              ${delimiter}`
+                </div>
+                <p class="zk-title">
+                 ${content.replace(zkdescReg, '')}
+                </p>
+                `
       }
-      return ret
+      return this.header
     }
     renderer.code = (text, type) => {
-      const { idReg, titleReg, descReg, imageReg, markdown, allCardReg } = this
+      const { idReg, descReg } = this
       let id = text.match(idReg)
-      let title = text.match(titleReg)
       let desc = text.match(descReg)
-      let image = text.match(imageReg)
       if (Utils.isValidArray(id)) {
         id = id[1]
-      }
-      if (Utils.isValidArray(title)) {
-        title = title[1]
       }
       if (Utils.isValidArray(desc)) {
         desc = desc[1]
       }
-      if (Utils.isValidArray(image)) {
-        image = image[1]
-      }
+      // console.log('title:', title)
+      // console.log('desc:', desc)
+      // console.log('image:', image)
       /**
        * 有购买链接：
        *  1. 先拿文章的
        */
-      if (/card/i.test(type)) {
-        const allCardMarkdown = markdown.match(allCardReg)
-        let index = -1
-        let len = allCardMarkdown.length
-        for (let i = 0; i < len; i++) {
-          let md = allCardMarkdown[i]
-          if (md.indexOf(text) !== -1) {
-            index = i
-            break
-          }
-        }
-        const item = `
-        <li class="goodthing f-l">
+      let ret = ''
+      if (/zkarticle/i.test(type)) {
+        ret = `<li class="goodthing f-l">
           <a target="_blank" href="//www.diaox2.com/article/${id}.html" data-type="goodthing">
             <div class="img-container">
-              <img onload="adjust(this);" src="//${image}" data-w="596" data-h="486">
+              <img onload="adjust(this);"  data-w="596" data-h="486">
             </div>
             <div class="goodthing-highlight">
-              <h2><div>${title}</div></h2>
+              <h2><div></div></h2>
               <p>${desc}</p>
             </div>
           </a>
-        </li>`
-        if (index === 0) {
-          return `
-            <ul class="goodthing-list clearfix">
-              ${item}
+        </li>
           `
-        } else if (index === len - 1) {
-          return `
-              ${item}
-            </ul>
-          `
-        } else {
-          return item
-        }
-      } else if (/zk/i.test(type)) {
-        return `
-          <div class="article-banner">
-            <div class="article-banner-container">
-              <ul class="banner-list loading">
-                <li><img src="//${image}" data-w="640" data-h="416" alt="" width="640" height="416"></li>
-              </ul>
-            </div>
-          </div>
-          <p class="zk-title">
-          ${desc}
-          </p>
-          <a name="goodthing"></a>
-          <ul class="zs-box">
-            <li>
-              <a href="javascript:;">
-                <i class="icon icon-s"></i>
-                <span class="a-fav">...</span>
-              </a>
-            </li>
-            <li>
-              <a href="javascript:;">
-                <i class="icon icon-z"></i>
-                <span class="a-up">..</span>
-              </a>
-            </li>
-          </ul>`
-      } else {
-        return ''
       }
+      this.body += ret
+      return ret
     }
+    // renderer.code = (text, type) => {
+    //   const { article } = this
+    //   /**
+    //    * 有购买链接：
+    //    *  1. 先拿文章的
+    //    */
+    //   // let ids = Object.keys(article)
+    //   let ret = ''
+    //   ret += `
+    //     <li class="goodthing f-l">
+    //       <a target="_blank" href="//www.diaox2.com/article/${id}.html" data-type="goodthing">
+    //         <div class="img-container">
+    //           <img onload="adjust(this);"  data-w="596" data-h="486">
+    //         </div>
+    //         <div class="goodthing-highlight">
+    //           <h2><div></div></h2>
+    //           <p>${desc}</p>
+    //         </div>
+    //       </a>
+    //     </li>`
+    //   return ret
+    // }
+    // renderer.code = (text, type) => {
+    //   const { idReg, descReg } = this
+    //   let id = text.match(idReg)
+    //   let desc = text.match(descReg)
+    //   if (Utils.isValidArray(id)) {
+    //     id = id[1]
+    //   }
+    //   if (Utils.isValidArray(desc)) {
+    //     desc = desc[1]
+    //   }
+    //   // console.log('title:', title)
+    //   // console.log('desc:', desc)
+    //   // console.log('image:', image)
+    //   /**
+    //    * 有购买链接：
+    //    *  1. 先拿文章的
+    //    */
+    //   if (/zkarticle/i.test(type)) {
+    //     return `<div class="bottomshadow card goodthing" data-href="//c.diaox2.com/view/app/?m=show&id=${id}">
+    //             <div class="wrapper">
+    //                     <div class="img">
+    //                       <img class="direct" src="" data-w="596" data-h="486" style="width: 672px; height: 547px;">
+    //                     </div>
+    //                     </div>
+    //                     <p class="title"></p>
+    //                     <p class="desc">${desc}</p>
+    //                 </div>
+    //                `
+    //   }
+    // }
     super.setRenderer(renderer)
+  }
+  setTitle (title) {
+    this.title = title
+    return this
+  }
+  setTitleex (titleex) {
+    this.titleex = titleex
+    return this
+  }
+  setArticle (article) {
+    this.article = article
+    return this
+  }
+  setCover (cover) {
+    this.cover = cover
+    return this
   }
 }
 

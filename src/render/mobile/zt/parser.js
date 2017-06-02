@@ -65,62 +65,6 @@ class ZTParser extends Parser {
                     `
       }
     }
-    // renderer.code = (text, type) => {
-    //   const idReg = /id[:：]\s*(\d+)\s*title[:：]/
-    //   const titleReg = /title[:：]\s*(.+)\s*desc[:：]/
-    //   const descReg = /desc[:：]\s*(.+)\s*(?:image[:：])?/
-    //   const imageReg = /image[:：]\s*!\[.*\]\((?:https?)?(?:\/\/)?(.+)\s*\)\s*/
-    //   let id = text.match(idReg)
-    //   let title = text.match(titleReg)
-    //   let desc = text.match(descReg)
-    //   let image = text.match(imageReg)
-    //   if (Utils.isValidArray(id)) {
-    //     id = id[1]
-    //   }
-    //   if (Utils.isValidArray(title)) {
-    //     title = title[1]
-    //   }
-    //   if (Utils.isValidArray(desc)) {
-    //     desc = desc[1]
-    //   }
-    //   if (Utils.isValidArray(image)) {
-    //     image = image[1]
-    //   }
-    //   try {
-    //     // console.log(type)
-    //     // console.log('title:', title)
-    //     // console.log('desc:', desc)
-    //     // console.log('image:', image)
-    //     if (/card/i.test(type)) {
-    //       // console.log('48: if')
-    //       return `<div class="articlecard ztcard" data-href="//c.diaox2.com/view/app/?m=show&id=${id}">
-    //                   <div class="ztleft">
-    //                     <img src="//${image}">
-    //                   </div>
-    //                   <div class="ztright">
-    //                     <p class="p1">${title}</p>
-    //                     <p class="p2">${desc}</p>
-    //                     <p class="p3" data-id="${Utils.toLongId(id)}">阅读 ...</p>
-    //                   </div>
-    //                 </div>
-    //                 ${delimiter}
-    //                 `
-    //     } else if (/zt/i.test(type)) {
-    //       // console.log('62: else')
-    //       return `<div class="headdesc bottomshadow zthead">
-    //                 <h2>${title}</h2>
-    //                 <p>${desc || ''}</p>
-    //               </div>
-    //               <div class="grayband"></div>`
-    //     } else {
-    //       // console.log('70: default')
-    //       return ''
-    //     }
-    //   } catch (e) {
-    //     console.log(e)
-    //     return ''
-    //   }
-    // }
     super.setRenderer(renderer)
   }
 

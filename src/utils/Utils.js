@@ -59,13 +59,15 @@ class Utils {
     let ret = Object.create(null)
     ret.ztdesc = ztdesc
     ret.article = Object.create(null)
+    ret.ids = []
     const allCardMarkdown = markdown.match(allCardReg)
     for (let cardMarkdown of allCardMarkdown) {
       let id = cardMarkdown.match(idReg)
       let desc = cardMarkdown.match(descReg) || ['', '']
       if (Utils.isValidArray(id)) {
-        // ret.push(Number(id[1]))
-        ret.article[id[1]] = desc[1]
+        id = id[1]
+        ret.article[id] = desc[1]
+        ret.ids.push(Number(id))
       }
     }
     return ret
@@ -97,13 +99,16 @@ class Utils {
     let ret = Object.create(null)
     ret.zkdesc = zkdesc
     ret.article = Object.create(null)
+    // 使用一数组，单独防止cid的顺序，否则，cid作为key的话，可能跟编辑的书写顺序是不一致的
+    ret.ids = []
     const allCardMarkdown = markdown.match(allCardReg)
     for (let cardMarkdown of allCardMarkdown) {
       let id = cardMarkdown.match(idReg)
       let desc = cardMarkdown.match(descReg) || ['', '']
       if (Utils.isValidArray(id)) {
-        // ret.push(Number(id[1]))
-        ret.article[id[1]] = desc[1]
+        id = id[1]
+        ret.article[id] = desc[1]
+        ret.ids.push(Number(id))
       }
     }
     return ret

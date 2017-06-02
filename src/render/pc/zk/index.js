@@ -14,6 +14,7 @@ class ZKRender extends Render {
     this.setId(id)
     this.template = this.readTemplate(__dirname + '/zk.ejs')
     this.parser = new Parser()
+    this.metaService = new MetaService()
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
@@ -22,17 +23,20 @@ class ZKRender extends Render {
     this.id = id
     return this
   }
-
   async rende () {
-    const { parser, id } = this
+    const { parser, id, metaService } = this
     if (!id) return
     try {
-      let { content, meta, images } = await new MetaService(
-        this.id
-      ).getRenderData()
+      let { content, meta, images } = await metaService.getRenderData(id)
       let { title, titleex } = meta
+      if (!content) return
       parser.markdown = content // markdown is a setter like method `setMarkdown`
-      let body = parser.getHTML()
+      //  对于专刊，我们要先取出所引用的所有文章id
+      let data = Utils.getZkDataByParseMarkdown(content)
+      console.log(data)
+      if (!data) return
+      let {article} = data
+      let cids = data.ids
       // body = imageHandler(body, images)
       //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
       let cover = images.filter(img => {
@@ -44,14 +48,22 @@ class ZKRender extends Render {
       const swipes = images.filter(img => {
         return (img.type & 16) === img.type
       })
-
       thumb = Utils.getFirst(thumb)
       cover = Utils.getFirst(cover)
-
+      parser
+          .setCover(cover)
+          .setTitle(title)
+          .setTitleex(titleex)
+          .setArticle(article)
+          .getHTML()
+      let {header, body} = parser
+      body = await articleHandler(body, cids)
+      parser.header = parser.body = ''
       return this.getDoc(this.template, {
         id,
         title,
         titleex,
+        header,
         body,
         version: this.version,
         swipes,

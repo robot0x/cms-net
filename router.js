@@ -102,10 +102,8 @@ router.get('/', async (req, res) => {
         const trueM = Utils.ctypeToM(ctype)
         if (trueM) {
           if (m !== trueM) {
-            console.log('redirect ....')
             redirect(res, `//${req.headers.host}/?m=${trueM}&id=${id}`)
           } else {
-            console.log('not redirect ....')
             showAndZKAndZTRouter(m, id, 'inapp', req, res)
           }
         } else {

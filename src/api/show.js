@@ -161,7 +161,7 @@ class Show {
       ret.title = title
       ret.desc = desc
       ret.image = image
-      let cids = Object.keys(data.article)
+      let cids = data.ids
       let rawMetas = await metaService.getRawMetas(cids, true, true)
       let metas = []
       for (let cid of cids) {
@@ -172,7 +172,6 @@ class Show {
           rawMetas.filter(rawMeta => rawMeta.nid === cid)
         )
         if (!cardMeta) continue
-        console.log(cardMeta)
         card.title = cardMeta.title[0]
         card.desc = data.article[cid]
         card.image = cardMeta.cover_image_url
@@ -203,30 +202,26 @@ class Show {
       ])
       if (!markdown) return null
       let data = Utils.getZtDataByParseMarkdown(markdown)
-      console.log(data)
-      console.log(meta)
       let title = meta.title[0]
       let image = meta.cover_image_url
       let desc = data.ztdesc
       ret.title = title
       ret.desc = desc
       ret.image = image
-      let cids = Object.keys(data.article)
+      let cids = data.ids
+      console.log(cids)
       let rawMetas = await metaService.getRawMetas(cids, true, true)
       let metas = []
       for (let cid of cids) {
         let card = Object.create(null)
-        cid = Number(cid)
         card.id = cid
         let cardMeta = Utils.getFirst(
           rawMetas.filter(rawMeta => rawMeta.nid === cid)
         )
         if (!cardMeta) continue
-        console.log(cardMeta)
         card.title = cardMeta.title[0]
         card.desc = data.article[cid]
-        // card.image = cardMeta.cover_image_url
-        // card.buylink = cardMeta.buylink
+        card.image = cardMeta.cover_image_url
         metas.push(card)
       }
       ret.ctype = meta.ctype
