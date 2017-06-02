@@ -1,6 +1,6 @@
 const Render = require('../../')
 const Utils = require('../../../utils/Utils')
-// const imageHandler = require('./imageHandler')
+const articleHandler = require('./articleHandler')
 const Parser = require('./parser')
 const MetaService = require('../../../service/MetaService')
 const Log = require('../../../utils/Log')

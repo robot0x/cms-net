@@ -15,24 +15,42 @@ class ZKParser extends Parser {
     super()
     //* ****************************************自定义markdown语法解析*****************************************
     const renderer = super.getRenderer()
-    this.idReg = /id[:：]\s*(\d+)\s*title[:：]/
-    this.titleReg = /title[:：]\s*(.+)\s*desc[:：]/
-    this.descReg = /desc[:：]\s*(.+)\s*image[:：]/
-    this.imageReg = /image[:：]\s*!\[.*\]\((?:https?)?(?:\/\/)?(.+)\s*\)\s*/
-    // this.allCardReg = /```card(.|\r|\n)+?```/ig
-    // this.allCardReg = /```card(.|\s)+?```/ig
-    this.allCardReg = /```card[\s\S]+?```/ig
+    this.idReg = /id[:：]\s*(\d+)\s*/
+    this.descReg = /desc[:：]\s*(.+)\s*/
+
+    // this.idReg = /id[:：]\s*(\d+)\s*title[:：]/
+    // this.titleReg = /title[:：]\s*(.+)\s*desc[:：]/
+    // this.descReg = /desc[:：]\s*(.+)\s*image[:：]/
+    // this.imageReg = /image[:：]\s*!\[.*\]\((?:https?)?(?:\/\/)?(.+)\s*\)\s*/
+    // this.allCardReg = /```card[\s\S]+?```/ig
     // this.indexReg = /\`\`\`card\s+(\w+)\`\`\`/
-    // ```zk
-    //     title: 三百元以下的情趣小厨具
-    //     desc: 无论是单身狗还是一对汪，一年之中总有那么几个周末想窝在家中，望望天花板，剥剥手指甲，吃吃小食，看看电视，度过一天。所以啊，小食很重要，样样不能少！怎么做？且听我慢慢道来。
-    //     image: ![](//content.image.alimmdn.com/cms/sites/default/files/20150903/zk/okiki.jpg)
+
+    // zkdesc 无论是单身狗还是一对汪，一年之中总有那么几个周末想窝在家中，望望天花板，剥剥手指甲，吃吃小食，看看电视，度过一天。所以啊，小食很重要，样样不能少！怎么做？且听我慢慢道来。
+    // ```zkarticle
+    //     id: 2717
+    //     desc: 男生嘛，肯定要来瓶啤酒潇洒一下，尤其是那口感细腻的啤酒花，绝对不能少。别再依靠土掉渣的晃动酒瓶子，来弄点儿少得可怜的啤酒花。试试电动打泡器，分分钟尽情享用爽口的啤酒。
     // ```
-    // ```card
-    // title: 关爱啤酒，更关爱打泡的你
-    // desc: 男生嘛，肯定要来瓶啤酒潇洒一下，尤其是那口感细腻的啤酒花，绝对不能少。别再依靠土掉渣的晃动酒瓶子，来弄点儿少得可怜的啤酒花。试试电动打泡器，分分钟尽情享用爽口的啤酒。
-    //     image: ![](//content.image.alimmdn.com/cms/sites/default/files/20150730/goodthing/BeerCover.jpg)
+    // ```zkarticle
+    //     id: 2197
+    //     desc: 女生嘛，即便宅在家里，还是要注意各种营养。买几袋鲜奶，用上酸奶机，自己做个天然酸奶。周末便能窝在沙发上，边喝酸奶边看真人秀啦！
     // ```
+    renderer.paragraph = content => {
+      const zkdescReg = /^zkdesc\s+/i
+      const { title, cover } = this
+      let ret = ''
+      if (zkdescReg.test(content)) {
+        ret = `<div class="bottomshadow card" id="head">
+                  <div>
+                      <div class="mask" style="width: 720px; height: 468px;"></div>
+                      <img class="direct" src="//${cover.url}" data-w="640" data-h="416" style="width: 720px; height: 468px;">
+                      <div id="headtitle"><p>${title}</p></div>
+                  </div>
+                  <p class="headdesc">${content.replace(zkdescReg, '')}</p>
+              </div>
+              ${delimiter}`
+      }
+      return ret
+    }
     renderer.code = (text, type) => {
       const { idReg, titleReg, descReg, imageReg, markdown, allCardReg } = this
       let id = text.match(idReg)

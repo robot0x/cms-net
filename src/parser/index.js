@@ -170,6 +170,9 @@ class Parser {
               item.url = Utils.removeProtocolHead(href)
               item.scheme = /^https/i.test(href) ? 'https' : 'http'
             }
+            if (!item.value) {
+              item.value = this.htmlToData($child, false)
+            }
           } else if (name === 'span' && attribs.style) {
             item.style = attribs.style
           } else if (name === 'sku') {
