@@ -25,9 +25,12 @@ class AuthorTable extends Table {
     source = source || defaultAuthor
     let data = await super.getByCond({ source })
     console.log('source:', source)
+    console.log('defaultAuthor:', defaultAuthor)
     if (!Utils.isValidArray(data)) {
       console.log('data不存在 ....')
-      data = await super.getByCond({ source: defaultAuthor })
+      data = await this.getByCond({ source: defaultAuthor })
+      console.log('if内的data:', data)
+      if (!data) return
     }
     console.log('data:', data)
     return Utils.getFirst(data)
