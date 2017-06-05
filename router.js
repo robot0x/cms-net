@@ -256,6 +256,7 @@ router.get('/', async (req, res) => {
       pageNotFound(res)
     }
   } else {
+    pageNotFound(res)
   }
 })
 
@@ -560,10 +561,6 @@ router.post('/', async (req, res) => {
         .then(meta => writeJSON(meta, res, 'TR'))
         .catch(e => happyEnd(e, res))
     } else if (/TS/i.test(m)) {
-      // console.log('命中TS POST接口 ....')
-      // console.log(postData)
-      // res.json('noting')
-
       search
         .byTitle(postData)
         .then(meta => writeJSON(meta, res, 'TS'))
@@ -643,91 +640,4 @@ function writeJSON (json, res, type) {
   res.json(json)
   res.end()
 }
-// router.all(/(\w+)/i, requestHandler)
 module.exports = router
-
-// 启动渲染器路由
-// const renderRouter = new RenderRouter
-// 所有渲染器的父类
-// const render = new Render
-// router.get('/', (req, res) => {
-//     console.log(`${req.originalUrl}`)
-//     res.end(`hello ${req.originalUrl}`)
-//     // m=show&id=1
-//     // m=zk&id=1
-//     // m=zt&id=1
-//     // m=author&src=ZRJ
-//     const {m, id, src, tid} = req.body
-//     // 如果m有值的话，说明渲染的是移动页
-//     if (m) {
-//       // firstpage/goodthing/exprience
-//       if (/show/i.test(m)){
-//
-//       }
-//       // 专刊
-//       else if (/zk/i.test(m))
-//       {
-//
-//       }
-//       // 专题
-//        else if (/zt/i.test(m))
-//       {
-//
-//       }
-//       // 作者
-//       else if (/author/i.test(m))
-//       {
-//
-//       }
-//       // tag
-//       else if (/tag/i.test(m))
-//       {
-//
-//       }
-//     } else {
-//
-//     }
-
-// const {m, id, src} = req.body
-// if(m){
-//   if(/show|zk|zt/i.test(m)){
-//
-//   } else if (/author/i.test(m)) {
-//
-//   } else if (/tag/i.test(m)){
-//
-//   }
-// } else {
-//
-// }
-// render
-//   .set(m, id, src)
-//   .getData()
-//   .then(data => {
-//     try {
-//       // 如果
-//       let mtype = Utils.ctypeToM(data.meta.ctype)
-//       // 如果过来的url形如：m=zk&id=1，但确是show的模板，则重定向为 m=show&id=1
-//       if (mtype == m) {
-//         res.writeHead(200, {'Content-Type': 'text/html'})
-//         const doc = renderRouter.setRenderType(m).getRender().setData(data).rende()
-//         res.write(doc)
-//       } else {
-//         if(id) {
-//           res.writeHead(302, {'Location': `//${req.headers.host}/?m=${mtype}&id=${id}`})
-//         } else if (src) {
-//           res.writeHead(302, {'Location': `//${req.headers.host}/?m=${mtype}&src=${id}`})
-//         }
-//       }
-//     } catch (e) {
-//       console.log(e)
-//       runLogger.error(e)
-//     } finally {
-//       res.end()
-//     }
-// }).catch(e => {
-//   console.log(e)
-//   // 若发生错误，则跳转到一个特定的模板
-//   runLogger.error(e)
-// })
-// })

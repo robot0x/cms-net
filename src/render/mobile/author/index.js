@@ -32,6 +32,7 @@ class AuthorRender extends Render {
       let { metas, author } = await new AuthorService(
         this.source
       ).getRenderData()
+      if (!metas || !author) return
       let allarticles = metas.map(meta => Utils.toLongId(meta.nid))
       let infos = Object.create(null)
       allarticles.forEach((id, index) => {
