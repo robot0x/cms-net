@@ -75,6 +75,7 @@ class ShowRender extends Render {
         metaService.getRenderData(id, true),
         this.getRelsearchWords()
       ])
+      console.log('metaObj:', metaObj)
       if (!metaObj) return
       let {
         content,
