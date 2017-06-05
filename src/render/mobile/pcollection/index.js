@@ -63,10 +63,12 @@ class PCollectionRender extends Render {
     const ret = Object.create(null)
     let list = text.split(separator)
     let ids = []
+    ret.order = []
     for (let cate of list) {
       `最新报告\n9829,有调评测,遮阳伞\n9833,有调评测，防晒霜`
       let array = cate.split(/\n/)
       let [cateName] = array
+      ret.order.push(cateName)
       ret[cateName] = []
       for (let i = 1, l = array.length; i < l; i++) {
         let info = array[i]

@@ -8,12 +8,14 @@ const imageHandler = require('./imageHandler')
 const Parser = require('./parser')
 const MetaService = require('../../../service/MetaService')
 const Log = require('../../../utils/Log')
+
 class ShowRender extends Render {
   constructor (id) {
     super()
     this.setId(id)
     this.template = this.readTemplate(__dirname + '/show.ejs')
     this.parser = new Parser()
+    this.metaService = new MetaService()
   }
   /**
     * 在 cms-net.js 中调用，解析url参数之后，调用setId
@@ -24,12 +26,15 @@ class ShowRender extends Render {
   }
 
   async rende () {
-    const { parser, id } = this
+    const { parser, id, metaService } = this
     if (!id) return
     try {
-      let { content, meta, author, images } = await new MetaService(
-        id
-      ).getRenderData()
+      let { content, meta, author, images } = await metaService.getRenderData(id)
+      // console.log('author:', author)
+      // if (!author) {
+      //   author = defaultAuthor
+      // }
+      // console.log('author:', author)
       let { title, ctype, create_time, price } = meta
       // 在此处进行ctype判断
       parser.markdown = content // markdown is a setter like method `setMarkdown`

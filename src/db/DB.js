@@ -69,6 +69,8 @@ class DB {
    * 转码，防止sql注入
    */
   static escape (str) {
+    // str = new Buffer(str).toString('base64')
+    // str = escape(str.replace(/\\u/, '%u'))
     return mysql.escape(str)
   }
 

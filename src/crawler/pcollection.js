@@ -1,4 +1,5 @@
 const DB = require('../db/DB')
+const defaultAuthor = require('../../config/app').defaultAuthor
 const content = `
 目录
 7352,买买买,评测必败清单
@@ -94,11 +95,11 @@ DB.exec(
    id = ${ID},
    title = '测评报告',
    ctype = 10,
-   author = '有调机器人'
+   author = '${defaultAuthor}'
   ON DUPLICATE KEY UPDATE
    title = '测评报告',
    ctype = 10,
-   author = '有调机器人'
+   author = '${defaultAuthor}'
 `
 )
   .then(data => {

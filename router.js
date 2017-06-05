@@ -115,11 +115,11 @@ router.get('/', async (req, res) => {
       }
     } else if (/author/i.test(m)) {
       // 虽然在querystring中的汉字貌似nodejs自动decode了，但是为了保险，还是要decode
-      const defaultSource = '有调机器人'
-      src = decodeURIComponent(src || defaultSource)
-      console.log('routers.js src is ', src)
+      // const defaultSource = '有调机器人'
+      // src = decodeURIComponent(src || defaultSource)
+      // console.log('routers.js src is ', src)
       mAuthorRender
-        .setSource(src)
+        .setSource(decodeURIComponent(src))
         .rende()
         .then(doc => writeDoc(doc, res, 'author'))
         .catch(e => happyEnd(e, res))

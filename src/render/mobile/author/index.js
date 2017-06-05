@@ -3,6 +3,7 @@ const Utils = require('../../../utils/Utils')
 const Parser = require('./parser')
 const AuthorService = require('../../../service/AuthorService')
 const Log = require('../../../utils/Log')
+const defaultAuthor = require('../../../../config/app').defaultAuthor
 /**
  * 渲染：
  *  1. 作者页
@@ -20,7 +21,7 @@ class AuthorRender extends Render {
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
   setSource (src) {
-    this.source = src
+    this.source = src || defaultAuthor
     return this
   }
 

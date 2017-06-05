@@ -40,10 +40,7 @@ class SkuRender extends Render {
       data = Utils.getFirst(data)
       let { title, brand, sales, images, revarticles } = data
       images = images.map(image => {
-        //  //  如果是阿里云图，则加上后缀，否则不用处理
-        //  if(/content\.image\.alimmdn\.com/i.test(url)){
-        //    url += '@200w_200h_1e%7C200x200-5rc'
-        //  }
+        // 如果是阿里云图，则加上后缀，否则不用处理
         return Utils.addAliImageSuffix(image.url)
       })
       const metas = await metaService.getRawMetas(revarticles, false)
@@ -53,11 +50,13 @@ class SkuRender extends Render {
         images,
         brand,
         body: parser.setSales(sales).getHTML(),
-        revarticles: parser.getRevarticleHTML(metas),
+        // 如果关联文章是一篇新写的文章，但是还没有更新到新CMS的库里，所以导致metas是null。。需要做个兼容
+        revarticles: parser.getRevarticleHTML(metas || []),
         prefix: this.prefix,
         version
       })
     } catch (e) {
+      console.log(e)
       Log.exception(e)
       return null
     }

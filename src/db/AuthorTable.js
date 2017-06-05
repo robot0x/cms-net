@@ -1,6 +1,6 @@
 const Table = require('./Table')
 const Utils = require('../utils/Utils')
-
+const defaultAuthor = require('../../config/app').defaultAuthor
 class AuthorTable extends Table {
   constructor () {
     super(
@@ -22,7 +22,14 @@ class AuthorTable extends Table {
   }
   // article_content的主键为aid
   async getBySource (source) {
+    source = source || defaultAuthor
     let data = await super.getByCond({ source })
+    console.log('data:', data)
+    if (!Utils.isValidArray(data)) {
+      console.log('data不存在 ....')
+      data = await super.getByCond({ source: defaultAuthor })
+    }
+    console.log(data)
     return Utils.getFirst(data)
   }
   getByTitle (title) {

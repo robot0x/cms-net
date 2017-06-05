@@ -65,7 +65,6 @@ class Show {
    */
   async getArticleData (id, ctype) {
     console.log('[API show getArticleData] 输入参数为：', id)
-    // Log.business(`[API show getArticleData] 输入参数为：${id}`)
     try {
       let [content, meta, images, goods] = await Promise.all([
         contentTable.getById(id),
@@ -82,21 +81,7 @@ class Show {
       // 批处理文章内引用的sku，根据sid通过getsimplesku接口拿数据，然后更新与sku相关的标签
       html = await skuHandler(html, false)
       parser.html = html
-      // console.log(html)
       let contents = parser.getData()
-      // let sids = contents.map(content => {
-      //   if (content.type === 'sku') {
-      //     return content.id
-      //   }
-      // }).filter(content => !!content)
-      // if (Utils.isValidArray(sids)) {
-      //   [skus, goods] = await Promise.all([
-      //     this.getSkusBySids(sids),
-      //     recommend(id)
-      //   ])
-      // } else {
-      //   goods = await recommend(id)
-      // }
       if (goods) {
         goods = goods.map(good => {
           // console.log(good.type)
@@ -105,24 +90,11 @@ class Show {
             title: good.title,
             ctype: Utils.typeToCtype(good.type),
             article_id: Utils.toShortId(good.serverid)
-            // price: 239
           }
         })
       } else {
         goods = []
       }
-      // if (skus) {
-      //   contents = contents.map(content => {
-      //     if (content.type === 'sku') {
-      //       let sku = this.findSkuBySid(skus, content.id)
-      //       content.title = sku.title
-      //       content.price = sku.price_str
-      //       content.image = Utils.getFirst(sku.images).url
-      //     }
-      //     return content
-      //   })
-      // }
-
       return {
         ctype,
         header: {

@@ -8,4 +8,5 @@ logs/business/
 logs/exception/
 logs/http/
 src/crawler/data
+src/crawler/*.sh
 src/api/genpub/views
