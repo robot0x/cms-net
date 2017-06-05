@@ -19,6 +19,7 @@ const MetaTable = require(`${SRC}/db/MetaTable`)
 const metaTable = new MetaTable()
 const moment = require('moment')
 const cache = require('./config/cache')
+const NOTFOUND = require('./config/404')
 // 只执行一次渲染器对象实例化，然后渲染器实例长存于内存中即可，所以应该在这儿实例化所有渲染器，而不是在路由回调中实例化
 // 否则，每次路由回调执行都会实例化一个对象，可能会导致内存占用过多GC压力过大，GC压力过大，也会导致CPU占用过高
 const {
@@ -74,7 +75,7 @@ async function showAndZKAndZTRouter (m, id, pageType, req, res) {
       .then(doc => writeDoc(doc, res, pageType === 'share' ? 'ztShare' : 'zt'))
       .catch(e => happyEnd(e, res))
   } else {
-    pageNotFound(res)
+    pageNotFound(res, NOTFOUND.mobile)
   }
 }
 
@@ -108,10 +109,10 @@ router.get('/', async (req, res) => {
           }
         } else {
           console.log('pageNotFound ....')
-          pageNotFound(res)
+          pageNotFound(res, NOTFOUND.mobile)
         }
       } else {
-        pageNotFound(res)
+        pageNotFound(res, NOTFOUND.mobile)
       }
     } else if (/author/i.test(m)) {
       // 虽然在querystring中的汉字貌似nodejs自动decode了，但是为了保险，还是要decode
@@ -274,9 +275,7 @@ router.get('/show', async (req, res) => {
         .getData(id)
         .then(result => writeJSON(result, res, 'app_show'))
         .catch(e => happyEnd(e, res))
-    } else if (id == 'pcollection') {
-      console.log('pcollection 命中 ....')
-      console.log(mPCollectionRender)
+    } else if (/pcollection/i.test(id)) {
       mPCollectionRender
         .getRendeData()
         .then(result => writeJSON(result, res, 'pcollection'))
@@ -451,34 +450,39 @@ router.get(uidReg, (req, res) => {
     .catch(e => happyEnd(e, res))
 })
 
-const pcShowReg = /\/article\/(\d+)\.html/
+const pcShowReg = /\/article\/(.+)\.html/
 router.get(pcShowReg, async (req, res) => {
   console.log(`PC article 路由被激活，此文章url为${req.originalUrl} ...`)
   let match = req.originalUrl.match(pcShowReg)
   let id = match[1]
-  // 需要判断这篇文章是专刊还是article还是专刊
-  const ctype = await metaTable.getCtypeById(id)
-  if (ctype) {
-    // 好物/首页/经验/活动
-    // if(ctype === 1 || ctype === 2 || ctype === 4 || ctype === 5) {
-    if (/^1|2|4|5$/.test(ctype)) {
-      pShowRender
-        .setId(id)
-        .rende()
-        .then(doc => writeDoc(doc, res, 'article'))
-        .catch(e => happyEnd(e, res))
-    } else if (ctype === 3) {
-      // 专刊
-      pZKRender
-        .setId(id)
-        .rende()
-        .then(doc => writeDoc(doc, res, 'pc_zk'))
-        .catch(e => happyEnd(e, res))
+  if (/^\d+$/.test(id)) {
+    // 需要判断这篇文章是专刊还是article还是专刊
+    const ctype = await metaTable.getCtypeById(id)
+    console.log('ctype:', ctype)
+    if (ctype) {
+      // 好物/首页/经验/活动
+      // if(ctype === 1 || ctype === 2 || ctype === 4 || ctype === 5) {
+      if (/^1|2|4|5$/.test(ctype)) {
+        pShowRender
+          .setId(id)
+          .rende()
+          .then(doc => writeDoc(doc, res, 'article'))
+          .catch(e => happyEnd(e, res))
+      } else if (ctype === 3) {
+        // 专刊
+        pZKRender
+          .setId(id)
+          .rende()
+          .then(doc => writeDoc(doc, res, 'pc_zk'))
+          .catch(e => happyEnd(e, res))
+      } else {
+        pageNotFound(res, NOTFOUND.pc)
+      }
     } else {
-      pageNotFound(res)
+      pageNotFound(res, NOTFOUND.pc)
     }
   } else {
-    pageNotFound(res)
+    pageNotFound(res, NOTFOUND.pc)
   }
 })
 
@@ -504,20 +508,35 @@ router.get(pcEditorReg, (req, res) => {
   pAuthorRender
     .setSource(src)
     .rende()
-    .then(doc => writeDoc(doc, res, 'editor'))
-    .catch(e => happyEnd(e, res))
+    .then(doc => {
+      // console.log('status in doc:', 'status' in doc)
+      if (typeof doc !== 'string' && 'status' in doc) {
+        pageNotFound(res, NOTFOUND.pc)
+      } else {
+        writeDoc(doc, res, 'editor')
+      }
+    }).catch(e => happyEnd(e, res))
 })
 
-const pcCategoryReg = /\/category\/(\d+)\.html/
+const pcCategoryReg = /\/category\/(.+)\.html/
 router.get(pcCategoryReg, (req, res) => {
   let match = req.originalUrl.match(pcCategoryReg)
   let tid = match[1]
-  console.log(tid)
-  pTagRender
+  if (numnberReg.test(tid)) {
+    pTagRender
     .setTid(tid)
     .rende()
-    .then(doc => writeDoc(doc, res, 'category'))
+    .then(doc => {
+      if (!doc) {
+        pageNotFound(res, NOTFOUND.pc)
+      } else {
+        writeDoc(doc, res, 'category')
+      }
+    })
     .catch(e => happyEnd(e, res))
+  } else {
+    pageNotFound(res, NOTFOUND.pc)
+  }
 })
 
 router.post('/', async (req, res) => {
@@ -571,6 +590,8 @@ router.post('/', async (req, res) => {
 
 // 幸福和快乐是结局 ...
 function happyEnd (e, res) {
+  removeCacheControlHeader(res)
+  console.log(e)
   // 打印异常log
   Log.exception(e)
   // 直接结束。防止一直没有返回，导致客户端请求一致是pending状态
@@ -584,9 +605,17 @@ function redirect (res, Location) {
   res.end()
 }
 
-function pageNotFound (res) {
+function pageNotFound (res, doc = '无此页面') {
+  //  Cache-Control: private, no-cache, no-store, proxy-revalidate, no-transform
+  // Pragma: no-cache
+  removeCacheControlHeader(res)
   res.writeHead(404)
-  res.end('无此页面 ...')
+  res.end(doc)
+}
+function removeCacheControlHeader (res) {
+  res.append('Cache-Control', 'private, no-cache, no-store, proxy-revalidate, no-transform')
+  res.append('Pragma', 'no-cache')
+  res.append('Expires', '-1')
 }
 /**
  * header('Cache-Control:max-age=' . $max_age);
@@ -625,6 +654,8 @@ function addCacheControlHeader (res, type) {
 }
 
 function writeDoc (doc, res, type) {
+  // Error: Can't set headers after they are sent. 如果doc为null，res.end()之后，在设置header，会报错
+  // if (!doc) res.end()
   if (!doc) res.end()
   addCacheControlHeader(res, type)
   res.writeHead(200, {

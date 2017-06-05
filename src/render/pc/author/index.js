@@ -13,6 +13,7 @@ class AuthorRender extends Render {
     this.setSource(src)
     this.template = this.readTemplate(__dirname + '/author.ejs')
     this.parser = new Parser()
+    this.authorService = new AuthorService()
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
@@ -23,16 +24,20 @@ class AuthorRender extends Render {
   }
 
   async rende () {
-    const { parser, source } = this
+    const { parser, source, authorService } = this
     if (!source) return
     try {
       //  相当于then
-      let { metas, author } = await new AuthorService(source).getRenderData()
-      return this.getDoc(this.template, {
-        author,
-        body: parser.setMetas(metas).getHTML(20),
-        version: this.version
-      })
+      let { metas, author } = await authorService.getRenderData(source)
+      if (!metas) {
+        return { status: '404' }
+      } else {
+        return this.getDoc(this.template, {
+          author,
+          body: parser.setMetas(metas).getHTML(20),
+          version: this.version
+        })
+      }
     } catch (e) {
       Log.exception(e)
       return null

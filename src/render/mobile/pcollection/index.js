@@ -5,7 +5,6 @@ const Utils = require('../../../utils/Utils')
 class PCollectionRender extends Render {
   constructor () {
     super()
-    console.log('PCollectionRender 被实例化 ...')
     this.template = this.readTemplate(__dirname + '/pcollection.ejs')
   }
   /**

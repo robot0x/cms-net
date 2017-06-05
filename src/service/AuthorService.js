@@ -23,8 +23,8 @@ class AuthorService {
   }
 
   // 渲染数据接口
-  async getRenderData () {
-    const { authorTable, metaTable, metaService, source } = this
+  async getRenderData (source = this.source) {
+    const { authorTable, metaTable, metaService } = this
     try {
       // let source = '+0'
       let [author, aids] = await Promise.all([authorTable.getBySource(source), metaTable.getAidsBySource(source)])
