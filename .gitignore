@@ -9,4 +9,5 @@ logs/exception/
 logs/http/
 src/crawler/data
 src/crawler/*.sh
+src/crawler/tmp
 src/api/genpub/views
