@@ -2,15 +2,16 @@ const Log = require('./src/utils/Log')
 
 module.exports = {
   allowCors (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*')
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
-    // 如果前端fetch或ajax带cookie的话，必须设置 credentials 头为true
-    // res.header('Access-Control-Allow-Credentials', true)
-    res.header(
-      'Access-Control-Allow-Headers',
-      'Content-Type,Content-Length,Authorization,X-Request-With'
-    )
+    // 只有OPTIONS请求，才加上跨域heander，其他请求不处理
     if (req.method === 'OPTIONS') {
+      res.header('Access-Control-Allow-Origin', '*')
+      res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+      // 如果前端fetch或ajax带cookie的话，必须设置 credentials 头为true
+      // res.header('Access-Control-Allow-Credentials', true)
+      res.header(
+        'Access-Control-Allow-Headers',
+        'Content-Type,Content-Length,Authorization,X-Request-With'
+      )
       res.sendStatus(200)
     } else {
       next()
