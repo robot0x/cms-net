@@ -24,12 +24,12 @@ class AuthorTable extends Table {
   async getBySource (source) {
     source = source || defaultAuthor
     let data = await super.getByCond({ source })
-    console.log('data:', data)
+    console.log('source:', source)
     if (!Utils.isValidArray(data)) {
       console.log('data不存在 ....')
       data = await super.getByCond({ source: defaultAuthor })
     }
-    console.log(data)
+    console.log('data:', data)
     return Utils.getFirst(data)
   }
   getByTitle (title) {
