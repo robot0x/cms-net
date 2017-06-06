@@ -31,11 +31,11 @@ class ZDMRender extends Render {
   getRenderData () {
     return new Promise((resolve, reject) => {
       // { activity_cid: [activity_cid],  goods_cid: [4553099126516997,4553099126516997] }
-      const { activity_cid, goods_cid } = this
+      const { activity_cid } = this
       const body = { activity_cid: [+activity_cid] }
-      if (goods_cid) {
-        data.goods_cid = [+goods_cid]
-      }
+      // if (goods_cid) {
+      //   data.goods_cid = [+goods_cid]
+      // }
       request(
         {
           url: 'http://api.diaox2.com/v4/zdm_activity',
@@ -66,8 +66,15 @@ class ZDMRender extends Render {
       if (!data) return
       data = JSON.stringify(data).replace(/^\{/, '').replace(/\}$/, '')
       if (!data) return
+      let {goods_cid} = this
+      // 因为是长id，所以长度至少10位，且值至少为4294967297
+      if (!/^\d{10,}$/.test(goods_cid) || goods_cid < 4294967297) {
+        goods_cid = -1
+      }
+      console.log('goods_cid:', goods_cid)
       return this.getDoc(this.template, {
         data,
+        goods_cid,
         // data: s.join(','),
         cid: this.activity_cid,
         pageType: this.pageType,

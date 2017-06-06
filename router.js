@@ -387,7 +387,7 @@ router.get(longidReg, async (req, res) => {
   }
 })
 
-const inappZdmReg = /\/zdmactivity\/(\d+)_?(\d+)?\.html/
+const inappZdmReg = /\/zdmactivity\/(\d+)_?(.+)?\.html/
 router.get(inappZdmReg, (req, res) => {
   let match = req.originalUrl.match(inappZdmReg)
   let activityCid = match[1]
@@ -403,7 +403,7 @@ router.get(inappZdmReg, (req, res) => {
     .catch(e => happyEnd(e, res))
 })
 
-const shareZdmReg = /\/zdmshare\/(\d+)_?(\d+)?\.html/
+const shareZdmReg = /\/zdmshare\/(\d+)_?(.+)?\.html/
 router.get(shareZdmReg, (req, res) => {
   let match = req.originalUrl.match(shareZdmReg)
   let activityCid = match[1]
