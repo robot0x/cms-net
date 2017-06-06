@@ -230,9 +230,17 @@ router.get('/', async (req, res) => {
       }
     } else if (/recommend/i.test(m)) {
       console.log('推荐结果接口的路由被命中ID为', id)
+      let {cb} = req.body // 支持jsonp
+      console.log('cb:', cb)
       if (id && numnberReg.test(id)) {
-        recommend(id)
-          .then(result => writeJSON(result, res, 'recommend'))
+        recommend(id, cb)
+          .then(result => {
+            if (cb) {
+              writeTXT(result, res, 'recommend')
+            } else {
+              writeJSON(result, res, 'recommend')
+            }
+          })
           .catch(e => happyEnd(e, res))
       } else {
         pageNotFound(res)
@@ -670,5 +678,11 @@ function writeJSON (json, res, type) {
   addCacheControlHeader(res, type)
   res.json(json)
   res.end()
+}
+
+function writeTXT (txt, res, type) {
+  if (!txt) res.end()
+  addCacheControlHeader(res, type)
+  res.end(txt)
 }
 module.exports = router

@@ -37,7 +37,7 @@ function genSimpleMeta (meta) {
 //   "serverid":197568495662,
 //   "url":"\/\/c.diaox2.com\/cms\/diaodiao\/articles\/firstpage\/46_46.html"
 // }]
-async function recommend (id) {
+async function recommend (id, cb) {
   if (!id) return null
   Log.business('[API recommend] 输入参数为：', id)
   // diaodiao_article_recommend, diaodiao_hot_goodthing
@@ -94,6 +94,9 @@ async function recommend (id) {
     }
   } catch (error) {
     Log.exception(error)
+  }
+  if (cb) {
+    return `${cb}(${JSON.stringify(simpleMetas)})`
   }
   return simpleMetas
 }
