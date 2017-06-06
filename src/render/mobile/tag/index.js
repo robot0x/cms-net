@@ -39,9 +39,9 @@ class TagRender extends Render {
     try {
       //  只有前20条数据是服务端渲染出来的，后面的数据由前端js拿
       let limit = 20
-      let { metas, images, name } = await new TagService(tid)
+      let { metas, images, name } = (await new TagService(tid)
         .setLimit(limit)
-        .getRenderData()
+        .getRenderData()) || {}
       let allarticles = []
       let infos = Object.create(null)
       // let len = allarticles.length
@@ -71,6 +71,7 @@ class TagRender extends Render {
         version: this.version
       })
     } catch (e) {
+      console.log(e)
       Log.exception(e)
       return null
     }

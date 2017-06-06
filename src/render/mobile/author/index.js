@@ -3,7 +3,7 @@ const Utils = require('../../../utils/Utils')
 const Parser = require('./parser')
 const AuthorService = require('../../../service/AuthorService')
 const Log = require('../../../utils/Log')
-const defaultAuthor = require('../../../../config/app').defaultAuthor
+// const defaultAuthor = require('../../../../config/app').defaultAuthor
 /**
  * 渲染：
  *  1. 作者页
@@ -21,7 +21,7 @@ class AuthorRender extends Render {
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
   setSource (src) {
-    this.source = src || defaultAuthor
+    this.source = src
     return this
   }
 
@@ -32,7 +32,7 @@ class AuthorRender extends Render {
       let { metas, author } = await new AuthorService(
         this.source
       ).getRenderData()
-      if (!metas || !author) return
+      metas = metas || []
       let allarticles = metas.map(meta => Utils.toLongId(meta.nid))
       let infos = Object.create(null)
       allarticles.forEach((id, index) => {

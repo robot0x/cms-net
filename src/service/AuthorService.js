@@ -9,6 +9,7 @@ const MetaTable = require('../db/MetaTable')
 const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
 const MetaService = require('./MetaService')
+
 class AuthorService {
   constructor (source) {
     this.metaTable = new MetaTable()
@@ -26,11 +27,7 @@ class AuthorService {
   async getRenderData (source = this.source) {
     const { authorTable, metaTable, metaService } = this
     try {
-      // let source = '+0'
       let [author, aids] = await Promise.all([authorTable.getBySource(source), metaTable.getAidsBySource(source)])
-      // if (!author || !Utils.isValidArray(aids)) {
-      //   [author, aids] = await Promise.all([authorTable.getBySource(defaultAuthor), metaTable.getAidsBySource(defaultSource)])
-      // }
       // 如果aids的长度为1，则返回的是对象而不是对象数组形式，需要处理一下
       let metas = await metaService.getRawMetas(aids, false, true)
       if (metas && !Utils.isValidArray(metas)) {
