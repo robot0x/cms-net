@@ -1,5 +1,6 @@
 const cheerio = require('cheerio')
 const Utils = require('../../../utils/Utils')
+const placeholder = require('../../../../config/app').placeholder
 var findByUrl = (url, images) => {
   for (let image of images) {
     if (image.url.indexOf(url) !== -1) {
@@ -28,7 +29,7 @@ module.exports = (html, images) => {
       img.attribs.alt = image.alt
       img.attribs.width = attribs['data-w'] = image.width
       img.attribs.height = attribs['data-h'] = image.height
-      img.attribs.src = '//c.diaox2.com/cms/diaodiao/assets/pixel.gif'
+      img.attribs.src = '//' + placeholder
       img.attribs['data-big'] = '//' + image.url
       img.attribs['data-src'] =
         attribs['data-big'] + (image.extension_name == 'gif' ? '@768w_1l' : '')

@@ -132,9 +132,9 @@ DB.exec(`DELETE FROM diaodiao_article_image WHERE aid = ${ID}`).then(data => {
     })
 })
 
-DB.exec(`INSERT INTO 
- diaodiao_article_image
-(aid, url, used, type, extension_name, size, width, height)
-SELECT aid, 'content.image.alimmdn.com/cms/sites/default/files/20160909/firstpage/703520671307449679_0.jpg',1,1,'jpg',99055,768,512 FROM diaodiao_article_content WHERE content LIKE '%pcollection%'`).then(data => {
-  console.log('所有引用pcollection的文章图片插入成功')
-})
+// DB.exec(`INSERT INTO 
+//  diaodiao_article_image
+// (aid, url, used, type, extension_name, size, width, height)
+// SELECT aid, 'content.image.alimmdn.com/cms/sites/default/files/20160909/firstpage/703520671307449679_0.jpg',1,1,'jpg',99055,768,512 FROM diaodiao_article_content WHERE content LIKE '%pcollection%'`).then(data => {
+//   console.log('所有引用pcollection的文章图片插入成功')
+// })

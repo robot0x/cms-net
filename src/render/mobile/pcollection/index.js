@@ -1,7 +1,8 @@
 const DB = require('../../../db/DB')
 const Render = require('../../')
 const Utils = require('../../../utils/Utils')
-
+const Log = require('../../../utils/Log')
+const placeholder = require('../../../../config/app').placeholder
 class PCollectionRender extends Render {
   constructor () {
     super()
@@ -62,12 +63,12 @@ class PCollectionRender extends Render {
     const ret = Object.create(null)
     let list = text.split(separator)
     let ids = []
-    ret.order = []
+    let order = []
     for (let cate of list) {
-      `最新报告\n9829,有调评测,遮阳伞\n9833,有调评测，防晒霜`
+      // `最新报告\n9829,有调评测,遮阳伞\n9833,有调评测，防晒霜`
       let array = cate.split(/\n/)
       let [cateName] = array
-      ret.order.push(cateName)
+      order.push(cateName)
       ret[cateName] = []
       for (let i = 1, l = array.length; i < l; i++) {
         let info = array[i]
@@ -122,15 +123,20 @@ class PCollectionRender extends Render {
         ret[key] = list
       }
     }
-    // console.log(ret)
-    // console.log(list)
-    // console.log(list.length)
-    return ret
+    console.log({
+      contents: ret,
+      order
+    })
+    return {
+      contents: ret,
+      order
+    }
   }
   async getRendeData () {
-    const res = Utils.getFirst(
-      await DB.exec(
-        `
+    try {
+      const res = Utils.getFirst(
+        await DB.exec(
+          `
       SELECT 
        meta.id AS id, 
        meta.title AS title,
@@ -151,29 +157,40 @@ class PCollectionRender extends Render {
       WHERE
        meta.ctype = 10
     `
+        )
       )
-    )
-    if (!res) return
-    // console.log(res)
-    let ret = Object.create(null)
-    ret.meta = Object.create(null)
-    ret.meta.id = res.id
-    ret.meta.title = res.title
-    ret.meta.cover = '//' + res.url
-    ret.contents = await this.parse(res.content)
-    // console.log(ret)
-    return ret
+      if (!res) return
+      let ret = Object.create(null)
+      ret.meta = Object.create(null)
+      ret.meta.id = res.id
+      ret.meta.title = res.title
+      ret.meta.cover = '//' + res.url
+      let {contents, order} = await this.parse(res.content)
+      ret.contents = contents
+      ret.order = order
+      return ret
+    } catch (error) {
+      console.log(error)
+    }
   }
   async rende () {
-    let data = await this.getRendeData()
-    let {meta, contents} = data
-    console.log(contents)
-    return this.getDoc(this.template, {
-      meta,
-      contents,
-      prefix: this.prefix,
-      version: this.version
-    })
+    try {
+      let data = await this.getRendeData()
+      // console.log('data:', data)
+      let { meta, contents } = data
+      console.log(contents)
+      return this.getDoc(this.template, {
+        meta,
+        contents,
+        placeholder,
+        prefix: this.prefix,
+        version: this.version
+      })
+    } catch (error) {
+      console.log(error)
+      Log.exception(error)
+      return null
+    }
   }
 }
 // const pcr = new PCollectionRender()

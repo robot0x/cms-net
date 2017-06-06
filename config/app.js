@@ -8,5 +8,7 @@ module.exports = {
   // 默认作者source，即有调机器人
   defaultAuthor: 'sink',
   // 文章timetopublish的起始日期
-  startDate: 20141106
+  startDate: 20141106,
+  // 图片占位
+  placeholder: 'c.diaox2.com/cms/diaodiao/assets/pixel.gif'
 }

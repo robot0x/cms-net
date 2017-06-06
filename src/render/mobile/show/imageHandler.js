@@ -1,5 +1,6 @@
 const cheerio = require('cheerio')
 const Utils = require('../../../utils/Utils')
+const placeholder = require('../../../../config/app').placeholder
 var findByUrl = (url, images) => {
   for (let image of images) {
     if (image.url.indexOf(url) !== -1) {
@@ -27,16 +28,9 @@ module.exports = (html, images, usePlaceholder = true) => {
   const $ = cheerio.load(`<div id="container">${html}</div>`, { decodeEntities: false })
   const container = $('#container')
   const imgs = Array.from(container.find('img'))
-  // console.log('images.length:', images.length)
-  // console.log('imgs.length:', imgs.length)
-  // console.log('imgs:', imgs)
   for (let img of imgs) {
-    // let src = img.attribs.src
     let image = findByUrl(Utils.removeProtocolHead(img.attribs.src), images)
     if (image) {
-      // if (image.url == 'content.image.alimmdn.com/cms/sites/default/files/20170512/firstpage/ConsumerReportsHealthInlineCanyoutrustSPF.png') {
-      //   console.log('true .....')
-      // }
       let {attribs} = img
       if ($(img).hasClass('articleimg')) {
         continue
@@ -45,7 +39,7 @@ module.exports = (html, images, usePlaceholder = true) => {
       img.attribs.width = attribs['data-w'] = image.width
       img.attribs.height = attribs['data-h'] = image.height
       if (usePlaceholder) {
-        img.attribs.src = '//c.diaox2.com/cms/diaodiao/assets/pixel.gif'
+        img.attribs.src = '//' + placeholder
       }
       img.attribs['data-big'] = '//' + image.url
       img.attribs['data-src'] = attribs['data-big'] + (image.extension_name == 'gif' ? '@768w_1l' : '')
