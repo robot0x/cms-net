@@ -21,7 +21,7 @@
 <body data-type="buy" data-render="<%-version%>">
   <div class="total">
     <div class="articlecard bottomshadow" data-sid="<%-sid%>">
-      <img class="articleimg" id="stack" src="<%-images[0]%>">
+      <img class="articleimg" id="stack" src="<%-(images[0] || {}).url + '@200w_200h_1e%7C200x200-5rc'%>">
       <span class="img-index">1/<%-images.length%></span>
       <span class="articletitle"><%-title %></span>
       <span class="brand"><%-brand %></span>
@@ -64,10 +64,7 @@
 </body>
 <script>
   //埋图 [{"url":"xx", "id":"yy"}, {}]
-  var piclist = [{
-    "url": "http:\/\/content.image.alimmdn.com\/sku\/1464594466111_jpg.jpg",
-    "id": "0"
-  }];
+  var piclist = <%-JSON.stringify(images)%>;
   var current = "0";
   var ddIsBridgeReady = false;
   //自动运行的初始化代码

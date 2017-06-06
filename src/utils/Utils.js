@@ -1,6 +1,7 @@
 const url = require('url')
 const appConfig = require('../../config/app')
 const moment = require('moment')
+const startDate = require('../../config/app').startDate
 class Utils {
   /**
    * @static
@@ -154,7 +155,7 @@ class Utils {
     // return ` (${col} BETWEEN 20141106 AND ${Number(moment()
     //     .add(1, 'days')
     //     .format('YYYYMMDD'))}) `
-    return ` (${col} BETWEEN 20141106 AND ${Number(moment().format('YYYYMMDD'))}) `
+    return ` (${col} BETWEEN ${startDate} AND ${Number(moment().format('YYYYMMDD'))}) `
   }
 
   // 把sku的形如：http://c.diaox2.com/view/app/sku/8383.html

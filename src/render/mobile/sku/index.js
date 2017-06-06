@@ -39,10 +39,16 @@ class SkuRender extends Render {
       }
       data = Utils.getFirst(data)
       let { title, brand, sales, images, revarticles } = data
-      images = images.map(image => {
+      images = images.map((image, index) => {
+        image.id = index
+        return image
+        // console.log(index)
         // 如果是阿里云图，则加上后缀，否则不用处理
-        return Utils.addAliImageSuffix(image.url)
+        // return Utils.addAliImageSuffix(image.url)
       })
+      if (!Utils.isValidArray(images)) {
+        images = []
+      }
       const metas = await metaService.getRawMetas(revarticles, false)
       return this.getDoc(this.template, {
         sid,
