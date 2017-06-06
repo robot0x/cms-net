@@ -57,7 +57,6 @@ class TagService {
     try {
       tagNameTable.setColumns(['tid', 'name', 'parent', 'level'])
       const alltags = await tagNameTable.getAll()
-      console.log(alltags)
       const tree = []
       const res = [...alltags]
       alltags.filter(tag => tag.level === 1).map(tag => {

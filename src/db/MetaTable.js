@@ -79,7 +79,7 @@ class MetaTable extends Table {
   }
 
   getAidsBySource (source) {
-    return this.getAidsByCond(` author = ${super.escape(source)} `)
+    return this.getAidsByCond(` author = ${super.escape(source)} AND ${Utils.genTimetopublishInterval()}`)
     // return this.getRecordsByCond('id' ,`author = ${super.escape(source)}`)
   }
 
