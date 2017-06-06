@@ -58,7 +58,6 @@ class PCollectionRender extends Render {
    */
   async parse (text = '') {
     text = text.trim()
-    // console.log(text)
     const separator = /\n+\s+/
     const ret = Object.create(null)
     let list = text.split(separator)
@@ -123,10 +122,6 @@ class PCollectionRender extends Render {
         ret[key] = list
       }
     }
-    console.log({
-      contents: ret,
-      order
-    })
     return {
       contents: ret,
       order
@@ -176,9 +171,7 @@ class PCollectionRender extends Render {
   async rende () {
     try {
       let data = await this.getRendeData()
-      // console.log('data:', data)
       let { meta, contents } = data
-      console.log(contents)
       return this.getDoc(this.template, {
         meta,
         contents,

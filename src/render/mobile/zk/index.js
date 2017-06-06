@@ -40,6 +40,7 @@ class ZKRender extends Render {
     const { parser, id, metaService } = this
     if (!id) return
     try {
+      // 取专刊本身的meta，用不着buylink
       let { content, meta, images } = await metaService.getRenderData(id)
       let { title, titleex } = meta
       if (!content) return
@@ -52,7 +53,9 @@ class ZKRender extends Render {
       // 先读diaodiao_buyinfo表
       // 根据文章id获取其buylink
       let promises = []
+      // 取专刊引用文章的buylink
       for (let cid of cids) {
+        console.log(cid)
         // 并行去拿buylink，提高响应时间
         promises.push(metaService.getBuylink(cid))
       }

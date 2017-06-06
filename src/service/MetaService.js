@@ -356,6 +356,7 @@ class MetaService {
             const { data } = JSON.parse(body.body)
             const skus = data[Utils.toLongId(id)]
             // 如果只有1个sku且这个sku的status为1（即已经发布了），则把SKU页作为购买页
+            // 比如 1229 这篇文章关联的sku有且仅有一个，但这个sku的staus却为0，所以不满足条件
             if (
               Utils.isValidArray(skus) &&
               skus.length === 1 &&

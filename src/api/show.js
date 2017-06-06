@@ -101,8 +101,12 @@ class Show {
       ret.desc = desc
       ret.image = image
       let cids = data.ids
-      let rawMetas = await metaService.getRawMetas(cids, true, true)
+      let [rawMetas, stat] = await Promise.all([
+        metaService.getRawMetas(cids, true, true),
+        this.getStat(cids)
+      ])
       let metas = []
+      let empty = Object.create(null)
       for (let cid of cids) {
         let card = Object.create(null)
         cid = Number(cid)
@@ -111,16 +115,18 @@ class Show {
           rawMetas.filter(rawMeta => rawMeta.nid === cid)
         )
         if (!cardMeta) continue
-        let {title, cover_image_url, buylink, ctype, price} = cardMeta
+        let { title, cover_image_url, buylink, ctype, price } = cardMeta
         card.title = title[0]
         card.desc = data.article[cid]
         card.image = cover_image_url
         card.buylink = buylink
         card.ctype = ctype
+        let st = stat[Utils.toLongId(cid)] || empty
         // 当不是好物时，不下发ctype字段
         if (ctype === 2) {
           card.price = price
         }
+        card.favo_count = st.fav || 0
         metas.push(card)
       }
       ret.ctype = meta.ctype
@@ -174,7 +180,7 @@ class Show {
     }
     return ret
   }
- // 拿出文章关联的所有sku
+  // 拿出文章关联的所有sku
   async _getSkus (id) {
     let skus = null
     const result = await Promise.promisify(request)(
@@ -248,11 +254,20 @@ class Show {
      */
       data.sku = Object.create(null)
       data.sku.pick_up_part = []
-      if (skus && skus.length === 1) {
+      // 策略跟 MetaService.getBuyLink是一样的
+      if (
+        Utils.isValidArray(skus) &&
+        skus.length === 1 &&
+        skus[0].status === 1
+      ) {
         let sku = Utils.getFirst(skus)
         let { sid, sales } = sku
         try {
-          data.sku.show_part = await this._toShowpart(JSON.parse(sales), sid, 'sku')
+          data.sku.show_part = await this._toShowpart(
+            JSON.parse(sales),
+            sid,
+            'sku'
+          )
         } catch (error) {
           data.sku.show_part = []
         }
@@ -268,7 +283,7 @@ class Show {
       return null
     }
   }
-  getReadcound (aids) {
+  getStat (aids) {
     if (!Utils.isValidArray(aids)) return {}
     aids = Utils.toLongId(aids)
     return new Promise((resolve, reject) => {
@@ -283,14 +298,15 @@ class Show {
         (error, response, body) => {
           if (error) reject(error)
           if (response.statusCode === 200) {
-            const { res } = body
-            const keys = Object.keys(res)
-            const ret = Object.create(null)
-            keys.forEach(key => {
-              ret[key] = res[key].click
-            })
-            console.log('ret:', ret)
-            resolve(ret)
+            // const { res } = body
+            // console.log(res)
+            // const keys = Object.keys(res)
+            // const ret = Object.create(null)
+            // keys.forEach(key => {
+            //   ret[key] = res[key].click
+            // })
+            // console.log('ret:', ret)
+            resolve(body.res)
           } else {
             reject('接口返回错误的状态吗', response.statusCode)
           }
@@ -365,13 +381,14 @@ class Show {
     const { metas } = data
     if (!Utils.isValidArray(metas)) return
     const aids = metas.slice(0, 20).map(meta => meta.nid)
-    const readCounts = await this.getReadcound(aids)
-    console.log('readCounts:', readCounts)
+    const stat = await this.getStat(aids)
     ret.article = []
+    const empty = Object.create(null)
     for (let meta of data.metas) {
+      let st = stat[Utils.toLongId(meta.nid)] || empty
       ret.article.push({
         title: meta.title.join(),
-        read_cound: readCounts[Utils.toLongId(meta.nid)] || 0,
+        read_cound: st.click || 0,
         image: meta.thumb_image_url,
         article_id: meta.nid,
         ctype: meta.ctype
@@ -400,11 +417,13 @@ class Show {
     }
     const { metas } = data
     const aids = metas.slice(0, 20).map(meta => meta.id)
-    const readCounts = await this.getReadcound(aids)
+    const stat = await this.getStat(aids)
+    const empty = Object.create(null)
     for (let meta of metas) {
+      let st = stat[Utils.toLongId(meta.id)] || empty
       ret.article.push({
         title: meta.title,
-        read_cound: readCounts[Utils.toLongId(meta.id)] || 0,
+        read_cound: st.click || 0,
         image: findImageById(meta.id, data.images),
         article_id: meta.id,
         ctype: meta.ctype
@@ -432,7 +451,7 @@ class Show {
 module.exports = Show
 
 // const show = new Show()
-// show.getReadcound([42189463758431, 23484881179996, 23021024711920, 42262478202480]).then(data => {
+// show.getStat([42189463758431, 23484881179996, 23021024711920, 42262478202480]).then(data => {
 //   console.log(data)
 // })
 
