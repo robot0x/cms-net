@@ -149,10 +149,12 @@ class Utils {
    取meta时，要给所有的where条件加上时间限制
    */
   static genTimetopublishInterval (col = 'timetopublish') {
-    // 从 [20141108, 明天) 的数据，即截止到今天
-    return ` (${col} BETWEEN 20141106 AND ${Number(moment()
-        .add(1, 'days')
-        .format('YYYYMMDD'))}) `
+    // 从 [20141108, 今天] 的数据，即截止到今天
+    // between ... and ... 包含边界值
+    // return ` (${col} BETWEEN 20141106 AND ${Number(moment()
+    //     .add(1, 'days')
+    //     .format('YYYYMMDD'))}) `
+    return ` (${col} BETWEEN 20141106 AND ${Number(moment().format('YYYYMMDD'))}) `
   }
 
   // 把sku的形如：http://c.diaox2.com/view/app/sku/8383.html
