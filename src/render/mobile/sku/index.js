@@ -49,10 +49,13 @@ class SkuRender extends Render {
       if (!Utils.isValidArray(images)) {
         images = []
       }
+      // sku页显示的图片
+      let thumb = Utils.addAliImageSuffix((images[0] || {}).url) || ''
       const metas = await metaService.getRawMetas(revarticles, false)
       return this.getDoc(this.template, {
         sid,
         title,
+        thumb,
         images,
         brand,
         body: parser.setSales(sales).getHTML(),
