@@ -91,13 +91,17 @@ class ShowParser extends Parser {
       // 处理a标签内含有图片的语法 end
       if (/^\d+$/.test(href)) {
         // 处理测评集合页 [这是测评集合页的链接](7216)
-        if (href == 7216) {
-          href = `//c.diaox2.com/?m=pcollection`
-        } else {
-          href = `${prefix}/${href}.html`
-        }
+        // if (href == 7216) {
+        //   href = `//c.diaox2.com/?m=pcollection`
+        // } else {
+        //   href = `${prefix}/${href}.html`
+        // }
+        href = '#'
+        openMethod = '_self'
       } else if (/pcollection/i.test(href)) { // [这是测评集合页的链接](pcollection)
-        href = `${prefix}/?m=pcollection`
+        // href = `${prefix}/?m=pcollection`
+        href = '#'
+        openMethod = '_self'
       } else if (match) {
         // 9833#youdiao 或 #youdiao
         // href = hash
