@@ -35,7 +35,7 @@ class Parser {
       this.content = content
       const { html, type, id, m } = content
       this.html = html
-      this.type = type
+      this.type = type || ''
       this.id = Number(id)
       this.m = m // 根据不同的m来选择相应的解析markdown的方法
       this.$ = cheerio.load(this.html, { decodeEntities: false })
@@ -201,20 +201,22 @@ class Parser {
       if (text !== null) {
         innerText = $child.text().replace(/\n*/, '')
       }
+      // 如果有id，那么要解析成 $$$id 这种形式，因为有可能是个锚点
+      // 在markdown -> html 这一步，会把 $$$ 后面的id取出来放到dom上
       if (attribs) {
         id = attribs.id
       }
       // console.log('59:', name)
       if (name === 'p') {
         if (text !== null) {
-          md += `${id ? 'a' + id + ' ' : ''}${blockquotePrefix}${innerText}\n\n`
+          md += `${id ? '$$$' + id + ' ' : ''}${blockquotePrefix}${innerText}\n\n`
         } else {
           const theChildOfchild = $child[0].childNodes
           // 需要对视频单独做处理
           if (theChildOfchild.length === 1 && theChildOfchild[0].name === 'iframe') {
-            md += `${id ? 'a' + id + ' ' : ''}${blockquotePrefix}${$child.html()}\n\n`
+            md += `${id ? '$$$' + id + ' ' : ''}${blockquotePrefix}${$child.html()}\n\n`
           } else {
-            md += `${id ? 'a' + id + ' ' : ''}${blockquotePrefix}${this.getShowMarkdown($child, false)}\n\n`
+            md += `${id ? '$$$' + id + ' ' : ''}${blockquotePrefix}${this.getShowMarkdown($child, false)}\n\n`
           }
         }
       } else if (name === 'text') {
@@ -225,15 +227,15 @@ class Parser {
         }
       } else if (name === 'h2') {
         if (text !== null) {
-          md += `## ${id ? 'a' + id + ' ' : ''}${innerText}\n\n`
+          md += `## ${id ? '$$$' + id + ' ' : ''}${innerText}\n\n`
         } else {
-          md += `## ${id ? 'a' + id + ' ' : ''}${this.getShowMarkdown($child, false)}\n\n`
+          md += `## ${id ? '$$$' + id + ' ' : ''}${this.getShowMarkdown($child, false)}\n\n`
         }
       } else if (name === 'h3') {
         if (text !== null) {
-          md += `### ${id ? 'a' + id + ' ' : ''}${innerText}\n\n`
+          md += `### ${id ? '$$$' + id + ' ' : ''}${innerText}\n\n`
         } else {
-          md += `### ${id ? 'a' + id + ' ' : ''}${this.getShowMarkdown($child, false)}\n\n`
+          md += `### ${id ? '$$$' + id + ' ' : ''}${this.getShowMarkdown($child, false)}\n\n`
         }
       } else if (name === 'ul') {
         // 如果ul在blockquote中，则相对于其下的li，其ptype为blockquote，否则才为ul
