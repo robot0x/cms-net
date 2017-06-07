@@ -81,11 +81,6 @@ class ShowParser extends Parser {
       } else {
         ret = `<h${level}>${text}</h${level}>`
       }
-      if (content.indexOf('#B22222') !== -1) {
-        console.log('[ShowParser.heading] content:', content)
-        console.log('[ShowParser.heading] text:', text)
-        console.log('[ShowParser.heading] ret:', ret)
-      }
       return ret
     }
     renderer.paragraph = content => {

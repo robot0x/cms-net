@@ -13,10 +13,11 @@ class Utils {
    *      "a锚点 这是一段儿文本" 输出 {isAnchor: true, anchor:'锚点', text: '这是一段儿文本'}
    *      "a锚点 a呵呵 这是一段儿文本" 输出 {isAnchor: true, anchor:'锚点', text: 'a呵呵 这是一段儿文本'}
    *      "这是一段儿文本" 输出 {isAnchor: false, anchor:'', text: '这是一段儿文本'}
+   * anchor改为只支持数字和字母的，且必须为小写的a开头
    */
   static anchorHandler (text) {
     if (!text) return text
-    const anchorReg = /^a(.+?)\s+/i
+    const anchorReg = /^a(\w+?) .+/
     const match = text.match(anchorReg)
     const ret = Object.create(null)
     ret.isAnchor = false
@@ -485,6 +486,24 @@ class Utils {
 // console.log(Utils.normalize('/view/app/?m=pcollection'))
 // console.log(Utils.normalize('/view/app/?m=show&id=7216'))
 // console.log(Utils.normalize('view/app/?m=show&id=7216'))
+
+/**
+   * @static
+   * @param {string} text
+   * @returns {object} {isAnchor: boolean, text: string}
+   * @memberof Utils
+   * 输入一段文本，按照约定好的markdown anchor语法，输出对象
+   * 比如 'aanchor 这是一段儿文本' 输出 {isAnchor: true, anchor:'anchor', text: '这是一段儿文本'}
+   *      'a锚点 这是一段儿文本' 输出 {isAnchor: true, anchor:'锚点', text: '这是一段儿文本'}
+   *      'a锚点 a呵呵 这是一段儿文本' 输出 {isAnchor: true, anchor:'锚点', text: 'a呵呵 这是一段儿文本'}
+   *      '这是一段儿文本' 输出 {isAnchor: false, anchor:'', text: '这是一段儿文本'}
+   */
+console.log(Utils.anchorHandler('aanchor 这是一段儿文本'))
+console.log(Utils.anchorHandler('AKG 这是一段儿文本'))
+console.log(Utils.anchorHandler('a锚点 这是一段儿文本'))
+console.log(Utils.anchorHandler('a锚点 a呵呵 这是一段儿文本'))
+console.log(Utils.anchorHandler('这是一段儿文本'))
+console.log(Utils.anchorHandler('AKG爱科技头戴式监听耳机K812，<span style="color:#B22222;">5989元</span>（参考价：8999元）'))
 
 // const lcids = [4294967297, 41201621280121, 39423504819163, 39423504819163, '', NaN, 41205916247418, 3563]
 // const lcid = 4647154615354
