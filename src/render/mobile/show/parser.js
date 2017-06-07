@@ -75,14 +75,16 @@ class ShowParser extends Parser {
     renderer.heading = (content, level) => {
       const {isAnchor, anchor, text} = Utils.anchorHandler(content)
       let ret = ''
-      if (content.indexOf('#B22222') !== -1) {
-        console.log('[ShowParser.heading] content:', content)
-      }
       if (isAnchor) {
         // console.log('ShowParser.anchor:', anchor)
         ret = `<h${level} id="${anchor}">${text}</h${level}>`
       } else {
         ret = `<h${level}>${text}</h${level}>`
+      }
+      if (content.indexOf('#B22222') !== -1) {
+        console.log('[ShowParser.heading] content:', content)
+        console.log('[ShowParser.heading] text:', text)
+        console.log('[ShowParser.heading] ret:', ret)
       }
       return ret
     }
