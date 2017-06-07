@@ -209,7 +209,13 @@ class Parser {
         if (text !== null) {
           md += `${id ? 'a' + id + ' ' : ''}${blockquotePrefix}${innerText}\n\n`
         } else {
-          md += `${id ? 'a' + id + ' ' : ''}${blockquotePrefix}${this.getShowMarkdown($child, false)}\n\n`
+          const theChildOfchild = $child[0].childNodes
+          // 需要对视频单独做处理
+          if (theChildOfchild.length === 1 && theChildOfchild[0].name === 'iframe') {
+            md += `${id ? 'a' + id + ' ' : ''}${blockquotePrefix}${$child.html()}\n\n`
+          } else {
+            md += `${id ? 'a' + id + ' ' : ''}${blockquotePrefix}${this.getShowMarkdown($child, false)}\n\n`
+          }
         }
       } else if (name === 'text') {
         // console.log(innerText)

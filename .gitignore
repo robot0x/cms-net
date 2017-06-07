@@ -9,5 +9,6 @@ logs/exception/
 logs/http/
 src/crawler/data
 src/crawler/*.sh
+src/crawler/handleVideo.js
 src/crawler/tmp
 src/api/genpub/views
