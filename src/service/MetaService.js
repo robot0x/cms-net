@@ -95,7 +95,8 @@ class MetaService {
     useCoverex = false,
     useBanner = false,
     useSwipe = false,
-    useImageSize = false
+    useImageSize = false,
+    useAuthorSource = false
   ) {
     // 参数处理
     if (!Utils.isValidArray(ids)) {
@@ -110,6 +111,7 @@ class MetaService {
     if (!isShortId) {
       ids = Utils.toShortId(ids)
     }
+    let source = useAuthorSource ? 'au.source,' : ''
     // console.log('ids:', ids)
     // const metaAndAuthors = await DB.exec(`SELECT meta.id AS nid, meta.title, meta.titleex, meta.titlecolor, meta.ctype, meta.price, meta.buylink, meta.author, au.pic_uri, au.title AS author_name FROM diaodiao_article_meta AS meta ,diaodiao_author AS au where meta.author = au.source AND meta.id in (${ids.join(',')})`)
     // 取meta需要加上时间限制，timetopublish必须处在20141108和今天之间
@@ -124,6 +126,7 @@ class MetaService {
       meta.price,
       meta.buylink,
       meta.timetopublish,
+      ${source}
       au.pic_uri,
       au.title AS author_name
     FROM 
@@ -183,6 +186,7 @@ class MetaService {
           ctype,
           price,
           pic_uri,
+          source,
           author_name,
           timetopublish
         } = me
@@ -191,7 +195,7 @@ class MetaService {
         let meta = Object.create(null) // 使用超轻量对象，提升性能
         meta.timetopublish = timetopublish
         // author字段变形
-        meta.author = { pic: pic_uri, name: author_name }
+        meta.author = { pic: pic_uri, name: author_name, source }
         // 这个可能在app内用来控制title的颜色
         meta.title_color = meta.titlecolor || 4294967295
         meta.title = title

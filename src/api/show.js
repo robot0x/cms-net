@@ -37,7 +37,7 @@ class Show {
     try {
       let [content, meta, images, goods] = await Promise.all([
         contentTable.getById(id),
-        metaService.getRawMetas(id, false, true, false, false, true),
+        metaService.getRawMetas(id, false, true, false, false, true, false, true),
         imageTable.getByAid(id),
         recommend(id)
       ])
@@ -69,7 +69,7 @@ class Show {
           title: Utils.getFirst(title),
           price: { type: 'price', value: price },
           banners: swipe_image_url,
-          author: { url: author.pic, value: author.name }
+          author: { url: author.pic, value: author.name, source: author.source }
         },
         contents,
         goods
@@ -226,6 +226,7 @@ class Show {
       promises.push(this._getSkus(id))
       promises.push(this.genShareData(id, trueM))
       let [data, skus, shareData] = await Promise.all(promises)
+      data = data || {}
       /**
      * show_part: [
             {
