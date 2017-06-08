@@ -14,16 +14,17 @@ class Writer {
     // batch.push(
     // 增量更新
     try {
-      await DB.exec(
+      let insertContentResult = await DB.exec(
         `
       INSERT INTO diaodiao_article_content set aid=${id}, content=${DB.escape(markdown)}
       ON DUPLICATE KEY UPDATE content = ${DB.escape(markdown)}
       `
       )
-      console.log(`ID为${id}的文章入库成功 ....`)
+      console.log(`[STEP3] ID为 ${id} 插入content表成功，影响${insertContentResult.affectedRows}行 ...`)
     } catch (error) {
       console.log(error)
-      Log.exception(`id为${id}的文章写入article_content数据库出错，出错信息：`, err.message)
+      console.log(`ID为 ${id} 插入content表失败：`, error)
+      Log.exception(`ID为 ${id} 插入content表失败：`, error)
     }
   }
 }

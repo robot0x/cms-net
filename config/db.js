@@ -32,7 +32,7 @@ const dbConfig = isDebug
     // 大叔说，这个数据库最多共有150条连接，大部分情况下110 ~ 120 条连接就够用了
     connectionLimit: 20
   }
-console.log(`isDebug:${isDebug}\nuse: ${JSON.stringify(dbConfig)}`)
+// console.log(`isDebug:${isDebug}\nuse: ${JSON.stringify(dbConfig)}`)
 module.exports = dbConfig
 
 //  module.exports = {

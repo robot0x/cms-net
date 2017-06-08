@@ -22,7 +22,6 @@ async function run2 (file) {
       `[crawler/insertMetaAndImage.js] 增量更新的文章有ID大于10500的，ID为${nid}`
     )
   }
-  console.log(title)
   let {
     timetopublish,
     price,
@@ -137,6 +136,7 @@ async function run2 (file) {
     last_update_time=${DB.escape(new Date(changed * 1000))},
     author=${author}
   `
+  // console.log(insertMetaSQL)
   let deleteImageSQL = `DELETE FROM diaodiao_article_image WHERE aid = ${nid}`
   const images = []
     .concat(setImage(1, pics))
@@ -157,14 +157,17 @@ async function run2 (file) {
   }
   insertImageSQL = insertImageSQL + values.join(',')
   try {
-    await Promise.all([DB.exec(deleteImageSQL), DB.exec(insertMetaSQL)])
-    await DB.exec(insertImageSQL)
+    let [deleteImageResult, insertMetaResult] = await Promise.all([DB.exec(deleteImageSQL), DB.exec(insertMetaSQL)])
+    console.log(`[STEP4] ID为 ${nid} 删除图片成功，删除了${deleteImageResult.affectedRows}条 ...`)
+    console.log(`[STEP5] ID为 ${nid} 插入meta表成功，影响${insertMetaResult.affectedRows}行 ...`)
+    let insertImageResult = await DB.exec(insertImageSQL)
+    console.log(`[STEP6] ID为 ${nid} 插入图片成功，插入了${insertImageResult.affectedRows}条 ...`)
   } catch (error) {
-    console.log(`ID为${nid}的文章入库失败 出错信息：`, error)
+    console.log(`ID为 ${nid} 的文章插入图片和meta失败：`, error)
     Log.exception(error)
   }
-  console.log(`ID为${nid}的文章入库成功 ....`)
-  process.exit(0)
+  // console.log(`ID为 ${nid} 的文章插入图片和meta成功 ....`)
+  // process.exit(0)
 }
 
 function setImage (type, images) {
