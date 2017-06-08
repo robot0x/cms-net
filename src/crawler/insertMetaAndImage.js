@@ -169,7 +169,6 @@ async function run2 (file) {
     Log.exception(error)
   }
   console.log(`ID为${nid}的文章入库成功 ....`)
-  run2 = null
 }
 
 function setImage (type, images) {

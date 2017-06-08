@@ -8,8 +8,10 @@ async function callRun () {
   .then(() => {
     console.log('success ...')
   })
+  .catch(e => {
+    console.log(e)
+  })
   .finally(() => {
-    callRun = null
     process.exit(0)
   })
 }
