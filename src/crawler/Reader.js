@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const Promise = require('bluebird')
+const Log = require('../utils/Utils')
 /**
  * 段落与段落之间 用 \n\n 隔开，若一个 \n 则还是在一个p标签里
  *  1. goodthing (type = show)                                http://c.diaox2.com/view/app/?m=show&id=9669
@@ -37,6 +38,7 @@ class Reader {
       fs.readFile(file, 'utf8', (err, text) => {
         if (err) {
           console.log(err)
+          Log.exception('[Reader.js read]', err)
           reject(err)
         } else {
           resolve(
@@ -51,6 +53,7 @@ class Reader {
                   article = JSON.parse(content)
                 } catch (e) {
                   console.log(e)
+                  Log.exception('[Reader.js parseJSON]', err)
                   return
                 }
                 const { node } = article
