@@ -1,5 +1,5 @@
 const Render = require('../../')
-// const Utils = require('../../../utils/Utils')
+const Utils = require('../../../utils/Utils')
 const Parser = require('./parser')
 const BuyinfoService = require('../../../service/BuyinfoService')
 const Log = require('../../../utils/Log')
@@ -13,6 +13,7 @@ class BuyRender extends Render {
     this.setAid(aid)
     this.template = this.readTemplate(__dirname + '/buy.ejs')
     this.parser = new Parser()
+    this.buyinfoService = new BuyinfoService()
   }
 
   setAid (aid) {
@@ -21,10 +22,13 @@ class BuyRender extends Render {
   }
 
   async rende () {
-    const { aid } = this
+    const { aid, buyinfoService } = this
     if (!aid) return
     try {
-      let { meta, buyinfos } = await new BuyinfoService(aid).getRenderData()
+      let { meta, buyinfos } = await buyinfoService.getRenderData(aid)
+      // 做一下防御，防止meta为kong，页面出现空白
+      meta = meta || {}
+      buyinfos = Utils.isValidArray(buyinfos) ? buyinfos : []
       let { id, title, thumb_image_url } = meta
       return this.getDoc(this.template, {
         id,
@@ -35,6 +39,7 @@ class BuyRender extends Render {
         version: this.version
       })
     } catch (e) {
+      console.log(e)
       Log.exception(e)
       return null
     }

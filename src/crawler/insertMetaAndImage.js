@@ -156,11 +156,17 @@ async function run2 (file) {
     )
   }
   insertImageSQL = insertImageSQL + values.join(',')
+  if (nid == 10127) {
+    console.log('deleteImageSQL:', deleteImageSQL)
+    console.log('insertMetaSQL:', insertMetaSQL)
+    console.log('insertImageSQL:', insertImageSQL)
+  }
   try {
     await Promise.all([DB.exec(deleteImageSQL), DB.exec(insertMetaSQL)])
     await DB.exec(insertImageSQL)
   } catch (error) {
     console.log(`ID为${nid}的文章入库失败 出错信息：`, error)
+    Log.exception(error)
   }
   console.log(`ID为${nid}的文章入库成功 ....`)
   run2 = null
