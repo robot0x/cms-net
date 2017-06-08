@@ -156,11 +156,6 @@ async function run2 (file) {
     )
   }
   insertImageSQL = insertImageSQL + values.join(',')
-  if (nid == 10127) {
-    console.log('deleteImageSQL:', deleteImageSQL)
-    console.log('insertMetaSQL:', insertMetaSQL)
-    console.log('insertImageSQL:', insertImageSQL)
-  }
   try {
     await Promise.all([DB.exec(deleteImageSQL), DB.exec(insertMetaSQL)])
     await DB.exec(insertImageSQL)
