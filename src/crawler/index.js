@@ -44,7 +44,6 @@ async function run (file) {
   const ret = parser.parse()
   // console.log('39:', ret)
   await writer.write(ret, id)
-  run = null
-  // process.exit(0)
+  process.exit(0)
 }
 module.exports = run
