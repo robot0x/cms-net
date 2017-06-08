@@ -107,8 +107,9 @@ class DB {
       DB.pool.getConnection((err, connection) => {
         //  DB.poolCluster.getConnection(CMS, DIAODIAO, function(err, connection) {
         if (err) {
-          reject(err)
+          console.log('mysql connection\'s error:', err)
           Log.exception(err)
+          reject(err)
         } else {
           connection.query(sql, data, (error, rows) => {
             connection.release()
@@ -118,7 +119,7 @@ class DB {
               )
             }
             if (error) {
-              console.log(error)
+              console.log('mysql query\'s error:', error)
               Log.exception(error)
               reject(error)
             } else {
