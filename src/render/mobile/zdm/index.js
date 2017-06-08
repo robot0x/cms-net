@@ -59,11 +59,11 @@ class ZDMRender extends Render {
 
   async rende () {
     try {
-      const result = await this.getRenderData()
-      if (!result) return
+      const result = (await this.getRenderData()) || {}
+      // if (!result) return
       // TODO: 拿到数据之后进行处理
-      let data = Utils.getFirst(result.res)
-      if (!data) return
+      let data = Utils.getFirst(result.res) || {}
+      // if (!data) return
       data = JSON.stringify(data).replace(/^\{/, '').replace(/\}$/, '')
       if (!data) return
       let {goods_cid} = this
@@ -71,7 +71,6 @@ class ZDMRender extends Render {
       if (!/^\d{10,}$/.test(goods_cid) || goods_cid < 4294967297) {
         goods_cid = -1
       }
-      console.log('goods_cid:', goods_cid)
       return this.getDoc(this.template, {
         data,
         goods_cid,

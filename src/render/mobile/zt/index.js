@@ -41,10 +41,14 @@ class ZTRender extends Render {
     const { parser, id } = this
     if (!id) return
     try {
-      let { content, meta, images } = await new MetaService().getRenderData(id)
+      let { content, meta, images } = (await new MetaService().getRenderData(id)) || {}
+      content = content || ''
+      meta = meta || {}
+      images = images || []
       // console.log('zt markdown 37:', content)
       parser.markdown = content // markdown is a setter like method `setMarkdown`
       let {title} = meta
+      title = title || ''
       let body = parser
       .setTitle(title)
       .getHTML()
@@ -56,18 +60,18 @@ class ZTRender extends Render {
       let thumb = images.filter(img => {
         return (img.type & 8) === img.type
       })
-      const swipes = images.filter(img => {
-        return (img.type & 16) === img.type
-      })
+      // const swipes = images.filter(img => {
+      //   return (img.type & 16) === img.type
+      // }) || []
 
-      thumb = Utils.getFirst(thumb)
-      cover = Utils.getFirst(cover)
+      thumb = Utils.getFirst(thumb) || {}
+      cover = Utils.getFirst(cover) || {}
 
       return this.getDoc(this.template, {
         id,
         title,
         body,
-        swipes,
+        // swipes,
         thumb,
         cover,
         pageType: this.pageType,

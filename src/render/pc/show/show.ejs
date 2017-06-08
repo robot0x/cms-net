@@ -74,6 +74,17 @@
         <div class="article-area f-l">
           <h1 class="article-title"><%-title %></h1>
           <!-- swipe -->
+          <% if( swipes && swipes.length !== 0) {%>
+          <div class="article-banner-container">
+            <ul class="banner-list loading">
+               <%swipes.forEach(function(swipe){%>
+                  <li>
+                    <img src="//<%-swipe.url%>@768w_1l" width="800" height="462">
+                  </li>
+                <% }) %>
+            </ul>
+          </div>
+          <% } %>
           <div class="author-area">
             <a href="//www.diaox2.com/editor/<%=author.source%>.html">
               <img src="<%=author.pic_uri%>" alt="" height="30" width="30">

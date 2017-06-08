@@ -42,6 +42,8 @@ class TagRender extends Render {
       let { metas, images, name } = (await new TagService(tid)
         .setLimit(limit)
         .getRenderData()) || {}
+      name = name || ''
+      images = images || []
       let allarticles = []
       let infos = Object.create(null)
       // let len = allarticles.length

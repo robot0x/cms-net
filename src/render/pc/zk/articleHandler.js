@@ -23,8 +23,11 @@ module.exports = async (html, ids) => {
   const container = $('#container')
   try {
     const articleDoms = Array.from(container.find('.goodthing'))
+    console.log('ids:', ids)
     const metas = await metaService.getRawMetas(ids, false, true)
+    console.log('metas:', metas)
     for (let articleDom of articleDoms) {
+      // console.log($(articleDom).find('a')[0].attribs['href'])
       let meta = findMetaById(
         Utils.normalize($(articleDom).find('a')[0].attribs['href']),
         metas

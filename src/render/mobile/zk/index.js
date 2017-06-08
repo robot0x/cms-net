@@ -41,21 +41,24 @@ class ZKRender extends Render {
     if (!id) return
     try {
       // 取专刊本身的meta，用不着buylink
-      let { content, meta, images } = await metaService.getRenderData(id)
+      let { content, meta, images } = (await metaService.getRenderData(id)) || {}
+      content = content || ''
+      meta = meta || {}
+      images = images || []
       let { title, titleex } = meta
-      if (!content) return
+      title = title || ''
+      titleex = titleex || ''
+      // if (!content) return
       parser.markdown = content // markdown is a setter like method `setMarkdown`
       //  对于专刊，我们要先取出所引用的所有文章id
-      let data = Utils.getZkDataByParseMarkdown(content)
-      if (!data) return
-      let cids = data.ids
+      let data = (Utils.getZkDataByParseMarkdown(content)) || {}
+      let cids = data.ids || []
       let buylinks = []
       // 先读diaodiao_buyinfo表
       // 根据文章id获取其buylink
       let promises = []
       // 取专刊引用文章的buylink
       for (let cid of cids) {
-        console.log(cid)
         // 并行去拿buylink，提高响应时间
         promises.push(metaService.getBuylink(cid))
       }
@@ -76,11 +79,11 @@ class ZKRender extends Render {
       let thumb = images.filter(img => {
         return (img.type & 8) === 8
       })
-      const swipes = images.filter(img => {
-        return (img.type & 16) === 16
-      })
-      thumb = Utils.getFirst(thumb)
-      cover = Utils.getFirst(cover)
+      // const swipes = images.filter(img => {
+      //   return (img.type & 16) === 16
+      // }) || []
+      thumb = Utils.getFirst(thumb) || {}
+      cover = Utils.getFirst(cover) || {}
       let body = parser
           .setBuylinks(buylinks)
           .setIds(cids)
@@ -93,7 +96,7 @@ class ZKRender extends Render {
         id,
         title,
         body,
-        swipes,
+        // swipes,
         thumb,
         cover,
         pageType: this.pageType,

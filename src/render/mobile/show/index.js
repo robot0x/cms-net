@@ -75,7 +75,7 @@ class ShowRender extends Render {
         metaService.getRenderData(id, true),
         this.getRelsearchWords()
       ])
-      if (!metaObj) return
+      metaObj = metaObj || {}
       let {
         content,
         meta,
@@ -84,10 +84,10 @@ class ShowRender extends Render {
       } = metaObj
       author = author || {}
       // console.log('images:', images.length)
-      let { title, ctype, timetopublish, price, has_buylink, buylink } = meta
+      let { title, ctype, timetopublish, price, has_buylink, buylink } = meta || {}
       // let relwords = await this.getRelsearchWords()
       // 在此处进行ctype判断
-      parser.markdown = content // markdown is a setter like method `setMarkdown`
+      parser.markdown = content || '' // markdown is a setter like method `setMarkdown`
       let body = parser.getHTML()
       body = imageHandler(body, images)
       body = await skuHandler(body)

@@ -44,17 +44,16 @@ class JfMallRender extends Render {
 
   async rende () {
     try {
-      const result = await this.getRenderData()
-      if (!result) return
-      let items = result.data
-      if (!Utils.isValidArray(items)) return
+      const result = (await this.getRenderData()) || {}
+      // if (!Utils.isValidArray(items)) return
       return this.getDoc(this.template, {
-        data: JSON.stringify(items),
+        data: JSON.stringify(result.data || []),
         pageType: this.pageType,
         prefix: this.prefix,
         version: this.version
       })
     } catch (e) {
+      console.log(e)
       Log.exception(e)
       return null
     }

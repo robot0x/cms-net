@@ -62,7 +62,7 @@ class RssRender extends Render {
     // const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, meta.ctype, meta.timetopublish, CONCAT('//',image.url) AS thumb_image_url FROM diaodiao_article_meta as meta WHERE meta.ctype IN (${ctypes.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
     // const thumb = await imageTable.getSpecialImagesUrl()
     // console.log('[RssRender.getRenderData] sql:', sql);
-    const metas = await DB.exec(sql)
+    const metas = (await DB.exec(sql)) || []
     return { name, metas }
   }
 

@@ -230,8 +230,7 @@ router.get('/', async (req, res) => {
       }
     } else if (/recommend/i.test(m)) {
       console.log('推荐结果接口的路由被命中ID为', id)
-      let {cb} = req.body // 支持jsonp
-      console.log('cb:', cb)
+      let { cb } = req.body // 支持jsonp
       if (id && numnberReg.test(id)) {
         recommend(id, cb)
           .then(result => {
@@ -523,7 +522,8 @@ router.get(pcEditorReg, (req, res) => {
       } else {
         writeDoc(doc, res, 'editor')
       }
-    }).catch(e => happyEnd(e, res))
+    })
+    .catch(e => happyEnd(e, res))
 })
 
 const pcCategoryReg = /\/category\/(.+)\.html/
@@ -532,16 +532,16 @@ router.get(pcCategoryReg, (req, res) => {
   let tid = match[1]
   if (numnberReg.test(tid)) {
     pTagRender
-    .setTid(tid)
-    .rende()
-    .then(doc => {
-      if (!doc) {
-        pageNotFound(res, NOTFOUND.pc)
-      } else {
-        writeDoc(doc, res, 'category')
-      }
-    })
-    .catch(e => happyEnd(e, res))
+      .setTid(tid)
+      .rende()
+      .then(doc => {
+        if (!doc) {
+          pageNotFound(res, NOTFOUND.pc)
+        } else {
+          writeDoc(doc, res, 'category')
+        }
+      })
+      .catch(e => happyEnd(e, res))
   } else {
     pageNotFound(res, NOTFOUND.pc)
   }
@@ -621,7 +621,10 @@ function pageNotFound (res, doc = '无此页面') {
   res.end(doc)
 }
 function removeCacheControlHeader (res) {
-  res.append('Cache-Control', 'private, no-cache, no-store, proxy-revalidate, no-transform')
+  res.append(
+    'Cache-Control',
+    'private, no-cache, no-store, proxy-revalidate, no-transform'
+  )
   res.append('Pragma', 'no-cache')
   res.append('Expires', '-1')
 }
@@ -664,25 +667,44 @@ function addCacheControlHeader (res, type) {
 function writeDoc (doc, res, type) {
   // Error: Can't set headers after they are sent. 如果doc为null，res.end()之后，在设置header，会报错
   // if (!doc) res.end()
-  if (!doc) res.end()
-  addCacheControlHeader(res, type)
-  res.writeHead(200, {
-    'Content-Type': 'text/html'
-  })
-  res.write(doc)
-  res.end()
+  // 做下兼容，不然doc为null是会报错：TypeError: First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object 
+  doc = doc || ''
+  try {
+    addCacheControlHeader(res, type)
+    res.writeHead(200, {
+      'Content-Type': 'text/html'
+    })
+    res.write(doc)
+  } catch (error) {
+    console.log(error)
+    Log.exception(error)
+  } finally {
+    res.end()
+  }
 }
 
 function writeJSON (json, res, type) {
-  if (!json) res.end()
-  addCacheControlHeader(res, type)
-  res.json(json)
-  res.end()
+  // res.json 不用做兼容，若是空串，则返回""
+  // 若是null，则返回null
+  try {
+    addCacheControlHeader(res, type)
+    res.json(json)
+  } catch (error) {
+    console.log(error)
+    Log.exception(error)
+  } finally {
+    res.end()
+  }
 }
 
 function writeTXT (txt, res, type) {
-  if (!txt) res.end()
-  addCacheControlHeader(res, type)
-  res.end(txt)
+  try {
+    addCacheControlHeader(res, type)
+  } catch (error) {
+    console.log(error)
+    Log.exception(error)
+  } finally {
+    res.end(txt)
+  }
 }
 module.exports = router

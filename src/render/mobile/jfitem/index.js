@@ -68,6 +68,7 @@ class JfitemRender extends Render {
         version: this.version
       })
     } catch (e) {
+      console.log(e)
       Log.exception(e)
       return null
     }

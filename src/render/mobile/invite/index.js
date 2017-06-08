@@ -47,9 +47,10 @@ class InviteRender extends Render {
     const { uid } = this
     if (!uid) return
     try {
-      const result = await this.getRenderData(uid)
-      if (!result) return
-      const { invite_str, nick } = result.data
+      const result = (await this.getRenderData(uid)) || {}
+      let { invite_str, nick } = result.data
+      invite_str = invite_str || ''
+      nick = nick || ''
       return this.getDoc(this.template, {
         invite_str,
         nick,
@@ -57,6 +58,7 @@ class InviteRender extends Render {
         version: this.version
       })
     } catch (e) {
+      console.log(e)
       Log.exception(e)
       return null
     }

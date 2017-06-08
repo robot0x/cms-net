@@ -29,13 +29,13 @@ class ShowRender extends Render {
     const { parser, id, metaService } = this
     if (!id) return
     try {
-      let { content, meta, author, images } = await metaService.getRenderData(id)
-      // console.log('author:', author)
-      // if (!author) {
-      //   author = defaultAuthor
-      // }
-      // console.log('author:', author)
+      let { content, meta, author, images } = (await metaService.getRenderData(id)) || {}
+      content = content || ''
+      meta = meta || {}
+      images = images || []
       let { title, ctype, create_time, price } = meta
+      title = title || ''
+      price = price || ''
       // 在此处进行ctype判断
       parser.markdown = content // markdown is a setter like method `setMarkdown`
       let body = parser.getHTML()
@@ -49,9 +49,9 @@ class ShowRender extends Render {
       })
       const swipes = images.filter(img => {
         return (img.type & 16) === img.type
-      })
-      thumb = Utils.getFirst(thumb)
-      cover = Utils.getFirst(cover)
+      }) || []
+      thumb = Utils.getFirst(thumb) || {}
+      cover = Utils.getFirst(cover) || {}
       let date = ''
       if (create_time) {
         console.log(create_time)
@@ -64,6 +64,7 @@ class ShowRender extends Render {
         date += month + '-'
         date += create_time.getDate()
       }
+      console.log('swipes:', swipes)
       return this.getDoc(this.template, {
         id,
         body,
@@ -78,6 +79,7 @@ class ShowRender extends Render {
         date
       })
     } catch (e) {
+      console.log(e)
       Log.exception(e)
       return null
     }

@@ -34,11 +34,15 @@ class SkuRender extends Render {
         `http://s5.a.dx2rd.com:3000/v1/getfullsku/${sid}`
       )
       let { state, data } = JSON.parse(result.body)
-      if (state !== 'SUCCESS') {
+      if (state && state !== 'SUCCESS') {
         throw Error('调用getfullsku接口失败')
       }
       data = Utils.getFirst(data)
-      let { title, brand, sales, images, revarticles } = data
+      let { title, brand, sales, images, revarticles } = data || {}
+      title = title || ''
+      brand = title || brand
+      sales = sales || []
+      images = images || []
       images = images.map((image, index) => {
         image.id = index
         return image
@@ -46,9 +50,6 @@ class SkuRender extends Render {
         // 如果是阿里云图，则加上后缀，否则不用处理
         // return Utils.addAliImageSuffix(image.url)
       })
-      if (!Utils.isValidArray(images)) {
-        images = []
-      }
       // sku页显示的图片
       let thumb = Utils.addAliImageSuffix((images[0] || {}).url) || ''
       const metas = await metaService.getRawMetas(revarticles, false)

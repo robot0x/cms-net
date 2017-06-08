@@ -10,27 +10,27 @@
 <meta name=description content="「调调」每天讲述精致的生活方式，推荐那些真正高品质的好东西，帮你低价买到优质海淘商品。拥有调调，拥有生活。">
 <link rel="stylesheet" type="text/css" href="//www.diaox2.com/css/zk.css">
 <script>
-  function adjust(img) {
-    var imgContainer = img.parentNode,
-      width = imgContainer.offsetWidth,
-      height = imgContainer.offsetHeight,
-      scale = (width / height).toFixed(2),
-      ratio = (img.width / img.height).toFixed(2);
-    if (Math.abs(scale - ratio) < 0.02) {
-      img.width = width;
-      img.height = height;
-    } else if (scale > ratio) {
-      img.width = width;
-      img.height = img.width / ratio;
-      // 图片上移
-      img.style.marginTop = -(img.height - height) / 2 + "px";
-    } else {
-      img.height = height;
-      img.width = img.height * ratio;
-      // 图片右移
-      img.style.marginLeft = -(img.width - width) / 2 + "px";
-    }
+function adjust(img) {
+  var imgContainer = img.parentNode,
+    width = imgContainer.offsetWidth,
+    height = imgContainer.offsetHeight,
+    scale = (width / height).toFixed(2),
+    ratio = (img.width / img.height).toFixed(2);
+  if (Math.abs(scale - ratio) < 0.02) {
+    img.width = width;
+    img.height = height;
+  } else if (scale > ratio) {
+    img.width = width;
+    img.height = img.width / ratio;
+    // 图片上移
+    img.style.marginTop = -(img.height - height) / 2 + "px";
+  } else {
+    img.height = height;
+    img.width = img.height * ratio;
+    // 图片右移
+    img.style.marginLeft = -(img.width - width) / 2 + "px";
   }
+}
 </script>
 </head>
 <body id="<%=4294967297 * id%>" class="<%=id%>_<%=id%>" data-type="zhuankan" data-share="0" data-render="<%=version%>">

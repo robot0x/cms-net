@@ -38,13 +38,14 @@ class TagRender extends Render {
       //  let { metas, thumbs, name } = await new TagService(this.tid).getRenderData()
       let tagService = new TagService(tid)
       let [metaObj, ptag] = await Promise.all([tagService.getRenderData(true, false), tagService.getParentTagByTid(tid)])
+      metaObj = metaObj || {metas: [], images: [], name: ''}
+      ptag = ptag || {}
       let { metas, images, name } = metaObj
       // 从数据库中读数据然后生成tree的方式与线上的排序不一致且显示的条目也不一致（比如，线上没有显示“有调专栏”这个tag）
       // 所以改为写死在模板里，响应速度由 139.7MS 降到了 60.4MS，响应速度提高了2.3+倍
       // 如果保留sql，但是模板不渲染，响应速度为121.7MS，模板不渲染这块数据只节省了 18MS，节省有限...
       // 所以后端响应慢主要是sql慢或sql多导致的
       // let tags =  await tagService.getTagTree()
-      ptag = ptag || {}
       // console.log(metas)
       for (let meta of metas) {
         let { id } = meta

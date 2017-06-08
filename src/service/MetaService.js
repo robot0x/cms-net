@@ -171,11 +171,11 @@ class MetaService {
         imageTypes.push(32)
       }
 
-      const images = await this.imageTable.getSpecialImagesUrl(
+      const images = (await this.imageTable.getSpecialImagesUrl(
         ids,
         imageTypes,
         imageCols
-      )
+      )) || []
       const metas = []
       for (let me of metaAndAuthors) {
         let {

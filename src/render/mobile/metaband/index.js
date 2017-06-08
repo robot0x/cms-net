@@ -14,24 +14,25 @@ class MetabandRender extends Render {
   }
   async rende (id = this.id) {
     try {
-      const meta = await metaService.getRawMetas(id, false, true)
+      const meta = (await metaService.getRawMetas(id, false, true)) || {}
       const { nid, thumb_image_url, title } = meta
       const url = `${this.prefix}/view/app/?m=show&id=${nid}`
       return `
       <div class="relcard" data-href="${url}" data-render="${this.version}" data-action="" data-fn="">
         <a href="${url}">
           <div class="relpic">
-            <img src="${thumb_image_url}" />
+            <img src="${thumb_image_url || ''}" />
           </div>
           <div class="reltext">
-            <span class="cardtitle">${Utils.getFirst(title)}</span>
-            <span class="cardread" data-id="${Utils.toLongId(nid)}">阅读 ...</span>
+            <span class="cardtitle">${Utils.getFirst(title) || ''}</span>
+            <span class="cardread" data-id="${Utils.toLongId(nid) || 0}">阅读 ...</span>
           </div>
         </a>
       </div>
       <div class="clearfix"></div>
       <hr class="sep">`
     } catch (e) {
+      console.log(e)
       Log.exception(e)
       return null
     }

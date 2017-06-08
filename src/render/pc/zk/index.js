@@ -27,16 +27,17 @@ class ZKRender extends Render {
     const { parser, id, metaService } = this
     if (!id) return
     try {
-      let { content, meta, images } = await metaService.getRenderData(id)
+      let { content, meta, images } = (await metaService.getRenderData(id)) || {}
+      content = content || ''
+      meta = meta || {title: '', titleex: ''}
       let { title, titleex } = meta
-      if (!content) return
       parser.markdown = content // markdown is a setter like method `setMarkdown`
       //  对于专刊，我们要先取出所引用的所有文章id
-      let data = Utils.getZkDataByParseMarkdown(content)
-      console.log(data)
-      if (!data) return
-      let {article} = data
-      let cids = data.ids
+      let data = Utils.getZkDataByParseMarkdown(content) || {}
+      // console.log(data)
+      let {article, ids} = data
+      article = article || {}
+      ids = ids || []
       // body = imageHandler(body, images)
       //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
       let cover = images.filter(img => {
@@ -45,11 +46,11 @@ class ZKRender extends Render {
       let thumb = images.filter(img => {
         return (img.type & 8) === img.type
       })
-      const swipes = images.filter(img => {
-        return (img.type & 16) === img.type
-      })
-      thumb = Utils.getFirst(thumb)
-      cover = Utils.getFirst(cover)
+      // const swipes = images.filter(img => {
+      //   return (img.type & 16) === img.type
+      // })
+      thumb = Utils.getFirst(thumb) || {}
+      cover = Utils.getFirst(cover) || {}
       parser
           .setCover(cover)
           .setTitle(title)
@@ -57,7 +58,7 @@ class ZKRender extends Render {
           .setArticle(article)
           .getHTML()
       let {header, body} = parser
-      body = await articleHandler(body, cids)
+      body = await articleHandler(body, ids)
       parser.header = parser.body = ''
       return this.getDoc(this.template, {
         id,
@@ -66,7 +67,7 @@ class ZKRender extends Render {
         header,
         body,
         version: this.version,
-        swipes,
+        // swipes,
         thumb,
         cover
       })
