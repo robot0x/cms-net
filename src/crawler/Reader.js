@@ -69,8 +69,8 @@ class Reader {
                     item.m = 'zt'
                     break
                 }
-                // item.url = `http://z.diaox2.com/view/app/?m=${item.m}&id=${id}`
-                item.url = `http://z.diaox2.com:81/view/app/?m=${item.m}&id=${id}`
+                item.url = `http://z.diaox2.com/view/app/?m=${item.m}&id=${id}`
+                // item.url = `http://z.diaox2.com:81/view/app/?m=${item.m}&id=${id}`
                 // console.log(item)
                 return item
               })
