@@ -290,10 +290,11 @@ class Parser {
         // 2017-06-01 开始支持a标签下有img，不然在文章引用测评集合页就不可以了
         // 语法为 [1120 img: http://a.com/sadasda.jpg]
         let img = $child.find('img')[0]
+        // 因为a标签还会有 <a href="t1"><strong>个人忽略</strong></a> 这种方式，所以，直接拿innerText复制即可
         if (img) {
-          md += `[${innerText}](${Utils.normalize(attribs.href)} img: ${img.attribs['data-big'] || img.attribs.src})`
+          md += `[${$child.text()}](${Utils.normalize(attribs.href)} img: ${img.attribs['data-big'] || img.attribs.src})`
         } else {
-          md += `[${innerText}](${Utils.normalize(attribs.href)})`
+          md += `[${$child.text()}](${Utils.normalize(attribs.href)})`
         }
       } else if (name === 'img') {
         md += `![${attribs.alt}](${attribs['data-big'] || attribs.src})`

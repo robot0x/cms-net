@@ -8,6 +8,7 @@ logs/business/
 logs/exception/
 logs/http/
 src/crawler/data
+src/crawler/data/*ajson*
 src/crawler/*.sh
 src/crawler/handle*
 src/crawler/*tmp*

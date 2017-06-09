@@ -103,8 +103,10 @@ router.get('/', async (req, res) => {
     // firstpage/goodthing/exprience/zk/zt
     if (/show|z(k|t)/.test(m)) {
       let pageType = 'inapp'
+      // share 或者 share=1 则pageType为share
+      // share不存在或者share = 0，则pageType为inapp
       if ('share' in req.body) {
-        if (!req.body.share) {
+        if (!req.body.share) { // req.body.share 不为空串，因为share是数字字符串
           pageType = 'share'
         } else if (req.body.share != 0) {
           pageType = 'share'
