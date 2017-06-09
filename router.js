@@ -51,9 +51,11 @@ const {
 } = renders
 const numnberReg = /^\d+$/
 async function showAndZKAndZTRouter (m, id, pageType, req, res) {
+  let debug = req.__debug__
   if (/show/.test(m)) {
     mShowRender
       .setPageType(pageType)
+      .setDebug(debug)
       .setId(id)
       .rende()
       .then(doc =>
@@ -63,6 +65,7 @@ async function showAndZKAndZTRouter (m, id, pageType, req, res) {
   } else if (/zk/.test(m)) {
     mZKRender
       .setPageType(pageType)
+      .setDebug(debug)
       .setId(id)
       .rende()
       .then(doc => writeDoc(doc, res, pageType === 'share' ? 'zkShare' : 'zk'))
@@ -70,6 +73,7 @@ async function showAndZKAndZTRouter (m, id, pageType, req, res) {
   } else if (/zt/.test(m)) {
     mZTRender
       .setPageType(pageType)
+      .setDebug(debug)
       .setId(id)
       .rende()
       .then(doc => writeDoc(doc, res, pageType === 'share' ? 'ztShare' : 'zt'))
@@ -124,15 +128,6 @@ router.get('/', async (req, res) => {
         .rende()
         .then(doc => writeDoc(doc, res, 'author'))
         .catch(e => happyEnd(e, res))
-      // if (src = decodeURIComponent(src)) {
-      //   console.log('routers.js src ', src);
-      //   mAuthorRender.setSource(src).rende().then(doc => writeDoc(doc, res, 'author')).catch(e => {
-      //     Log.exception(e)
-      //     res.end()
-      //   })
-      // } else {
-      //   pageNotFound(res)
-      // }
     } else if (/tag/i.test(m)) {
       if (tid && numnberReg.test(tid)) {
         if ('apimode' in req.body) {
@@ -212,7 +207,11 @@ router.get('/', async (req, res) => {
     } else if (/meta/i.test(m)) {
       console.log('meta接口的路由被命中：', id)
       if (id && numnberReg.test(id)) {
-        getMetas(id)
+        getMetas({
+          id,
+          debug: req.__debug__,
+          logid: req.__logid__
+        })
           .then(meta => writeJSON(meta, res, 'meta_get'))
           .catch(e => happyEnd(e, res))
         // metaService.getRawMetas(id).then(meta => writeJSON(meta, res))
@@ -275,10 +274,12 @@ router.get('/show', async (req, res) => {
     src, // ?src=
     tid // ?tid=
   } = req.body
+  const debug = req.__debug__
   if (id) {
     if (numnberReg.test(id)) {
       show
         .setType('show')
+        .setDebug(debug)
         .getData(id)
         .then(result => writeJSON(result, res, 'app_show'))
         .catch(e => happyEnd(e, res))
@@ -462,6 +463,7 @@ router.get(pcShowReg, async (req, res) => {
   console.log(`PC article 路由被激活，此文章url为${req.originalUrl} ...`)
   let match = req.originalUrl.match(pcShowReg)
   let id = match[1]
+  let debug = req.__debug__
   if (/^\d+$/.test(id)) {
     // 需要判断这篇文章是专刊还是article还是专刊
     const ctype = await metaTable.getCtypeById(id)
@@ -472,6 +474,7 @@ router.get(pcShowReg, async (req, res) => {
       if (/^1|2|4|5$/.test(ctype)) {
         pShowRender
           .setId(id)
+          .setDebug(debug)
           .rende()
           .then(doc => writeDoc(doc, res, 'article'))
           .catch(e => happyEnd(e, res))
@@ -479,6 +482,7 @@ router.get(pcShowReg, async (req, res) => {
         // 专刊
         pZKRender
           .setId(id)
+          .setDebug(debug)
           .rende()
           .then(doc => writeDoc(doc, res, 'pc_zk'))
           .catch(e => happyEnd(e, res))

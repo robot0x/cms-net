@@ -4,9 +4,11 @@
 const ejs = require('ejs')
 const fs = require('fs')
 const appConfig = require('../../config/app')
+const Base = require('../Base')
 
-class Render {
+class Render extends Base {
   constructor () {
+    super()
     this.version = appConfig.renderVersion
     // ejs 模板
     this.ejs = ejs

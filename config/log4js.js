@@ -32,7 +32,7 @@ const log4jsConfig = {
       category: 'console'
     },
     {
-      //
+      // http日志
       category: 'http',
       type: 'file',
       filename: `${theAbsolutePathDirOfLogfiles}/http/access.log`,

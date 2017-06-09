@@ -23,7 +23,8 @@ const tagService = new TagService()
 const request = require('request')
 const recommend = require('./recommend')
 const Promise = require('bluebird')
-class Show {
+const Base = require('../Base')
+class Show extends Base {
   setType (type) {
     this.type = type
     return this
@@ -37,7 +38,7 @@ class Show {
     try {
       let [content, meta, images, goods] = await Promise.all([
         contentTable.getById(id),
-        metaService.getRawMetas(id, false, true, false, false, true, false, true),
+        metaService.setDebug(this.debug).getRawMetas(id, false, true, false, false, true, false, true),
         imageTable.getByAid(id),
         recommend(id)
       ])

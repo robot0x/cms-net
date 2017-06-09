@@ -30,7 +30,6 @@ class ShowRender extends Render {
     this.id = id
     return this
   }
-
   /**
    * type:
    *  app、      app内看的页面
@@ -72,7 +71,7 @@ class ShowRender extends Render {
     if (!id) return
     try {
       let [metaObj, relwords] = await Promise.all([
-        metaService.getRenderData(id, true),
+        metaService.setDebug(this.debug).getRenderData(id, true),
         this.getRelsearchWords()
       ])
       metaObj = metaObj || {}
@@ -83,8 +82,9 @@ class ShowRender extends Render {
         images
       } = metaObj
       author = author || {}
+      images = images || []
       // console.log('images:', images.length)
-      let { title, ctype, timetopublish, price, has_buylink, buylink } = meta || {}
+      let { title, ctype, timetopublish, price, has_buylink, buylink } = meta || {title: '', price: ''}
       // let relwords = await this.getRelsearchWords()
       // 在此处进行ctype判断
       parser.markdown = content || '' // markdown is a setter like method `setMarkdown`
@@ -101,7 +101,7 @@ class ShowRender extends Render {
       })
       const swipes = images.filter(img => {
         return (img.type & 16) === 16
-      })
+      }) || []
       thumb = Utils.getFirst(thumb) || {}
       cover = Utils.getFirst(cover) || {}
       let shouldUsedSku = null

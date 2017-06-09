@@ -150,14 +150,18 @@ class Utils {
   /*
    取meta时，要给所有的where条件加上时间限制
    */
-  static genTimetopublishInterval (col = 'timetopublish', debug = global.debug) {
+  static genTimetopublishInterval (col = 'timetopublish', debug = false) {
     // console.log('Utils.genTimetopublishInterval debug:', debug)
     // 从 [20141108, 今天] 的数据，即截止到今天
     // between ... and ... 包含边界值
     // return ` (${col} BETWEEN 20141106 AND ${Number(moment()
     //     .add(1, 'days')
     //     .format('YYYYMMDD'))}) `
-    return ` (${col} BETWEEN ${startDate} AND ${Number(moment().format('YYYYMMDD'))}) `
+    let interval = ` (${col} BETWEEN ${startDate} AND ${Number(moment().format('YYYYMMDD'))}) `
+    if (debug) {
+      interval = ' 1=1 '
+    }
+    return interval
   }
 
   // 把sku的形如：http://c.diaox2.com/view/app/sku/8383.html

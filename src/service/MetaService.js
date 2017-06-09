@@ -15,9 +15,12 @@ const Log = require('../utils/Log')
 const request = require('request')
 const Promise = require('bluebird')
 const moment = require('moment')
+const Base = require('../Base')
+const startDate = require('../../config/app').startDate
 
-class MetaService {
+class MetaService extends Base {
   constructor (id) {
+    super()
     this.metaTable = new MetaTable()
     this.contentTable = new ContentTable()
     this.imageTable = new ImageTable()
@@ -28,6 +31,7 @@ class MetaService {
 
   setId (id) {
     this.id = id
+    return this
   }
   /**
    * meta接口
@@ -98,6 +102,8 @@ class MetaService {
     useImageSize = false,
     useAuthorSource = false
   ) {
+    // console.log('getRawMetas debug:', this.debug)
+    // console.log('getRawMetas logid:', this.logid)
     // 参数处理
     if (!Utils.isValidArray(ids)) {
       // 如果只传入一个id，则转化为数组，否则，参数不合法，直接返回
@@ -138,7 +144,7 @@ class MetaService {
      meta.author = au.source 
     AND
     (
-     ${Utils.genTimetopublishInterval('meta.timetopublish')}
+     ${Utils.genTimetopublishInterval('meta.timetopublish', this.debug)}
     OR 
      ctype = 9
     )
@@ -309,11 +315,10 @@ class MetaService {
 
         contentTable.getById(id)
       ])
-      console.log(meta)
       let { timetopublish } = meta
       if (
-        timetopublish < 20141108 &&
-        timetopublish > Number(moment().format('YYYYMMDD'))
+        !this.debug && (timetopublish < startDate ||
+        timetopublish > Number(moment().format('YYYYMMDD')))
       ) { return }
       // 由于author表目前的数据很少，所以写死
       // console.log('MetaService meta.author:', meta.author)

@@ -41,14 +41,11 @@ class ZKRender extends Render {
     if (!id) return
     try {
       // 取专刊本身的meta，用不着buylink
-      let { content, meta, images } = (await metaService.getRenderData(id)) || {}
+      let { content, meta, images } = (await metaService.setDebug(this.debug).getRenderData(id)) || {}
       content = content || ''
-      meta = meta || {}
+      meta = meta || {title: '', titleex: ''}
       images = images || []
       let { title, titleex } = meta
-      title = title || ''
-      titleex = titleex || ''
-      // if (!content) return
       parser.markdown = content // markdown is a setter like method `setMarkdown`
       //  对于专刊，我们要先取出所引用的所有文章id
       let data = (Utils.getZkDataByParseMarkdown(content)) || {}

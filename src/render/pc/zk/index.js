@@ -24,10 +24,10 @@ class ZKRender extends Render {
     return this
   }
   async rende () {
-    const { parser, id, metaService } = this
+    const { parser, id, metaService, debug } = this
     if (!id) return
     try {
-      let { content, meta, images } = (await metaService.getRenderData(id)) || {}
+      let { content, meta, images } = (await metaService.setDebug(debug).getRenderData(id)) || {}
       content = content || ''
       meta = meta || {title: '', titleex: ''}
       let { title, titleex } = meta

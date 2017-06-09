@@ -15,6 +15,7 @@ class ZTRender extends Render {
     this.setId(id)
     this.template = this.readTemplate(require('path').resolve(__dirname, 'zt.ejs'))
     this.parser = new Parser()
+    this.metaService = new MetaService()
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
@@ -38,10 +39,10 @@ class ZTRender extends Render {
   }
 
   async rende () {
-    const { parser, id } = this
+    const { parser, id, metaService, debug } = this
     if (!id) return
     try {
-      let { content, meta, images } = (await new MetaService().getRenderData(id)) || {}
+      let { content, meta, images } = (await metaService.setDebug(debug).getRenderData(id)) || {}
       content = content || ''
       meta = meta || {}
       images = images || []

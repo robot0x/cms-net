@@ -15,6 +15,7 @@ class TagRender extends Render {
     this.setTid(tid)
     this.template = this.readTemplate(__dirname + '/tag.ejs')
     this.parser = new Parser()
+    this.tagService = new TagService()
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
@@ -34,12 +35,12 @@ class TagRender extends Render {
   }
 
   async rende () {
-    const { parser, tid } = this
+    const { parser, tid, tagService } = this
     if (!tid) return
     try {
       //  只有前20条数据是服务端渲染出来的，后面的数据由前端js拿
       let limit = 20
-      let { metas, images, name } = (await new TagService(tid)
+      let { metas, images, name } = (await tagService
         .setLimit(limit)
         .getRenderData()) || {}
       name = name || ''

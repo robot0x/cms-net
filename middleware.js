@@ -1,6 +1,21 @@
 const Log = require('./src/utils/Log')
 
 module.exports = {
+  /**
+  * 往request对象上注入logid和__debug__
+  * __logid__ 打log时统一添加，这样就不会由于异步打的log的无序性而不好看log
+  * __debug__ 控制拿meta数据时的timetopublich范围
+  */
+  inject (req, res, next) {
+    const { url } = req
+    // 默认
+    req.__debug__ = false
+    if (/debug/i.test(url)) {
+      req.__debug__ = true
+    }
+    req.__logid__ = `${url}` + Date.now() + Math.round(Math.random() * 1000)
+    next()
+  },
   allowCors (req, res, next) {
     // 只有OPTIONS请求，才加上跨域heander，其他请求不处理
     if (req.method === 'OPTIONS') {

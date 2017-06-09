@@ -26,13 +26,15 @@ class ShowRender extends Render {
   }
 
   async rende () {
-    const { parser, id, metaService } = this
+    const { parser, id, metaService, debug } = this
     if (!id) return
     try {
-      let { content, meta, author, images } = (await metaService.getRenderData(id)) || {}
+      console.log('pc show render debug:', debug)
+      let { content, meta, author, images } = (await metaService.setDebug(debug).getRenderData(id)) || {}
       content = content || ''
       meta = meta || {}
       images = images || []
+      author = author || {}
       let { title, ctype, create_time, price } = meta
       title = title || ''
       price = price || ''
