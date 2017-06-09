@@ -8,9 +8,13 @@ module.exports = {
   */
   inject (req, res, next) {
     const { url } = req
+    const UA = req.headers['user-agent']
     // 默认
     req.__debug__ = false
     if (/debug/i.test(url)) {
+      req.__debug__ = true
+    } else if (/diaox2_(iOS|Android) +gray +Version/i.test(UA)) { // 如果是灰度版，则也是debug模式
+      // Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_2 like Mac OS X) AppleWebKit/603.2.4 (KHTML, like Gecko) Mobile/14F89 diaox2_iOS Version 3.8.2
       req.__debug__ = true
     }
     req.__logid__ = `${url}` + Date.now() + Math.round(Math.random() * 1000)
