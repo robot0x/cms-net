@@ -52,6 +52,7 @@ const {
 const numnberReg = /^\d+$/
 async function showAndZKAndZTRouter (m, id, pageType, req, res) {
   let debug = req.__debug__
+  console.log('pageType:', pageType)
   if (/show/.test(m)) {
     mShowRender
       .setPageType(pageType)
@@ -101,6 +102,14 @@ router.get('/', async (req, res) => {
   if (m && (m = m.trim().toLowerCase())) {
     // firstpage/goodthing/exprience/zk/zt
     if (/show|z(k|t)/.test(m)) {
+      let pageType = 'inapp'
+      if ('share' in req.body) {
+        if (!req.body.share) {
+          pageType = 'share'
+        } else if (req.body.share != 0) {
+          pageType = 'share'
+        }
+      }
       if (id && numnberReg.test(id)) {
         // showAndZKAndZTRouter(id, 'inapp', req, res)
         const ctype = await metaTable.getCtypeById(id)
@@ -109,7 +118,7 @@ router.get('/', async (req, res) => {
           if (m !== trueM) {
             redirect(res, `//${req.headers.host}/?m=${trueM}&id=${id}`)
           } else {
-            showAndZKAndZTRouter(m, id, 'inapp', req, res)
+            showAndZKAndZTRouter(m, id, pageType, req, res)
           }
         } else {
           console.log('pageNotFound ....')

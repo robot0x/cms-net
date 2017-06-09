@@ -204,6 +204,10 @@
   </script>
 </body>
 <script>
-  g_relsearch = ["\u7537\u58eb\u94b1\u5305", "\u7537\u751f\u94b1\u5305"];
+  <% if( relwords && relwords.length > 0 ) {%>
+		g_relsearch = [<%-relwords%>];
+	<% } else { %>
+		g_relsearch = [];
+	<% } %>
 </script>
 </html>

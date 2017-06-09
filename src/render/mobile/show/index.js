@@ -74,15 +74,14 @@ class ShowRender extends Render {
         metaService.setDebug(this.debug).getRenderData(id, true),
         this.getRelsearchWords()
       ])
-      metaObj = metaObj || {}
+      metaObj = metaObj || {author: {}, images: []}
+      relwords = relwords || []
       let {
         content,
         meta,
         author,
         images
       } = metaObj
-      author = author || {}
-      images = images || []
       // console.log('images:', images.length)
       let { title, ctype, timetopublish, price, has_buylink, buylink } = meta || {title: '', price: ''}
       // let relwords = await this.getRelsearchWords()

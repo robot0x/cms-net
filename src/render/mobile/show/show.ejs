@@ -96,7 +96,7 @@
 </body>
 <script>
 	//global;
-	<% if( relwords ) {%>
+	<% if( relwords && relwords.length > 0 ) {%>
 		g_relsearch = [<%-relwords%>];
 	<% } else { %>
 		g_relsearch = [];

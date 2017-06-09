@@ -38,11 +38,7 @@ class SkuRender extends Render {
         throw Error('调用getfullsku接口失败')
       }
       data = Utils.getFirst(data)
-      let { title, brand, sales, images, revarticles } = data || {}
-      title = title || ''
-      brand = title || brand
-      sales = sales || []
-      images = images || []
+      let { title, brand, sales, images, revarticles } = data || {title: '', brand: '', sales: [], images: [], revarticles: []}
       images = images.map((image, index) => {
         image.id = index
         return image
@@ -52,7 +48,7 @@ class SkuRender extends Render {
       })
       // sku页显示的图片
       let thumb = Utils.addAliImageSuffix((images[0] || {}).url) || ''
-      const metas = await metaService.getRawMetas(revarticles, false)
+      const metas = (await metaService.getRawMetas(revarticles, false)) || []
       return this.getDoc(this.template, {
         sid,
         title,

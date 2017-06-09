@@ -8,6 +8,7 @@ const imageHandler = require('./imageHandler')
 const Parser = require('./parser')
 const MetaService = require('../../../service/MetaService')
 const Log = require('../../../utils/Log')
+const relsearch = require('../../../api/relsearch')
 
 class ShowRender extends Render {
   constructor (id) {
@@ -24,13 +25,27 @@ class ShowRender extends Render {
     this.id = id
     return this
   }
-
+  async getRelsearchWords (id = this.id) {
+    let searchWords = await relsearch(id)
+    if (!Utils.isValidArray(searchWords)) return null
+    let words = []
+    for (let word of searchWords) {
+      words.push(`'${word}'`)
+    }
+    return words.join(',')
+  }
   async rende () {
     const { parser, id, metaService, debug } = this
     if (!id) return
     try {
       console.log('pc show render debug:', debug)
-      let { content, meta, author, images } = (await metaService.setDebug(debug).getRenderData(id)) || {}
+      let [metaObj, relwords] = await Promise.all([
+        await metaService.setDebug(debug).getRenderData(id),
+        this.getRelsearchWords()
+      ])
+      metaObj = metaObj || {}
+      relwords = relwords || []
+      let { content, meta, author, images } = metaObj
       content = content || ''
       meta = meta || {}
       images = images || []
@@ -72,6 +87,7 @@ class ShowRender extends Render {
         body,
         title,
         author,
+        relwords,
         type: Utils.ctypeToType(ctype),
         version: this.version,
         swipes,
