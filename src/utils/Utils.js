@@ -23,7 +23,7 @@ class Utils {
    */
   static anchorHandler (text) {
     if (!text) return text
-    const anchorReg = /^\${3}(.+?) .+/
+    const anchorReg = /^\${3}(.+) /
     const match = text.match(anchorReg)
     const ret = Object.create(null)
     ret.isAnchor = false
@@ -515,12 +515,13 @@ class Utils {
    *      'a锚点 a呵呵 这是一段儿文本' 输出 {isAnchor: true, anchor:'锚点', text: 'a呵呵 这是一段儿文本'}
    *      '这是一段儿文本' 输出 {isAnchor: false, anchor:'', text: '这是一段儿文本'}
    */
-// console.log(Utils.anchorHandler('$$$anchor 这是一段儿文本'))
-// console.log(Utils.anchorHandler('AKG 这是一段儿文本'))
-// console.log(Utils.anchorHandler('$$$锚点 这是一段儿文本'))
-// console.log(Utils.anchorHandler('$$$锚点 a呵呵 这是一段儿文本'))
-// console.log(Utils.anchorHandler('这是一段儿文本'))
-// console.log(Utils.anchorHandler('AKG爱科技头戴式监听耳机K812，<span style="color:#B22222;">5989元</span>（参考价：8999元）'))
+console.log(Utils.anchorHandler('$$$youdiaozhixuan 有调之选'))
+console.log(Utils.anchorHandler('$$$anchor 这是一段儿文本'))
+console.log(Utils.anchorHandler('AKG 这是一段儿文本'))
+console.log(Utils.anchorHandler('$$$锚点 这是一段儿文本'))
+console.log(Utils.anchorHandler('$$$锚点 a呵呵 这是一段儿文本'))
+console.log(Utils.anchorHandler('这是一段儿文本'))
+console.log(Utils.anchorHandler('AKG爱科技头戴式监听耳机K812，<span style="color:#B22222;">5989元</span>（参考价：8999元）'))
 // console.log(Utils.genStarAndEndDateForTimetopublish())
 // const lcids = [4294967297, 41201621280121, 39423504819163, 39423504819163, '', NaN, 41205916247418, 3563]
 // const lcid = 4647154615354
