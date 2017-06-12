@@ -318,7 +318,7 @@ class MetaService extends Base {
       let { timetopublish } = meta
       if (
         !this.debug && (timetopublish < startDate ||
-        timetopublish > Number(moment().format('YYYYMMDD')))
+        timetopublish > Utils.genStarAndEndDateForTimetopublish().endDate)
       ) { return }
       // 由于author表目前的数据很少，所以写死
       // console.log('MetaService meta.author:', meta.author)

@@ -104,6 +104,7 @@ class DB {
    */
   static exec (sql, data) {
     return new Promise((resolve, reject) => {
+      console.log(sql)
       DB.pool.getConnection((err, connection) => {
         //  DB.poolCluster.getConnection(CMS, DIAODIAO, function(err, connection) {
         if (err) {

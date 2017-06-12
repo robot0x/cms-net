@@ -91,7 +91,7 @@ class Show extends Base {
     try {
       let [markdown, meta] = await Promise.all([
         contentTable.getById(id),
-        metaService.getRawMetas(id)
+        metaService.setDebug(this.debug).getRawMetas(id)
       ])
       if (!markdown) return null
       let data = Utils.getZkDataByParseMarkdown(markdown)
@@ -148,6 +148,7 @@ class Show extends Base {
     try {
       let [markdown, meta] = await Promise.all([
         contentTable.getById(id),
+        // 专题没有timetopublish，所以不需要setDebug
         metaService.getRawMetas(id)
       ])
       if (!markdown) return null

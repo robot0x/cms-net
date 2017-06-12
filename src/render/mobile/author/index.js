@@ -16,6 +16,7 @@ class AuthorRender extends Render {
     this.setSource(src)
     this.template = this.readTemplate(__dirname + '/author.ejs')
     this.parser = new Parser()
+    this.authorService = new AuthorService()
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
@@ -26,12 +27,10 @@ class AuthorRender extends Render {
   }
 
   async rende () {
-    const { parser, source } = this
+    const { parser, source, authorService } = this
     if (!source) return
     try {
-      let { metas, author } = await new AuthorService(
-        this.source
-      ).getRenderData()
+      let { metas, author } = await authorService.getRenderData(source)
       metas = metas || []
       let allarticles = metas.map(meta => Utils.toLongId(meta.nid))
       let infos = Object.create(null)

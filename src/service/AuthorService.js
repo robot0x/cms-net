@@ -24,7 +24,14 @@ class AuthorService {
   }
 
   // 渲染数据接口
-  async getRenderData (source = this.source) {
+  /**
+   * @param {any} [source=this.source] 
+   * @param {boolean} [useTimetopublishInterval=true] 
+   * @returns
+   * @memberof AuthorService
+   * 如果一篇文章的timetopublish不再允许的范围内，渲染器是可以渲染的，但是不要出现在作者页上
+   */
+  async getRenderData (source = this.source, useTimetopublishInterval = true) {
     const { authorTable, metaTable, metaService } = this
     try {
       let [author, aids] = await Promise.all([authorTable.getBySource(source), metaTable.getAidsBySource(source)])
@@ -34,6 +41,11 @@ class AuthorService {
         metas = [metas]
       }
       if (metas) {
+        // timetopublish不再规定范围内，不予显示。详见middleware.js关于__debug__的说明。
+        let {startDate, endDate} = Utils.genStarAndEndDateForTimetopublish()
+        metas = metas.filter(meta => {
+          return meta.timetopublish >= startDate && meta.timetopublish <= endDate
+        })
         metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
       }
       author.pic_uri = Utils.addUrlPrefix(author.pic_uri)

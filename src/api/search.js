@@ -6,6 +6,11 @@ const metaService = new MetaService()
 const MetaTable = require('../db/MetaTable')
 const metaTable = new MetaTable()
 const Log = require('../utils/Log')
+/**
+ * TR和TS接口，因为每条数据多并且还需要查询buylink，
+ * 若一次性查询的数据过多，可能会引起超时，这个要注意
+ * @class Search
+ */
 
 class Search {
   async doQuery (cond) {

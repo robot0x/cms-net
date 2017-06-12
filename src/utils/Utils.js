@@ -3,6 +3,12 @@ const appConfig = require('../../config/app')
 const moment = require('moment')
 const startDate = require('../../config/app').startDate
 class Utils {
+  static genStarAndEndDateForTimetopublish () {
+    return {
+      startDate,
+      endDate: Number(moment().format('YYYYMMDD'))
+    }
+  }
   /**
    * @static
    * @param {string} text
@@ -92,28 +98,33 @@ class Utils {
     }
    */
   static getZkDataByParseMarkdown (markdown) {
-    const zkdescReg = /^zkdesc\s+/
-    const zkdescReg2 = /^zkdesc[\s\S]+?\s+/ig
-    const allCardReg = /```zkarticle[\s\S]+?```/ig
-    const idReg = /id[:：]\s*(\d+)\s+/
-    const descReg = /desc[:：]\s*(.+)\s*/
-    const zkdesc = Utils.getFirst(markdown.match(zkdescReg2)).replace(zkdescReg, '').trim()
-    let ret = Object.create(null)
-    ret.zkdesc = zkdesc
-    ret.article = Object.create(null)
-    // 使用一数组，单独防止cid的顺序，否则，cid作为key的话，可能跟编辑的书写顺序是不一致的
-    ret.ids = []
-    const allCardMarkdown = markdown.match(allCardReg)
-    for (let cardMarkdown of allCardMarkdown) {
-      let id = cardMarkdown.match(idReg)
-      let desc = cardMarkdown.match(descReg) || ['', '']
-      if (Utils.isValidArray(id)) {
-        id = id[1]
-        ret.article[id] = desc[1]
-        ret.ids.push(Number(id))
+    try {
+      const zkdescReg = /^zkdesc\s+/
+      const zkdescReg2 = /^zkdesc[\s\S]+?\s+/ig
+      const allCardReg = /```zkarticle[\s\S]+?```/ig
+      const idReg = /id[:：]\s*(\d+)\s+/
+      const descReg = /desc[:：]\s*(.+)\s*/
+      const zkdesc = Utils.getFirst(markdown.match(zkdescReg2)).replace(zkdescReg, '').trim()
+      let ret = Object.create(null)
+      ret.zkdesc = zkdesc
+      ret.article = Object.create(null)
+      // 使用一数组，单独防止cid的顺序，否则，cid作为key的话，可能跟编辑的书写顺序是不一致的
+      ret.ids = []
+      const allCardMarkdown = markdown.match(allCardReg)
+      for (let cardMarkdown of allCardMarkdown) {
+        let id = cardMarkdown.match(idReg)
+        let desc = cardMarkdown.match(descReg) || ['', '']
+        if (Utils.isValidArray(id)) {
+          id = id[1]
+          ret.article[id] = desc[1]
+          ret.ids.push(Number(id))
+        }
       }
+      return ret
+    } catch (error) {
+      console.log(error)
+      return null
     }
-    return ret
   }
   // static getCidByMarkdown (markdown) {
   //   const idReg = /id[:：]\s*(\d+)\s+/
@@ -157,7 +168,8 @@ class Utils {
     // return ` (${col} BETWEEN 20141106 AND ${Number(moment()
     //     .add(1, 'days')
     //     .format('YYYYMMDD'))}) `
-    let interval = ` (${col} BETWEEN ${startDate} AND ${Number(moment().format('YYYYMMDD'))}) `
+    let {startDate, endDate} = Utils.genStarAndEndDateForTimetopublish()
+    let interval = ` (${col} BETWEEN ${startDate} AND ${endDate}) `
     if (debug) {
       interval = ' 1=1 '
     }
@@ -509,7 +521,7 @@ class Utils {
 // console.log(Utils.anchorHandler('$$$锚点 a呵呵 这是一段儿文本'))
 // console.log(Utils.anchorHandler('这是一段儿文本'))
 // console.log(Utils.anchorHandler('AKG爱科技头戴式监听耳机K812，<span style="color:#B22222;">5989元</span>（参考价：8999元）'))
-
+// console.log(Utils.genStarAndEndDateForTimetopublish())
 // const lcids = [4294967297, 41201621280121, 39423504819163, 39423504819163, '', NaN, 41205916247418, 3563]
 // const lcid = 4647154615354
 // const scids = [9686, 9685, 9684, 2112, 1, Number, 41201621280121]

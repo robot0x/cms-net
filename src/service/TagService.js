@@ -68,6 +68,7 @@ class TagService {
       })
       return tree
     } catch (e) {
+      console.log(e)
       Log.exception(e)
       return null
     }
@@ -83,9 +84,9 @@ class TagService {
     // const { tagNameTable, tagIndexTable, metaTable } = this
     // tagNmaeTable tag的元数据表
     // tagIndexTable 文章关联的tag表
-    const { tagNameTable, tagIndexTable, limit } = this
+    const { tagNameTable, tagIndexTable, limit, tid } = this
     try {
-      let item = await tagNameTable.getByTid(this.tid)
+      let item = (await tagNameTable.getByTid(tid)) || {}
       let { level, name } = item
       let tags = null
       // console.log('[TagService.getRenderData]:', item)
@@ -102,6 +103,7 @@ class TagService {
       // 拿到所有aids，通过aids拿出所有meta，这个需要写自己写sql
       const aids = tags.map(tag => tag.aid)
       let metaSql = ''
+      // timetopublish不再规定范围内，不予显示。详见middleware.js关于__debug__的说明。
       // apimode接口使用
       if (useTimetopublish) {
         metaSql = `SELECT CONCAT('', id) AS aid, CONCAT('', timetopublish) AS pubtime FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
@@ -113,7 +115,6 @@ class TagService {
           metaSql = `SELECT id, CONCAT(title,titleex) AS title FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
         }
       }
-      Log.business(`[TagService.getRenderData] metaSql: ${metaSql}`)
       // 此数组已经有顺序，顺序是按照timetopublish从大到小排列
       const metas = await DB.exec(metaSql)
       let sliceAids = null
@@ -148,6 +149,7 @@ class TagService {
       // console.log(aids.length)
       // return  { metas:  await metaTable.getMetas(aids)}
     } catch (e) {
+      console.log(e)
       Log.exception(e)
       return null
     }

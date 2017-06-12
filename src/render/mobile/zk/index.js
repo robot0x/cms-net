@@ -42,6 +42,7 @@ class ZKRender extends Render {
     try {
       // 取专刊本身的meta，用不着buylink
       let { content, meta, images } = (await metaService.setDebug(this.debug).getRenderData(id)) || {}
+      console.log('content:', content)
       content = content || ''
       meta = meta || {title: '', titleex: ''}
       images = images || []
