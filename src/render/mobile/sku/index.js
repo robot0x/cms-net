@@ -40,7 +40,7 @@ class SkuRender extends Render {
       data = Utils.getFirst(data)
       let { title, brand, sales, images, revarticles } = data || {title: '', brand: '', sales: [], images: [], revarticles: []}
       images = images.map((image, index) => {
-        image.id = index
+        image.id = String(index)
         return image
         // console.log(index)
         // 如果是阿里云图，则加上后缀，否则不用处理
