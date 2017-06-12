@@ -37,7 +37,7 @@ async function genpub (postData) {
       Log.business('[API genpub] 输入参数为：', postData)
       let { iddict, version, tool, tool2, carousel } = postData
       let cids = Object.keys(iddict)
-      let metas = await metaService.getRawMetas(cids)
+      let metas = await metaService.setDebug(true).getRawMetas(cids)
       const ret = {
         seq: iddict,
         version,
