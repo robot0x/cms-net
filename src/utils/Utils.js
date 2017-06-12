@@ -19,10 +19,17 @@ class Utils {
    *      "$$$锚点 这是一段儿文本" 输出 {isAnchor: true, anchor:'锚点', text: '这是一段儿文本'}
    *      "$$$锚点 a呵呵 这是一段儿文本" 输出 {isAnchor: true, anchor:'锚点', text: 'a呵呵 这是一段儿文本'}
    *      "这是一段儿文本" 输出 {isAnchor: false, anchor:'', text: '这是一段儿文本'}
-   * anchor改为只支持数字和字母的，且必须为小写的a开头
+   *      "这是一段儿文本" 输出 {isAnchor: false, anchor:'', text: '这是一段儿文本'}
+   *      "$$$youdiao <img src="http://content.image.alimmdn.com/cms/sites/default/files/20170517/firstpage/guanyupingce.jpg" alt="">"
+   *      输出 {isAnchor: true, anchor:'youdiao', text: '<img src="http://content.image.alimmdn.com/cms/sites/default/files/20170517/firstpage/guanyupingce.jpg" alt="">'}
    */
   static anchorHandler (text) {
     if (!text) return text
+    /**
+     * 必须是非贪婪的，只匹配到第一个空格即可，不然若后面还有空格，就会出现错误
+     * 例如 $$$youdiao <img src="http://content.image.alimmdn.com/cms/sites/default/files/20170517/firstpage/guanyupingce.jpg" alt="">
+     * 若是贪婪的，则会一直匹配到 alt="" 前面的空格
+     */
     const anchorReg = /^\${3}(.+?) /
     const match = text.match(anchorReg)
     const ret = Object.create(null)
