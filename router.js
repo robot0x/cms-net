@@ -118,7 +118,8 @@ router.get('/', async (req, res) => {
         const trueM = Utils.ctypeToM(ctype)
         if (trueM) {
           if (m !== trueM) {
-            redirect(res, `//${req.headers.host}/?m=${trueM}&id=${id}`)
+            // redirect(res, `//${req.headers.host}/?m=${trueM}&id=${id}`)
+            redirect(res, `//c.diaox2.com/view/app/?m=${trueM}&id=${id}`)
           } else {
             showAndZKAndZTRouter(m, id, pageType, req, res)
           }
