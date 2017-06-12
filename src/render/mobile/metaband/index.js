@@ -14,7 +14,7 @@ class MetabandRender extends Render {
   }
   async rende (id = this.id) {
     try {
-      const meta = (await metaService.getRawMetas(id, false, true)) || {}
+      const meta = (await metaService.setDebug(true).getRawMetas(id, false, true)) || {}
       const { nid, thumb_image_url, title } = meta
       const url = `${this.prefix}/view/app/?m=show&id=${nid}`
       return `
