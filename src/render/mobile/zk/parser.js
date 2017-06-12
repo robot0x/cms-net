@@ -31,12 +31,13 @@ class ZKParser extends Parser {
       const zkdescReg = /^zkdesc\s+/i
       const { title, cover } = this
       let ret = ''
+      // title我们约定，如果里面有2个空格，则替换成换行。例如 "给你的小长假整齐行李！  旅行收纳大合集" => ""给你的小长假整齐行李！<br>旅行收纳大合集"
       if (zkdescReg.test(content)) {
         ret = `<div class="bottomshadow card" id="head">
                   <div>
                       <div class="mask" style="width: 720px; height: 468px;"></div>
                       <img class="direct" src="//${cover.url}" data-w="640" data-h="416" style="width: 720px; height: 468px;">
-                      <div id="headtitle"><p>${title}</p></div>
+                      <div id="headtitle"><p>${title.replace(/ {2}/, '<br>')}</p></div>
                   </div>
                   <p class="headdesc">${content.replace(zkdescReg, '')}</p>
               </div>
