@@ -110,7 +110,7 @@ class Parser {
       }
       children = Array.from(children)
       // 不递归的元素
-      let notRecursion = ['sku', 'lift', 'blockquote', 'img']
+      let notRecursion = ['sku', 'lift', 'blockquote', 'img', 'iframe']
       for (let child of children) {
         let item = {}
         let { type, data, attribs } = child
@@ -227,6 +227,9 @@ class Parser {
             item.url = imgAttr.src
             item.width = imgAttr.width || ''
             item.height = imgAttr.height || ''
+          } else if (name === 'iframe') {
+            item.type = child.name
+            item.value = child.attribs.src
           }
           // else if (doms.length === 1 && doms[0].name === 'img') {
           //   // 原来假设的是一个p只包含一个img，从线上效果来看，是可以包含多个的
