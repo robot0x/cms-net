@@ -121,6 +121,10 @@ class ShowRender extends Render {
       if (ctype === 1 || ctype === 5) {
         price = ''
       }
+      // 活动不出时间，也无价格
+      if (ctype === 4) {
+        timetopublish = ''
+      }
       return this.getDoc(this.template, {
         id,
         body,
