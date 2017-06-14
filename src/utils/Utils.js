@@ -174,6 +174,7 @@ class Utils {
    * 这个图片，原始大小为1.8M，加上后缀，大小为471KB，极大地减小了尺寸
    */
   static addImageOfShowPageAliImageSuffix (url, suffix = '@768w_1l') {
+    // 如果是gif，就不用加后缀，否则gif将会变成jpg
     if (
        !/gif/i.test(Utils.getFileExtension(url)) && Utils.isAliImage(url) && url.indexOf(suffix) === -1
     ) {

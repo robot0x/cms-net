@@ -26,13 +26,13 @@ module.exports = (html, images) => {
     let image = findByUrl(Utils.removeProtocolHead(img.attribs.src), images)
     if (image) {
       let { attribs } = img
+      let big = '//' + image.url
       img.attribs.alt = image.alt
       img.attribs.width = attribs['data-w'] = image.width
       img.attribs.height = attribs['data-h'] = image.height
       img.attribs.src = '//' + placeholder
-      img.attribs['data-big'] = '//' + image.url
-      img.attribs['data-src'] =
-        attribs['data-big'] + (image.extension_name == 'gif' ? '@768w_1l' : '')
+      img.attribs['data-big'] = big
+      img.attribs['data-src'] = Utils.addImageOfShowPageAliImageSuffix(big)
       $(img).addClass('lazy')
     }
   }

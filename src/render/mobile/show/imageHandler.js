@@ -35,14 +35,15 @@ module.exports = (html, images, usePlaceholder = true) => {
       if ($(img).hasClass('articleimg')) {
         continue
       }
+      let big = '//' + image.url
       img.attribs.alt = image.alt
       img.attribs.width = attribs['data-w'] = image.width
       img.attribs.height = attribs['data-h'] = image.height
       if (usePlaceholder) {
         img.attribs.src = '//' + placeholder
       }
-      img.attribs['data-big'] = '//' + image.url
-      img.attribs['data-src'] = Utils.addImageOfShowPageAliImageSuffix(attribs['data-big'])
+      img.attribs['data-big'] = big
+      img.attribs['data-src'] = Utils.addImageOfShowPageAliImageSuffix(big)
       $(img).addClass('lazy')
     }
   }
