@@ -42,7 +42,7 @@ module.exports = (html, images, usePlaceholder = true) => {
         img.attribs.src = '//' + placeholder
       }
       img.attribs['data-big'] = '//' + image.url
-      img.attribs['data-src'] = Utils.addImageOfShowPageAliImageSuffix(attribs['data-big'], void 0, image.extension_name)
+      img.attribs['data-src'] = Utils.addImageOfShowPageAliImageSuffix(attribs['data-big'])
       $(img).addClass('lazy')
     }
   }
