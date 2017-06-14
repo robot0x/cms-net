@@ -147,9 +147,12 @@ class Utils {
   //   }
   //   return ret
   // }
+  static isAliImage (url = '') {
+    return /content\.image\.alimmdn\.com/i.test(url)
+  }
   static removeAliImageSuffix (url, suffix = '@200w_200h_1e%7C200x200-5rc') {
     if (
-      /content\.image\.alimmdn\.com/i.test(url) && url.indexOf(suffix) !== -1
+       Utils.isAliImage(url) && url.indexOf(suffix) !== -1
     ) {
       return url.substring(0, url.lastIndexOf('@'))
     }
@@ -158,13 +161,26 @@ class Utils {
   // 如果是阿里云图，则加上后缀，否则不用处理
   static addAliImageSuffix (url, suffix = '@200w_200h_1e%7C200x200-5rc') {
     if (
-      /content\.image\.alimmdn\.com/i.test(url) && url.indexOf(suffix) === -1
+       Utils.isAliImage(url) && url.indexOf(suffix) === -1
     ) {
-      url += '@200w_200h_1e%7C200x200-5rc'
+      url += suffix
     }
     return url
   }
-
+  /**
+   * 正文页的图片需要加上@768w_1l后缀，这样在图片质量没有损失的情况下，
+   * size平均会减少50%，节省用户流量、省电、减少发热、提高页面加载速度
+   * 例如：http://content.image.alimmdn.com/cms/sites/default/files/20170519/firstpage/xuanpin.jpeg
+   * 这个图片，原始大小为1.8M，加上后缀，大小为471KB，极大地减小了尺寸
+   */
+  static addImageOfShowPageAliImageSuffix (url, suffix = '@768w_1l', extensionName = '') {
+    if (
+       !/gif/i.test(extensionName) && Utils.isAliImage(url) && url.indexOf(suffix) === -1
+    ) {
+      url += suffix
+    }
+    return url
+  }
   /*
    取meta时，要给所有的where条件加上时间限制
    */
