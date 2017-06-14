@@ -173,9 +173,9 @@ class Utils {
    * 例如：http://content.image.alimmdn.com/cms/sites/default/files/20170519/firstpage/xuanpin.jpeg
    * 这个图片，原始大小为1.8M，加上后缀，大小为471KB，极大地减小了尺寸
    */
-  static addImageOfShowPageAliImageSuffix (url, suffix = '@768w_1l', extensionName = '') {
+  static addImageOfShowPageAliImageSuffix (url, suffix = '@768w_1l') {
     if (
-       !/gif/i.test(extensionName) && Utils.isAliImage(url) && url.indexOf(suffix) === -1
+       !/gif/i.test(Utils.getFileExtension(url)) && Utils.isAliImage(url) && url.indexOf(suffix) === -1
     ) {
       url += suffix
     }
@@ -566,5 +566,5 @@ class Utils {
 // console.log(Utils.convertSkuUrl('http://c.diaox2.com/view/app/sku/8383.html', 7080))
 // console.log(Utils.convertSkuUrl('http://c.diaox2.com/view/app/?m=buy&aid=1598', 7080))
 // console.log(Utils.convertSkuUrl('http://c.diaox2.com/view/app/sku/1047/259.html', 7080))
-
+console.log(Utils.addImageOfShowPageAliImageSuffix('content.image.alimmdn.com/cms/sites/default/files/20170612/firstpage/touq.gif', void 0, 'gif'))
 module.exports = Utils
