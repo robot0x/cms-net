@@ -567,5 +567,5 @@ class Utils {
 // console.log(Utils.convertSkuUrl('http://c.diaox2.com/view/app/sku/8383.html', 7080))
 // console.log(Utils.convertSkuUrl('http://c.diaox2.com/view/app/?m=buy&aid=1598', 7080))
 // console.log(Utils.convertSkuUrl('http://c.diaox2.com/view/app/sku/1047/259.html', 7080))
-console.log(Utils.addImageOfShowPageAliImageSuffix('content.image.alimmdn.com/cms/sites/default/files/20170612/firstpage/touq.gif', void 0, 'gif'))
+// console.log(Utils.addImageOfShowPageAliImageSuffix('content.image.alimmdn.com/cms/sites/default/files/20170612/firstpage/touq.gif', void 0, 'gif'))
 module.exports = Utils
