@@ -277,6 +277,12 @@ class Parser {
         } else {
           md += `~~${this.getShowMarkdown($child, false)}~~`
         }
+      } else if (name === 's') { // 我们很多文章用s作为删除线标签，所以有必要改下
+        if (text !== null) {
+          md += `~~${innerText}~~`
+        } else {
+          md += `~~${this.getShowMarkdown($child, false)}~~`
+        }
       } else if (name === 'u') {
         if (text !== null) {
           md += `<u>${innerText}</u>`
