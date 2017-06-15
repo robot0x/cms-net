@@ -259,25 +259,19 @@ class Parser {
             md += `${blockquotePrefix}${inBlockquoto ? '  ' : ''}${index}. ${this.getShowMarkdown($child, false, 'li')}\n`
           }
         }
-      } else if (name === 'strong') {
+      } else if (name === 'strong' || name === 'b') {
         if (text !== null) {
           md += `**${innerText}**`
         } else {
           md += `**${this.getShowMarkdown($child, false)}**`
         }
-      } else if (name === 'em') {
+      } else if (name === 'em' || name === 'i') {
         if (text !== null) {
           md += `*${innerText}*`
         } else {
           md += `*${this.getShowMarkdown($child, false)}*`
         }
-      } else if (name === 'del') {
-        if (text !== null) {
-          md += `~~${innerText}~~`
-        } else {
-          md += `~~${this.getShowMarkdown($child, false)}~~`
-        }
-      } else if (name === 's') { // 我们很多文章用s作为删除线标签，所以有必要改下
+      } else if (name === 'del' || name === 's') { // 我们很多文章用s作为删除线标签，所以有必要改下
         if (text !== null) {
           md += `~~${innerText}~~`
         } else {
