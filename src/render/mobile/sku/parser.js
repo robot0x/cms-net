@@ -26,23 +26,24 @@ class SkuParser {
   getHTML (sales = this.sales) {
     let html = ''
     for (let sale of sales) {
-      let { mart, price, intro, link_m_cps } = sale
+      let { mart, price, intro, link_m_cps, link_pc_cps, link_m_raw, link_pc_raw } = sale
+      let link = link_m_cps || link_pc_cps || link_m_raw || link_pc_raw || ''
       let icon = 'default.png'
-      if (/tmall|天猫/.test(mart) || link_m_cps.indexOf('tmall.com') !== -1) {
+      if (/tmall|天猫/.test(mart) || link.indexOf('tmall.com') !== -1) {
         icon = 'tmall.png'
-      } else if (link_m_cps.indexOf('taobao.com') !== -1) {
+      } else if (link.indexOf('taobao.com') !== -1) {
         icon = 'tb.png'
-      } else if (link_m_cps.indexOf('jd.com') !== -1) {
+      } else if (link.indexOf('jd.com') !== -1) {
         icon = 'jd.png'
-      } else if (link_m_cps.indexOf('amazon.cn') !== -1) {
+      } else if (link.indexOf('amazon.cn') !== -1) {
         icon = 'amazoncn.png'
-      } else if (link_m_cps.indexOf('amazon.jp') !== -1) {
+      } else if (link.indexOf('amazon.jp') !== -1) {
         icon = 'amazonjp.png'
-      } else if (link_m_cps.indexOf('shopbop.com') !== -1) {
+      } else if (link.indexOf('shopbop.com') !== -1) {
         icon = 'shopbop.png'
-      } else if (link_m_cps.indexOf('rakuten.com') !== -1) {
+      } else if (link.indexOf('rakuten.com') !== -1) {
         icon = 'rakuten.png'
-      } else if (link_m_cps.indexOf('amazon.') !== -1) {
+      } else if (link.indexOf('amazon.') !== -1) {
         icon = 'amazon.png'
       }
       html += `
@@ -78,7 +79,7 @@ class SkuParser {
                     </tbody>
                   </table>
                 </td>
-                <td class="allri" data-href="${link_m_cps}">
+                <td class="allri" data-href="${link}">
                   <div>
                     <div></div><span>购买</span><img src="//c.diaox2.com/cms/diaodiao/assets/buywhitegt.png">
                   </div>
