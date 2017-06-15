@@ -162,7 +162,8 @@ class Parser {
             // 9833#jieguo
             // #jieguo
             if (id === 'pcollection') {
-              item.url = 'pcollection'
+              // item.url = 'pcollection'
+              item.url = 'c.diaox2.com/view/app/?m=pcollection'
             } else if (/^(\d+)?#.+$/.test(href)) {
               item.url = href.substring(href.lastIndexOf('#'))
               item.scheme = 'anchor'

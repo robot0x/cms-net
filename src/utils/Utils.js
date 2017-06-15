@@ -3,6 +3,20 @@ const appConfig = require('../../config/app')
 const moment = require('moment')
 const startDate = require('../../config/app').startDate
 class Utils {
+  /**
+   * 传入形如：
+   *  随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a href=/view/app/?m=show&id=2127&ch=experience>这里</a>
+   * 返回：
+   * {
+   *  text: '随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<<这里>>',
+   *  href: '/view/app/?m=show&id=2127&ch=experience'
+   * }
+   * @static
+   * @memberof Utils
+   */
+  static handleATag () {
+    const aTagReg = /<a\s+href=([^\s]+?)>(.+?)<\/a>/
+  }
   static genStarAndEndDateForTimetopublish () {
     return {
       startDate,

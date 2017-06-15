@@ -200,7 +200,8 @@ class Show extends Base {
     ])
     // const titles = await metaTable.getTitles(id)
     coverex = Utils.getFirst(coverex)
-    ret.url = `https://c.diaox2.com/view/app/?m=${trueM}&id=${id}`
+    // ret.url = `https://c.diaox2.com/view/app/?m=${trueM}&id=${id}`
+    ret.url = `https://c.diaox2.com/share/${Utils.toLongId(id)}.html`
     ret.image = coverex
     return Object.assign(ret, titles)
   }
@@ -340,6 +341,7 @@ class Show extends Base {
       ele.tag = type
       ele.type = 'link'
       ele.channel = sale.mart
+      // 随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a href=/view/app/?m=show&id=2127&ch=experience>这里</a>
       ele.des = sale.intro
       ele.price = sale.price
       ele.buy_link =
