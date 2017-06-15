@@ -7,7 +7,7 @@ const config = require('./package').config
 const app = express()
 // 往req对象上注入 __logid__ 和 __debug__
 app.use(middleware.inject)
-// 设置20秒的超时时间，防止express执行一个长时间的认为不返回，hang住node主进程
+// 设置20秒的超时时间，防止express执行一个长时间的任务不返回，hang住node主进程
 app.use(timeout(20000))
 // http日志中间件
 app.use(middleware.log())
