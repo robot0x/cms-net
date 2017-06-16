@@ -308,7 +308,7 @@ router.get('/show', async (req, res) => {
       show
         // .setType('show')
         // .setDebug(debug)
-        .getData(id, type, debug)
+        .getData(id, 'show', debug)
         .then(result => writeJSON(result, res, 'app_show'))
         .catch(e => happyEnd(e, res))
     } else if (/pcollection/i.test(id)) {
