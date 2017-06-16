@@ -14,8 +14,41 @@ class Utils {
    * @static
    * @memberof Utils
    */
-  static handleATag () {
-    const aTagReg = /<a\s+href=([^\s]+?)>(.+?)<\/a>/
+  static handleATag (desc) {
+    if (!desc || typeof desc !== 'string' || !desc.trim()) return desc
+    /**
+     * 有问题的正则 /<a.*href=(?:['"])?([^\s]+)(?:['"])?.*>(.+?)<\/a>/i
+     * 输入为 日本转运攻略见<a href="/view/app/?m=show&id=2127&ch=experience">这里</a>
+     * 输出为：[
+     * "<a href="/view/app/?m=show&id=2127&ch=experience">这里</a>", 
+     * "/view/app/?m=show&id=2127&ch=experience"", 
+     * "这里", 
+     * index: 7, 
+     * input: "日本转运攻略见<a href="/view/app/?m=show&id=2127&ch=experience">这里</a>"
+     * ]
+     * match[1] 后面有两个双引号
+     */
+    const aTagReg = /<a.*href=(?:['"])?([^\s'"]+)(?:['"])?.*>(.+?)<\/a>/i
+    let match = desc.match(aTagReg)
+    let ret = Object.create(null)
+    let text = desc
+    let href = ''
+    if (match) {
+      text = desc.replace(aTagReg, '<<$2>>')
+      href = match[1] || ''
+      let norm = Utils.normalize(href)
+      if (href && href === norm) {
+        ret.spec = 'other'
+      } else {
+        ret.spec = 'diaodiao'
+        if (/^\/view\/app\//.test(href)) {
+          href = 'https://c.diaox2.com' + href
+        }
+      }
+    }
+    ret.text = text
+    ret.href = href
+    return ret
   }
   static genStarAndEndDateForTimetopublish () {
     return {
@@ -582,4 +615,17 @@ class Utils {
 // console.log(Utils.convertSkuUrl('http://c.diaox2.com/view/app/?m=buy&aid=1598', 7080))
 // console.log(Utils.convertSkuUrl('http://c.diaox2.com/view/app/sku/1047/259.html', 7080))
 // console.log(Utils.addImageOfShowPageAliImageSuffix('content.image.alimmdn.com/cms/sites/default/files/20170612/firstpage/touq.gif', void 0, 'gif'))
+
+// console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a href=/view/app/?m=show&id=2127&ch=experience>这里</a>'))
+// console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a href=\'/view/app/?m=show&id=2127&ch=experience\'>这里</a>'))
+console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a href="/view/app/?m=show&id=2127&ch=experience">这里</a>'))
+console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a class=a href="/view/app/?m=show&id=2127&ch=experience">这里</a>'))
+console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience">这里</a>'))
+console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience" style="color:#e60012;">这里</a>'))
+console.log(Utils.handleATag('运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience" style="color:#e60012;">这里</a>呀'))
+console.log(Utils.handleATag('运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience" style="color:#e60012;">这里</a>呀 >2'))
+console.log(Utils.handleATag('运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience" style="color:#e60012;"><span>呵呵<span></a>呀 >2'))
+console.log(Utils.handleATag('运攻略见<a class="a" href="http://baidu.com" style="color:#e60012;"><span>呵呵<span></a>呀 >2'))
+console.log(Utils.handleATag('天王盖地虎'))
+
 module.exports = Utils
