@@ -618,14 +618,14 @@ class Utils {
 
 // console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a href=/view/app/?m=show&id=2127&ch=experience>这里</a>'))
 // console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a href=\'/view/app/?m=show&id=2127&ch=experience\'>这里</a>'))
-console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a href="/view/app/?m=show&id=2127&ch=experience">这里</a>'))
-console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a class=a href="/view/app/?m=show&id=2127&ch=experience">这里</a>'))
-console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience">这里</a>'))
-console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience" style="color:#e60012;">这里</a>'))
-console.log(Utils.handleATag('运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience" style="color:#e60012;">这里</a>呀'))
-console.log(Utils.handleATag('运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience" style="color:#e60012;">这里</a>呀 >2'))
-console.log(Utils.handleATag('运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience" style="color:#e60012;"><span>呵呵<span></a>呀 >2'))
-console.log(Utils.handleATag('运攻略见<a class="a" href="http://baidu.com" style="color:#e60012;"><span>呵呵<span></a>呀 >2'))
-console.log(Utils.handleATag('天王盖地虎'))
+// console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a href="/view/app/?m=show&id=2127&ch=experience">这里</a>'))
+// console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a class=a href="/view/app/?m=show&id=2127&ch=experience">这里</a>'))
+// console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience">这里</a>'))
+// console.log(Utils.handleATag('随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience" style="color:#e60012;">这里</a>'))
+// console.log(Utils.handleATag('运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience" style="color:#e60012;">这里</a>呀'))
+// console.log(Utils.handleATag('运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience" style="color:#e60012;">这里</a>呀 >2'))
+// console.log(Utils.handleATag('运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience" style="color:#e60012;"><span>呵呵<span></a>呀 >2'))
+// console.log(Utils.handleATag('运攻略见<a class="a" href="http://baidu.com" style="color:#e60012;"><span>呵呵<span></a>呀 >2'))
+// console.log(Utils.handleATag('天王盖地虎'))
 
 module.exports = Utils
