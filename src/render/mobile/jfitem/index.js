@@ -10,21 +10,20 @@ const Log = require('../../../utils/Log')
 class JfitemRender extends Render {
   constructor (gid) {
     super()
-    this.setGid(gid)
+    // this.setGid(gid)
     this.template = this.readTemplate(__dirname + '/jfitem.ejs')
   }
 
-  setGid (gid) {
-    this.gid = gid
-    return this
-  }
+  // setGid (gid) {
+  //   this.gid = gid
+  //   return this
+  // }
+  // setPageType (pageType) {
+  //   this.pageType = pageType
+  //   return this
+  // }
 
-  setPageType (pageType) {
-    this.pageType = pageType
-    return this
-  }
-
-  getRenderData (gid = this.gid) {
+  getRenderData (gid) {
     if (!gid) return
     return new Promise((resolve, reject) => {
       request(
@@ -49,8 +48,7 @@ class JfitemRender extends Render {
     })
   }
 
-  async rende () {
-    const { gid } = this
+  async rende (gid, pageType) {
     if (!gid) return
     try {
       const result = await this.getRenderData(gid)
@@ -63,7 +61,7 @@ class JfitemRender extends Render {
       // }
       return this.getDoc(this.template, {
         data: JSON.stringify(item),
-        pageType: this.pageType,
+        pageType: pageType,
         prefix: this.prefix,
         version: this.version
       })

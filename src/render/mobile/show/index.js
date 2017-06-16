@@ -18,18 +18,20 @@ const metaService = new MetaService()
  *  3. 活动 activity (ctype = 1)   http://c.diaox2.com/view/app/?m=show&id=1022
  */
 class ShowRender extends Render {
-  constructor (id) {
+  constructor () {
     super()
-    this.setId(id)
+    // this.setId(id)
     this.parser = new Parser()
+    this.showTemplate = this.readTemplate(__dirname + '/show.ejs')
+    this.shareTemplate = this.readTemplate(__dirname + '/share.ejs')
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
-  setId (id) {
-    this.id = id
-    return this
-  }
+  // setId (id) {
+  //   this.id = id
+  //   return this
+  // }
   /**
    * type:
    *  app、      app内看的页面
@@ -38,16 +40,16 @@ class ShowRender extends Render {
    *  flipboard、
    *  jike       即刻
    */
-  setPageType (pageType) {
-    this.pageType = pageType
-    let tempFile = __dirname + '/show.ejs'
-    if (/share/i.test(this.pageType)) {
-      tempFile = __dirname + '/share.ejs'
-    }
-    this.template = this.readTemplate(tempFile)
-    return this
-  }
-  async getRelsearchWords (id = this.id) {
+  // setPageType (pageType) {
+  //   this.pageType = pageType
+  //   let tempFile = 
+  //   if (/share/i.test(this.pageType)) {
+  //     tempFile = __dirname + '/share.ejs'
+  //   }
+  //   this.template = this.readTemplate(tempFile)
+  //   return this
+  // }
+  async getRelsearchWords (id) {
     let searchWords = await relsearch(id)
     if (!Utils.isValidArray(searchWords)) return null
     let words = []
@@ -57,7 +59,7 @@ class ShowRender extends Render {
     return words.join(',')
   }
   // 拿出文章关联的所有sku
-  async _getSkus (id = this.id) {
+  async _getSkus (id) {
     let skus = null
     const result = await Promise.promisify(request)(
       'http://s5.a.dx2rd.com:3000/v1/articlesku/' + id
@@ -66,13 +68,13 @@ class ShowRender extends Render {
     skus = data[Utils.toLongId(id)]
     return skus
   }
-  async rende () {
-    const { parser, id } = this
+  async rende (id, pageType, debug) {
+    const { parser } = this
     if (!id) return
     try {
       let [metaObj, relwords] = await Promise.all([
-        metaService.setDebug(this.debug).getRenderData(id, true),
-        this.getRelsearchWords()
+        metaService.setDebug(debug).getRenderData(id, true),
+        this.getRelsearchWords(id)
       ])
       metaObj = metaObj || {author: {}, images: []}
       relwords = relwords || []
@@ -106,7 +108,7 @@ class ShowRender extends Render {
       let shouldUsedSku = null
       // 如果是好物页，拿出所有的sku，并取出第一个，赋值给页面的 g_ab 变量，由前端js在页面底部插入这条sku
       if (ctype == 2) {
-        const skus = await this._getSkus()
+        const skus = await this._getSkus(id)
         if (Utils.isValidArray(skus)) {
           shouldUsedSku = Utils.getFirst(skus)
           try {
@@ -125,7 +127,7 @@ class ShowRender extends Render {
       if (ctype === 4) {
         timetopublish = ''
       }
-      return this.getDoc(this.template, {
+      return this.getDoc(/share/i.test(pageType) ? this.shareTemplate : this.showTemplate, {
         id,
         body,
         title,
@@ -143,7 +145,7 @@ class ShowRender extends Render {
         has_buylink,
         //  如果有购买链接且购买链接是sku页，则需要转成 /sku/longid/sid.html这种形式，用来进行统计
         buylink: Utils.convertSkuUrl(buylink, id),
-        pageType: this.pageType,
+        pageType: pageType,
         downloadAddr: this.downloadAddr,
         prefix: this.prefix,
         version: this.version

@@ -440,8 +440,7 @@ class Show extends Base {
    * @memberof Show
    * 对外暴露的接口，根据在 router.js 中所set的type的不同，路由到相应的取数据的方法
    */
-  getData (param) {
-    const { type } = this
+  getData (param, type) {
     if (/show/i.test(type)) {
       return this.getZKAndZTAndArticleData(param)
     } else if (/author/i.test(type)) {

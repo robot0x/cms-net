@@ -13,7 +13,7 @@ const relsearch = require('../../../api/relsearch')
 class ShowRender extends Render {
   constructor (id) {
     super()
-    this.setId(id)
+    // this.setId(id)
     this.template = this.readTemplate(__dirname + '/show.ejs')
     this.parser = new Parser()
     this.metaService = new MetaService()
@@ -21,11 +21,11 @@ class ShowRender extends Render {
   /**
     * 在 cms-net.js 中调用，解析url参数之后，调用setId
     */
-  setId (id) {
-    this.id = id
-    return this
-  }
-  async getRelsearchWords (id = this.id) {
+  // setId (id) {
+  //   this.id = id
+  //   return this
+  // }
+  async getRelsearchWords (id) {
     let searchWords = await relsearch(id)
     if (!Utils.isValidArray(searchWords)) return null
     let words = []
@@ -34,8 +34,8 @@ class ShowRender extends Render {
     }
     return words.join(',')
   }
-  async rende () {
-    const { parser, id, metaService, debug } = this
+  async rende (id, debug) {
+    const { parser, metaService } = this
     if (!id) return
     try {
       console.log('pc show render debug:', debug)

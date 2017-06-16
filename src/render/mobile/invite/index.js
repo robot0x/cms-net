@@ -43,8 +43,7 @@ class InviteRender extends Render {
     })
   }
 
-  async rende () {
-    const { uid } = this
+  async rende (uid) {
     if (!uid) return
     try {
       const result = (await this.getRenderData(uid)) || {}

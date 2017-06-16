@@ -13,10 +13,10 @@ class JfMallRender extends Render {
     this.template = this.readTemplate(__dirname + '/jfmall.ejs')
   }
 
-  setPageType (pageType) {
-    this.pageType = pageType
-    return this
-  }
+  // setPageType (pageType) {
+  //   this.pageType = pageType
+  //   return this
+  // }
 
   getRenderData () {
     return new Promise((resolve, reject) => {
@@ -42,13 +42,13 @@ class JfMallRender extends Render {
     })
   }
 
-  async rende () {
+  async rende (pageType) {
     try {
       const result = (await this.getRenderData()) || {}
       // if (!Utils.isValidArray(items)) return
       return this.getDoc(this.template, {
         data: JSON.stringify(result.data || []),
-        pageType: this.pageType,
+        pageType: pageType,
         prefix: this.prefix,
         version: this.version
       })

@@ -14,20 +14,20 @@ const metaService = new MetaService()
  *     http://c.diaox2.com/view/app/sku/1220/2112.html
  */
 class SkuRender extends Render {
-  constructor (sid) {
+  constructor () {
     super()
-    this.setSid(sid)
+    // this.setSid(sid)
     this.template = this.readTemplate(__dirname + '/sku.ejs')
     this.parser = new Parser()
   }
 
-  setSid (sid) {
-    this.sid = sid
-    return this
-  }
+  // setSid (sid) {
+  //   this.sid = sid
+  //   return this
+  // }
 
-  async rende () {
-    let { sid, parser, version } = this
+  async rende (sid) {
+    let { parser, version } = this
     if (!sid) return
     try {
       const result = await Promise.promisify(request)(

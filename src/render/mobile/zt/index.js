@@ -10,9 +10,9 @@ const Log = require('../../../utils/Log')
  *  1. 专题 zhuanti (ctype = 9)    http://c.diaox2.com/view/app/?m=zt&id=7080
  */
 class ZTRender extends Render {
-  constructor (id) {
+  constructor () {
     super()
-    this.setId(id)
+    // this.setId(id)
     this.template = this.readTemplate(require('path').resolve(__dirname, 'zt.ejs'))
     this.parser = new Parser()
     this.metaService = new MetaService()
@@ -20,10 +20,10 @@ class ZTRender extends Render {
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
-  setId (id) {
-    this.id = id
-    return this
-  }
+  // setId (id) {
+  //   this.id = id
+  //   return this
+  // }
 
   /**
    * type:
@@ -33,13 +33,13 @@ class ZTRender extends Render {
    *  flipboard、
    *  jike       即刻
    */
-  setPageType (pageType) {
-    this.pageType = pageType
-    return this
-  }
+  // setPageType (pageType) {
+  //   this.pageType = pageType
+  //   return this
+  // }
 
-  async rende () {
-    const { parser, id, metaService, debug } = this
+  async rende (id, pageType, debug) {
+    const { parser, metaService } = this
     if (!id) return
     try {
       let { content, meta, images } = (await metaService.setDebug(debug).getRenderData(id)) || {}
@@ -75,7 +75,7 @@ class ZTRender extends Render {
         // swipes,
         thumb,
         cover,
-        pageType: this.pageType,
+        pageType,
         downloadAddr: this.downloadAddr,
         prefix: this.prefix,
         version: this.version

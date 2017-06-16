@@ -17,22 +17,22 @@ class ZDMRender extends Render {
     this.template = this.readTemplate(__dirname + '/zdm.ejs')
   }
 
-  setData (activity_cid, goods_cid) {
-    this.activity_cid = activity_cid
-    this.goods_cid = goods_cid
-    return this
-  }
+  // setData (activity_cid, goods_cid) {
+  //   this.activity_cid = activity_cid
+  //   this.goods_cid = goods_cid
+  //   return this
+  // }
 
-  setPageType (pageType) {
-    this.pageType = pageType
-    return this
-  }
+  // setPageType (pageType) {
+  //   this.pageType = pageType
+  //   return this
+  // }
 
-  getRenderData () {
+  getRenderData (param) {
     return new Promise((resolve, reject) => {
       // { activity_cid: [activity_cid],  goods_cid: [4553099126516997,4553099126516997] }
-      const { activity_cid } = this
-      const body = { activity_cid: [+activity_cid] }
+      const { activityCid } = param
+      const body = { activity_cid: [+activityCid] }
       // if (goods_cid) {
       //   data.goods_cid = [+goods_cid]
       // }
@@ -46,7 +46,10 @@ class ZDMRender extends Render {
           body
         },
         (error, response, body) => {
-          if (error) reject(error)
+          if (error) {
+            console.log(error)
+            reject(error)
+          }
           if (response.statusCode === 200) {
             resolve(body)
           } else {
@@ -57,31 +60,33 @@ class ZDMRender extends Render {
     })
   }
 
-  async rende () {
+  async rende (param, pageType) {
+    if (!param) return
     try {
-      const result = (await this.getRenderData()) || {}
+      const result = (await this.getRenderData(param)) || {}
+      let {goodsCid, activityCid} = param
       // if (!result) return
       // TODO: 拿到数据之后进行处理
       let data = Utils.getFirst(result.res) || {}
       // if (!data) return
       data = JSON.stringify(data).replace(/^\{/, '').replace(/\}$/, '')
       if (!data) return
-      let {goods_cid} = this
       // 因为是长id，所以长度至少10位，且值至少为4294967297
-      if (!/^\d{10,}$/.test(goods_cid) || goods_cid < 4294967297) {
-        goods_cid = -1
+      if (!/^\d{10,}$/.test(goodsCid) || goodsCid < 4294967297) {
+        goodsCid = -1
       }
       return this.getDoc(this.template, {
         data,
-        goods_cid,
+        goodsCid,
         // data: s.join(','),
-        cid: this.activity_cid,
-        pageType: this.pageType,
+        activityCid,
+        pageType,
         downloadAddr: this.downloadAddr,
         prefix: this.prefix,
         version: this.version
       })
     } catch (e) {
+      console.log(e)
       Log.exception(e)
       return null
     }

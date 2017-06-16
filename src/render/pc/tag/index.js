@@ -31,8 +31,8 @@ class TagRender extends Render {
     return null
   }
 
-  async rende () {
-    const { parser, tid } = this
+  async rende (tid) {
+    const { parser } = this
     if (!tid) return
     try {
       //  let { metas, thumbs, name } = await new TagService(this.tid).getRenderData()

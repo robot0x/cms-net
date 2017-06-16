@@ -8,11 +8,11 @@ const Log = require('../../../utils/Log')
  *  1. http://c.diaox2.com/view/app/?m=metaband&id=1234
  */
 class MetabandRender extends Render {
-  setId (id) {
-    this.id = id
-    return this
-  }
-  async rende (id = this.id) {
+  // setId (id) {
+  //   this.id = id
+  //   return this
+  // }
+  async rende (id) {
     try {
       const meta = (await metaService.setDebug(true).getRawMetas(id, false, true)) || {}
       const { nid, thumb_image_url, title } = meta

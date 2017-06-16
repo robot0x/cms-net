@@ -11,7 +11,7 @@ const Log = require('../../../utils/Log')
 class ZKRender extends Render {
   constructor (id) {
     super()
-    this.setId(id)
+    // this.setId(id)
     this.template = this.readTemplate(require('path').resolve(__dirname, 'zk.ejs'))
     this.parser = new Parser()
     this.metaService = new MetaService()
@@ -19,10 +19,10 @@ class ZKRender extends Render {
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
-  setId (id) {
-    this.id = id
-    return this
-  }
+  // setId (id) {
+  //   this.id = id
+  //   return this
+  // }
   /**
    * type:
    *  app、      app内看的页面
@@ -31,17 +31,17 @@ class ZKRender extends Render {
    *  flipboard、
    *  jike       即刻
    */
-  setPageType (pageType) {
-    this.pageType = pageType
-    return this
-  }
+  // setPageType (pageType) {
+  //   this.pageType = pageType
+  //   return this
+  // }
 
-  async rende () {
-    const { parser, id, metaService } = this
+  async rende (id, pageType, debug) {
+    const { parser, metaService } = this
     if (!id) return
     try {
       // 取专刊本身的meta，用不着buylink
-      let { content, meta, images } = (await metaService.setDebug(this.debug).getRenderData(id)) || {}
+      let { content, meta, images } = (await metaService.setDebug(debug).getRenderData(id)) || {}
       console.log('content:', content)
       content = content || ''
       meta = meta || {title: '', titleex: ''}
@@ -97,7 +97,7 @@ class ZKRender extends Render {
         // swipes,
         thumb,
         cover,
-        pageType: this.pageType,
+        pageType,
         downloadAddr: this.downloadAddr,
         prefix: this.prefix,
         version: this.version

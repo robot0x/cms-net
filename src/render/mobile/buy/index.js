@@ -10,19 +10,19 @@ const Log = require('../../../utils/Log')
 class BuyRender extends Render {
   constructor (aid) {
     super()
-    this.setAid(aid)
+    // this.setAid(aid)
     this.template = this.readTemplate(__dirname + '/buy.ejs')
     this.parser = new Parser()
     this.buyinfoService = new BuyinfoService()
   }
 
-  setAid (aid) {
-    this.aid = aid
-    return this
-  }
+  // setAid (aid) {
+  //   this.aid = aid
+  //   return this
+  // }
 
-  async rende () {
-    const { aid, buyinfoService } = this
+  async rende (aid) {
+    const { buyinfoService } = this
     if (!aid) return
     try {
       let { meta, buyinfos } = await buyinfoService.getRenderData(aid)

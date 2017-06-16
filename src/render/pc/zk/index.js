@@ -9,9 +9,9 @@ const Log = require('../../../utils/Log')
  *  1. 专刊 zhuankan (ctype = 4)   http://www.diaox2.com/article/4234.html
  */
 class ZKRender extends Render {
-  constructor (id) {
+  constructor () {
     super()
-    this.setId(id)
+    // this.setId(id)
     this.template = this.readTemplate(__dirname + '/zk.ejs')
     this.parser = new Parser()
     this.metaService = new MetaService()
@@ -19,12 +19,12 @@ class ZKRender extends Render {
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
-  setId (id) {
-    this.id = id
-    return this
-  }
-  async rende () {
-    const { parser, id, metaService, debug } = this
+  // setId (id) {
+  //   this.id = id
+  //   return this
+  // }
+  async rende (id, debug) {
+    const { parser, metaService } = this
     if (!id) return
     try {
       let { content, meta, images } = (await metaService.setDebug(debug).getRenderData(id)) || {}

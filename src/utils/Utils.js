@@ -129,7 +129,7 @@ class Utils {
       let ret = Object.create(null)
       ret.zkdesc = zkdesc
       ret.article = Object.create(null)
-      // 使用一数组，单独防止cid的顺序，否则，cid作为key的话，可能跟编辑的书写顺序是不一致的
+      // 使用一个数组，单独放置cid的顺序，否则，cid作为key的话，可能跟编辑的书写顺序是不一致的
       ret.ids = []
       const allCardMarkdown = markdown.match(allCardReg)
       for (let cardMarkdown of allCardMarkdown) {

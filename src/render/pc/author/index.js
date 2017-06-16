@@ -10,7 +10,7 @@ const AuthorService = require('../../../service/AuthorService')
 class AuthorRender extends Render {
   constructor (src) {
     super()
-    this.setSource(src)
+    // this.setSource(src)
     this.template = this.readTemplate(__dirname + '/author.ejs')
     this.parser = new Parser()
     this.authorService = new AuthorService()
@@ -18,13 +18,13 @@ class AuthorRender extends Render {
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
-  setSource (src) {
-    this.source = src
-    return this
-  }
+  // setSource (src) {
+  //   this.source = src
+  //   return this
+  // }
 
-  async rende () {
-    const { parser, source, authorService } = this
+  async rende (source) {
+    const { parser, authorService } = this
     if (!source) return
     try {
       //  相当于then

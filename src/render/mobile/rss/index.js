@@ -14,17 +14,17 @@ class RssRender extends Render {
     super()
     this.template = this.readTemplate(__dirname + '/rss.ejs')
     this.parser = new Parser()
-    this.setType(type)
+    // this.setType(type)
   }
 
-  setType (type) {
-    this.type = type
-    return this
-  }
+  // setType (type) {
+  //   this.type = type
+  //   return this
+  // }
 
   // type  = firstpage goodthing zhuankan
   // 1-首页/2-好物/3-专刊/
-  async getRenderData (type = this.type) {
+  async getRenderData (type) {
     if (!type) return
     let ctypes = []
     let types = type.split(/\s/)
@@ -67,8 +67,8 @@ class RssRender extends Render {
     return { name, metas }
   }
 
-  async rende () {
-    const { parser, type } = this
+  async rende (type) {
+    const { parser } = this
     if (!type) return
     try {
       let limit = 20

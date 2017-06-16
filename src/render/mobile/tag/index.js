@@ -34,8 +34,8 @@ class TagRender extends Render {
     return null
   }
 
-  async rende () {
-    const { parser, tid, tagService } = this
+  async rende (tid) {
+    const { parser, tagService } = this
     if (!tid) return
     try {
       //  只有前20条数据是服务端渲染出来的，后面的数据由前端js拿
