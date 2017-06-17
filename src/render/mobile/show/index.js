@@ -72,8 +72,10 @@ class ShowRender extends Render {
     const { parser } = this
     if (!id) return
     try {
+      const isShare = /share/i.test(pageType)
       let [metaObj, relwords] = await Promise.all([
-        metaService.setDebug(debug).getRenderData(id, true),
+        // 如果是share页，则拿buylink，否则不拿
+        metaService.setDebug(debug).getRenderData(id, isShare),
         this.getRelsearchWords(id)
       ])
       metaObj = metaObj || {author: {}, images: []}
@@ -127,7 +129,11 @@ class ShowRender extends Render {
       if (ctype === 4) {
         timetopublish = ''
       }
-      return this.getDoc(/share/i.test(pageType) ? this.shareTemplate : this.showTemplate, {
+      if (!isShare) {
+        has_buylink = false
+        buylink = ''
+      }
+      return this.getDoc(isShare ? this.shareTemplate : this.showTemplate, {
         id,
         body,
         title,

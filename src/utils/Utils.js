@@ -9,7 +9,7 @@ class Utils {
    * 返回：
    * {
    *  text: '随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<<这里>>',
-   *  href: '/view/app/?m=show&id=2127&ch=experience'
+   *  href: 'https://c.diaox2.com/view/app/?m=show&id=2127&ch=experience',
    * }
    * @static
    * @memberof Utils
@@ -37,7 +37,8 @@ class Utils {
       text = desc.replace(aTagReg, '<<$2>>')
       href = match[1] || ''
       let norm = Utils.normalize(href)
-      if (href && href === norm) {
+      // 如果返回的norm为 '1234' 或 '1234#anchor' 这种形式，说明是我们自己的url，反之则不是
+      if (href && !/^\d+(#.+)?$/.test(norm)) {
         ret.spec = 'other'
       } else {
         ret.spec = 'diaodiao'
@@ -501,7 +502,7 @@ class Utils {
    * 判断一个url是否包含 形如 http:// or https:// or // 协议头
    */
   static hasProtocol (url) {
-    return url && /^(https?:)?\/\//i.test(url)
+    return url && Utils.HTTP_PROTOCOL_REG.test(url)
   }
   /**
    * 输入形如：
@@ -519,16 +520,28 @@ class Utils {
       if (!Utils.hasProtocol(url)) {
         return url
       }
-      url = url.replace(/^(https?:)?\/\//i, '')
+      url = url.replace(Utils.HTTP_PROTOCOL_REG, '')
       return url
     } catch (e) {
       return url
     }
   }
+  /**
+   * @static
+   * @param {String} url
+   * @param {string} [protocol='https']
+   * @returns 如果url含有协议头，直接返回，否则加上protocol参数指定的协议再返回，protocol默认为https
+   * @memberof Utils
+   */
+  static addProtocolHead (url, protocol = 'https') {
+    if (Utils.hasProtocol(url)) return url
+    return `${protocol}://${url}`
+  }
   // 获取文件扩展名
   // http://leftstick.github.io/tech/2016/04/23/how-to-get-the-file-extension-more-efficiently
   static getFileExtension (filename = '') {
-    // 形如 content.image.alimmdn.com/sku/1492441129999184_jpg.jpeg@200w_200h_1e%7C200x200-5rc ，的url，得到的扩展名为jpeg@200w_200h_1e%7C200x200-5rc，显然是有问题的
+    // 形如 content.image.alimmdn.com/sku/1492441129999184_jpg.jpeg@200w_200h_1e%7C200x200-5rc的url，
+    // 得到的扩展名为jpeg@200w_200h_1e%7C200x200-5rc，显然是有问题的，需要单独做处理
     const extensionName = filename.slice(
       ((filename.lastIndexOf('.') - 1) >>> 0) + 2
     )
@@ -538,6 +551,11 @@ class Utils {
     return extensionName
   }
 }
+Utils.HTTP_PROTOCOL_REG = /^(https?:)?\/\//i
+// console.log(Utils.addProtocolHead('diaox2.com'))
+// console.log(Utils.removeProtocolHead('http://diaox2.com'))
+// console.log(Utils.removeProtocolHead('https://diaox2.com'))
+// console.log(Utils.removeProtocolHead('//diaox2.com'))
 // console.log(
 //   Utils.getCidByMarkdown(
 //     `zkdesc 无论是单身狗还是一对汪，一年之中总有那么几个周末想窝在家中，望望天花板，剥剥手指甲，吃吃小食，看看电视，度过一天。所以啊，小食很重要，样样不能少！怎么做？且听我慢慢道来。

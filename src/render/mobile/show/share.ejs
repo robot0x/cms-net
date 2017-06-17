@@ -89,7 +89,7 @@
 				</div>
 			</div>
 
-			<div class='versionnotice' data-href="http://a.app.qq.com/o/simple.jsp?pkgname=com.diaox2.android&g_f=991653">
+			<div class='versionnotice' data-href="<%-downloadAddr%>">
 				<!--downlink TODO-->
 				<div>
 					<img src="<%-prefix%>/cms/diaodiao/assets/icontodown.png" /><span>下载有调参与讨论</span>
@@ -143,21 +143,28 @@
 			<table>
 				<tbody>
 					<tr>
-						<td style="width:100%" id="bot_intro"><img src="//c.diaox2.com/cms/diaodiao/assets/icontodown.png" /><span>有调</span><span>品质生活导购平台</span>
-							<div class="downlink" data-href="http://a.app.qq.com/o/simple.jsp?pkgname=com.diaox2.android&g_f=991653">立即下载</div>
-						</td>
+						<% if( has_buylink ) {%>
+							  <td style="width:50%" id="bot_down" class="downlink" data-href="<%-downloadAddr%>">
+								<img src="<%-prefix%>/cms/diaodiao/assets/icontodown.png">
+								<span>下载有调</span>
+							  </td>
+                			  <td style="width:50%" id="bot_buy">
+							   <p class="buylink" data-href="<%-buylink%>">立即购买</p>
+							  </td>
+						<% } else { %>
+							<td style="width:100%" id="bot_intro"><img src="//c.diaox2.com/cms/diaodiao/assets/icontodown.png" /><span>有调</span><span>品质生活导购平台</span>
+								<div class="downlink" data-href="<%-downloadAddr%>">立即下载</div>
+							</td>
+						<% } %>
 					</tr>
 				</tbody>
 			</table>
 		</div>
-
-
-		<div class="banner tpl" data-href="<%-downloadAddr%>"><img class="bannerleft" src="/cms/diaodiao/assets/icontodown.png">
+		<div class="banner tpl" data-href="<%-downloadAddr%>"><img class="bannerleft" src="<%-prefix%>/cms/diaodiao/assets/icontodown.png">
 			<p class="bannerhigh">品质生活导购平台</p>
 			<p class="bannerlow">尽在<span> 有调</span></p>
 			<div class="bannerright">点此下载</div>
 		</div>
-
 	</div>
 </body>
 <script>
