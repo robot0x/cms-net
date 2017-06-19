@@ -89,4 +89,4 @@ let data = `
 8110,有调评测,成人防霾口罩
 8239,有调评测,儿童防霾口罩
 8524,有调评测,空气净化器`
-DB.exec(`INSERT INTO diaodiao_article_content SET content = '${data}', aid = 7216`)
+DB.exec(`UPDATE  diaodiao_article_content SET content = '${data}' WHERE aid = 7216`)
