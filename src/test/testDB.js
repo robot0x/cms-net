@@ -20,7 +20,8 @@ const DB = require('../db/DB')
 // DB.exec('SELECT * FROM diaodiao_article_meta where id = 1').then(data => {
 //   console.log('13:', data)
 // })
-let data = `目录
+let data = `
+目录
 7352,买买买,评测必败清单
 
 最新报告
@@ -88,4 +89,4 @@ let data = `目录
 8110,有调评测,成人防霾口罩
 8239,有调评测,儿童防霾口罩
 8524,有调评测,空气净化器`
-DB.exec(`INSERT INTO diaodiao_article_content SET content = ${data}, aid = 7216`)
+DB.exec(`INSERT INTO diaodiao_article_content SET content = '${data}', aid = 7216`)
