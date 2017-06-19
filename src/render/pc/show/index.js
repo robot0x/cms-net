@@ -42,8 +42,8 @@ class ShowRender extends Render {
       SKU.getSkusByArticleId(id),
       this.buyinfoTable.getByAid(id)
     ])
-    console.log('skus:', skus);
-    console.log('buyInfos:', buyInfos);
+    // console.log('skus:', skus);
+    // console.log('buyInfos:', buyInfos);
     let ret = Object.create(null)
     ret.sales = []
     if (SKU.isOnlyOneOnlineSKU(skus)) {
@@ -70,7 +70,7 @@ class ShowRender extends Render {
       }
       ret.from = 'buy'
     }
-    console.log('ret:', ret)
+    // console.log('ret:', ret)
     return ret
   }
   async rende (id, debug) {
