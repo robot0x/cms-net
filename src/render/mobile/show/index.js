@@ -5,10 +5,9 @@ const skuHandler = require('./skuHandler')
 const Parser = require('./parser')
 const MetaService = require('../../../service/MetaService')
 const moment = require('moment')
-const request = require('request')
-const Promise = require('bluebird')
 const relsearch = require('../../../api/relsearch')
 const Log = require('../../../utils/Log')
+const SKU = require('../../../utils/SKU')
 const metaService = new MetaService()
 /**
  * 渲染：
@@ -22,8 +21,8 @@ class ShowRender extends Render {
     super()
     // this.setId(id)
     this.parser = new Parser()
-    this.showTemplate = this.readTemplate(__dirname + '/show.ejs')
-    this.shareTemplate = this.readTemplate(__dirname + '/share.ejs')
+    this.showTemplate = this.readTemplate(__dirname + '/show.ejs') // eslint-disable-line
+    this.shareTemplate = this.readTemplate(__dirname + '/share.ejs') // eslint-disable-line
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
@@ -58,16 +57,16 @@ class ShowRender extends Render {
     }
     return words.join(',')
   }
-  // 拿出文章关联的所有sku
-  async _getSkus (id) {
-    let skus = null
-    const result = await Promise.promisify(request)(
-      'http://s5.a.dx2rd.com:3000/v1/articlesku/' + id
-    )
-    let { data } = JSON.parse(result.body)
-    skus = data[Utils.toLongId(id)]
-    return skus
-  }
+  // // 拿出文章关联的所有sku
+  // async _getSkus (id) {
+  //   let skus = null
+  //   const result = await Promise.promisify(request)(
+  //     'http://s5.a.dx2rd.com:3000/v1/articlesku/' + id
+  //   )
+  //   let { data } = JSON.parse(result.body)
+  //   skus = data[Utils.toLongId(id)]
+  //   return skus
+  // }
   async rende (id, pageType, debug) {
     const { parser } = this
     if (!id) return
@@ -110,14 +109,14 @@ class ShowRender extends Render {
       let shouldUsedSku = null
       // 如果是好物页，拿出所有的sku，并取出第一个，赋值给页面的 g_ab 变量，由前端js在页面底部插入这条sku
       if (ctype == 2) {
-        const skus = await this._getSkus(id)
-        if (Utils.isValidArray(skus)) {
-          shouldUsedSku = Utils.getFirst(skus)
-          try {
-            shouldUsedSku.images = JSON.parse(shouldUsedSku.images)
-          } catch (e) {
-            shouldUsedSku.images = []
-          }
+        const skus = await SKU.getSkusByArticleId(id)
+        if (SKU.isOnlyOneOnlineSKU(skus)) {
+          [shouldUsedSku] = skus
+          // try {
+          //   shouldUsedSku.images = JSON.parse(shouldUsedSku.images)
+          // } catch (e) {
+          //   shouldUsedSku.images = []
+          // }
         }
       }
       // 首页和经验，顶部出的一定是时间
@@ -130,7 +129,7 @@ class ShowRender extends Render {
         timetopublish = ''
       }
       if (!isShare) {
-        has_buylink = false
+        has_buylink = false  // eslint-disable-line
         buylink = ''
       }
       return this.getDoc(isShare ? this.shareTemplate : this.showTemplate, {

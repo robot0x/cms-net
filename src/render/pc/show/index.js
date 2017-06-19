@@ -4,19 +4,22 @@
  */
 const Render = require('../../')
 const Utils = require('../../../utils/Utils')
+const SKU = require('../../../utils/SKU')
 const imageHandler = require('./imageHandler')
 const Parser = require('./parser')
 const MetaService = require('../../../service/MetaService')
 const Log = require('../../../utils/Log')
 const relsearch = require('../../../api/relsearch')
+const BuyinfoTable = require('../../../db/BuyinfoTable')
 
 class ShowRender extends Render {
   constructor (id) {
     super()
     // this.setId(id)
-    this.template = this.readTemplate(__dirname + '/show.ejs')
+    this.template = this.readTemplate(__dirname + '/show.ejs') // eslint-disable-line
     this.parser = new Parser()
     this.metaService = new MetaService()
+    this.buyinfoTable = new BuyinfoTable()
   }
   /**
     * 在 cms-net.js 中调用，解析url参数之后，调用setId
@@ -34,14 +37,47 @@ class ShowRender extends Render {
     }
     return words.join(',')
   }
+  async getSales (id) {
+    let [skus, buyInfos] = await Promise.all([
+      SKU.getSkusByArticleId(id),
+      this.buyinfoTable.getByAid(id)
+    ])
+    let ret = Object.create(null)
+    ret.sales = []
+    if (SKU.isOnlyOneOnlineSKU(skus)) {
+      let {sales} = skus[0]
+      for (let skuSale of sales) {
+        let {mart, intro, price, link_pc_cps, link_m_cps, link_pc_raw, link_m_raw} = skuSale
+        let sale = Object.create(null)
+        sale.mart = mart
+        sale.intro = intro
+        sale.price = price
+        sale.link = link_pc_cps || link_m_cps || link_pc_raw || link_m_raw // eslint-disable-line
+        ret.sales.push(sale)
+      }
+      ret.from = 'sku'
+    } else if (Utils.isValidArray(buyInfos)) {
+      for (let buyInfo of buyInfos) {
+        let sale = Object.create(null)
+        let {mart, intro, price, link_pc, link} = buyInfo
+        sale.mart = mart
+        sale.intro = intro
+        sale.price = price
+        sale.link = link_pc || link // eslint-disable-line
+      }
+      ret.from = 'buy'
+    }
+    return ret
+  }
   async rende (id, debug) {
     const { parser, metaService } = this
     if (!id) return
     try {
       console.log('pc show render debug:', debug)
-      let [metaObj, relwords] = await Promise.all([
-        await metaService.setDebug(debug).getRenderData(id),
-        this.getRelsearchWords()
+      let [metaObj, relwords, buylink] = await Promise.all([
+        metaService.setDebug(debug).getRenderData(id),
+        this.getRelsearchWords(),
+        this.getSales(id)
       ])
       metaObj = metaObj || {}
       relwords = relwords || []
@@ -70,9 +106,9 @@ class ShowRender extends Render {
       thumb = Utils.getFirst(thumb) || {}
       cover = Utils.getFirst(cover) || {}
       let date = ''
-      if (create_time) {
+      if (create_time) {  // eslint-disable-line
         console.log(create_time)
-        create_time = new Date(create_time)
+        create_time = new Date(create_time) // eslint-disable-line
         let month = create_time.getMonth() + 1
         if (month < 10) {
           month = '0' + month
@@ -81,13 +117,21 @@ class ShowRender extends Render {
         date += month + '-'
         date += create_time.getDate()
       }
-      console.log('swipes:', swipes)
+      // console.log('swipes:', swipes)
+      /**
+       * 如果有且仅有一个sku，则用sku，
+       * 若不满足上述条件，则取diaodiao_buyinfo
+       *
+       * 若是sku，则使用链接的顺序为 link_pc_cps || link_m_cps || link_pc_raw || like_m_raw
+       * 若是buyinfo，则使用链接的顺序为 link_pc || link
+       */
       return this.getDoc(this.template, {
         id,
         body,
         title,
         author,
         relwords,
+        buylink,
         type: Utils.ctypeToType(ctype),
         version: this.version,
         swipes,

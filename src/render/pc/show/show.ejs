@@ -111,6 +111,25 @@
         </div>
         <!-- article-area -->
         <div class="buy-area f-l">
+          <% if( buylink && buylink.length !== 0) {%>
+          <div class="buy-box" data-from="<%-buylink.from%>">
+          <h2>您可以通过以下方式购买：</h2>
+          <ul class="buy-method-list">
+              <%buylink.sales.forEach(function(sale){%>
+                <li class="method" data-href="<%-sale.link%>">
+                  <div class="method-source-and-price clearfix">
+                      <div class="method-source"><%-sale.mart%></div>
+                      <div class="method-price"><%-sale.price%></div>
+                  </div>
+                  <div class="method-desc-and-buy-link clearfix">
+                      <div class="method-desc"><%-sale.intro%></div>
+                      <div class="method-buy-link">购买<i class="shopping-cart"></i></div>
+                  </div>
+                </li>
+              <% }) %>
+          </ul>
+          </div>
+          <% } %>
           <!--buyinfo-->
           <div class="share-box">
             <a href="javascript:;" class="share">

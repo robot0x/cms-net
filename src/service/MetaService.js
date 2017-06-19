@@ -12,9 +12,7 @@ const BuyinfoTable = require('../db/BuyinfoTable')
 const DB = require('../db/DB')
 const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
-const request = require('request')
-const Promise = require('bluebird')
-const moment = require('moment')
+const SKU = require('../utils/SKU')
 const Base = require('../Base')
 const startDate = require('../../config/app').startDate
 
@@ -300,26 +298,30 @@ class MetaService extends Base {
     try {
       let [meta, images, content] = await Promise.all([
         metaTable
-        .setColumns([
-          'title',
-          'titleex',
-          'ctype',
-          'timetopublish',
-          'price',
-          'author'
-        ]).getById(id),
+          .setColumns([
+            'title',
+            'titleex',
+            'ctype',
+            'timetopublish',
+            'price',
+            'author'
+          ])
+          .getById(id),
 
         imageTable
-        .setColumns(['url', 'type', 'alt', 'width', 'height'])
-        .getByAid(id),
+          .setColumns(['url', 'type', 'alt', 'width', 'height'])
+          .getByAid(id),
 
         contentTable.getById(id)
       ])
       let { timetopublish } = meta
       if (
-        !this.debug && (timetopublish < startDate ||
-        timetopublish > Utils.genStarAndEndDateForTimetopublish().endDate)
-      ) { return }
+        !this.debug &&
+        (timetopublish < startDate ||
+          timetopublish > Utils.genStarAndEndDateForTimetopublish().endDate)
+      ) {
+        return
+      }
       // 由于author表目前的数据很少，所以写死
       // console.log('MetaService meta.author:', meta.author)
       const promises = [authorTable.getBySource(meta.author)]
@@ -350,50 +352,67 @@ class MetaService extends Base {
      sku的status字段：0/1/2/4, 编辑/在线/失效/...
      目前业务上只用了0和1，0未发布，1代表发布
    */
-  getBuylink (id, cms_buy_link = '') {
+  async getBuylink (id, cmsBuyLink = '') {
     if (!id) return
+    const skus = await SKU.getSkusByArticleId(id, false)
+    if (SKU.isOnlyOneOnlineSKU(skus)) {
+      return `http://c.diaox2.com/view/app/sku/${id}/${skus[0].sid}.html`
+    } else {
+      // 若SKU有0个或多个，则从diaodiao_buyinfo取购买页
+      // const buy_info = await this.metaTable.exec(`SELECT * FROM diaodiao_buyinfo where aid = ${id}`)
+      const buyInfo = await this.buyinfoTable.getByAid(id)
+      // 如果diaodiao_buyinfo表存在购买信息
+      if (buyInfo.length > 0 && buyInfo[0].link) {
+        return `http://c.diaox2.com/view/app/?m=buy&aid=${id}`
+      } else if (cmsBuyLink) {
+        return cmsBuyLink
+      } else {
+        return await this.metaTable.getBuylinkById(id)
+      }
+    }
     // console.log('getBuylink:', id)
     // 首先，http://s5.a.dx2rd.com:3000/v1/articlesku/1233 通过这个接口拿sku
-    return new Promise((resolve, reject) => {
-      request(
-        `http://s5.a.dx2rd.com:3000/v1/articlesku/${id}`,
-        async (err, body) => {
-          if (err) {
-            resolve(null)
-          }
-          try {
-            const { data } = JSON.parse(body.body)
-            const skus = data[Utils.toLongId(id)]
-            // 如果只有1个sku且这个sku的status为1（即已经发布了），则把SKU页作为购买页
-            // 比如 1229 这篇文章关联的sku有且仅有一个，但这个sku的staus却为0，所以不满足条件
-            if (
-              Utils.isValidArray(skus) &&
-              skus.length === 1 &&
-              skus[0].status === 1
-            ) {
-              resolve(
-                `http://c.diaox2.com/view/app/sku/${id}/${skus[0].sid}.html`
-              )
-            } else {
-              // 若SKU有0个或多个，则从diaodiao_buyinfo取购买页
-              // const buy_info = await this.metaTable.exec(`SELECT * FROM diaodiao_buyinfo where aid = ${id}`)
-              const buy_info = await this.buyinfoTable.getByAid(id)
-              // 如果diaodiao_buyinfo表存在购买信息
-              if (buy_info.length > 0 && buy_info[0].link) {
-                resolve(`http://c.diaox2.com/view/app/?m=buy&aid=${id}`)
-              } else if (cms_buy_link) {
-                resolve(cms_buy_link)
-              } else {
-                resolve(await this.metaTable.getBuylinkById(id))
-              }
-            }
-          } catch (e) {
-            Log.exception(e)
-            resolve(null)
-          }
-        }
-      )
-    })
+    // return new Promise((resolve, reject) => {
+    //   let skus = await SKU.getSkusByArticleId(id)
+    //   request(
+    //     `http://s5.a.dx2rd.com:3000/v1/articlesku/${id}`,
+    //     async (err, body) => {
+    //       if (err) {
+    //         resolve(null)
+    //       }
+    //       try {
+    //         const { data } = JSON.parse(body.body)
+    //         const skus = data[Utils.toLongId(id)]
+    //         // 如果只有1个sku且这个sku的status为1（即已经发布了），则把SKU页作为购买页
+    //         // 比如 1229 这篇文章关联的sku有且仅有一个，但这个sku的staus却为0，所以不满足条件
+    //         if (
+    //           Utils.isValidArray(skus) &&
+    //           skus.length === 1 &&
+    //           skus[0].status === 1
+    //         ) {
+    //           resolve(
+    //             `http://c.diaox2.com/view/app/sku/${id}/${skus[0].sid}.html`
+    //           )
+    //         } else {
+    //           // 若SKU有0个或多个，则从diaodiao_buyinfo取购买页
+    //           // const buy_info = await this.metaTable.exec(`SELECT * FROM diaodiao_buyinfo where aid = ${id}`)
+    //           const buy_info = await this.buyinfoTable.getByAid(id)
+    //           // 如果diaodiao_buyinfo表存在购买信息
+    //           if (buy_info.length > 0 && buy_info[0].link) {
+    //             resolve(`http://c.diaox2.com/view/app/?m=buy&aid=${id}`)
+    //           } else if (cms_buy_link) {
+    //             resolve(cms_buy_link)
+    //           } else {
+    //             resolve(await this.metaTable.getBuylinkById(id))
+    //           }
+    //         }
+    //       } catch (e) {
+    //         Log.exception(e)
+    //         resolve(null)
+    //       }
+    //     }
+    //   )
+    // })
   }
 }
 

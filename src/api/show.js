@@ -9,6 +9,7 @@ const skuHandler = require('../render/mobile/show/skuHandler')
 const parser = new Parser()
 const Log = require('../utils/Log')
 const Utils = require('../utils/Utils')
+const SKU = require('../utils/SKU')
 // const DB = require('../db/DB')
 const ContentTable = require('../db/ContentTable')
 const contentTable = new ContentTable()
@@ -119,7 +120,7 @@ class Show extends Base {
         let { title, cover_image_url, buylink, ctype, price } = cardMeta
         card.title = title[0]
         card.desc = data.article[cid]
-        card.image = cover_image_url
+        card.image = cover_image_url // eslint-disable-line
         card.buylink = buylink
         card.ctype = ctype
         let st = stat[Utils.toLongId(cid)] || empty
@@ -182,16 +183,16 @@ class Show extends Base {
     }
     return ret
   }
-  // 拿出文章关联的所有sku
-  async _getSkus (id) {
-    let skus = null
-    const result = await Promise.promisify(request)(
-      'http://s5.a.dx2rd.com:3000/v1/articlesku/' + id
-    )
-    let { data } = JSON.parse(result.body)
-    skus = data[Utils.toLongId(id)]
-    return skus || []
-  }
+  // // 拿出文章关联的所有sku
+  // async _getSkus (id) {
+  //   let skus = null
+  //   const result = await Promise.promisify(request)(
+  //     'http://s5.a.dx2rd.com:3000/v1/articlesku/' + id
+  //   )
+  //   let { data } = JSON.parse(result.body)
+  //   skus = data[Utils.toLongId(id)]
+  //   return skus || []
+  // }
   async genShareData (id, trueM) {
     const ret = Object.create(null)
     let [titles, coverex] = await Promise.all([
@@ -226,7 +227,7 @@ class Show extends Base {
           promises.push(this.getZTData(id, ctype))
           break
       }
-      promises.push(this._getSkus(id))
+      promises.push(SKU.getSkusByArticleId(id))
       promises.push(this.genShareData(id, trueM))
       let [data, skus, shareData] = await Promise.all(promises)
       data = data || {}
@@ -259,16 +260,12 @@ class Show extends Base {
       data.sku = Object.create(null)
       data.sku.pick_up_part = []
       // 策略跟 MetaService.getBuyLink是一样的
-      if (
-        Utils.isValidArray(skus) &&
-        skus.length === 1 &&
-        skus[0].status === 1
-      ) {
-        let sku = Utils.getFirst(skus)
+      if (SKU.isOnlyOneOnlineSKU(skus)) {
+        let [sku] = skus
         let { sid, sales } = sku
         try {
           data.sku.show_part = await this._toShowpart(
-            JSON.parse(sales),
+            sales,
             sid,
             'sku'
           )
