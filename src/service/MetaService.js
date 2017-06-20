@@ -145,7 +145,7 @@ class MetaService {
      ctype = 9
     )
     `
-    console.log(sql)
+    // console.log(sql)
     try {
       const metaAndAuthors = await DB.exec(sql)
       // console.log('metaAndAuthors:', metaAndAuthors);
