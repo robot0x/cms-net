@@ -139,7 +139,7 @@ class Search {
       ret.titlecolor = title_color; // eslint-disable-line
       ret.buy = buylink
       let [mtitle, titleex] = title
-      ret.title = mtitle.replace(/ {2}/, '\n')
+      ret.title = mtitle.replace(/ {2}/, '<br>')
       // 策略1：如果titleex存在就下发，否则不下发
       if (titleex && titleex.trim()) {
         ret.titleex = titleex
