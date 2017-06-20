@@ -142,8 +142,8 @@ class Search {
       if (!buylink) {
         ret.buy = `http://c.diaox2.com/view/app/?m=buy&aid=${nid}`
       }
-      ret.body = ret.thumbclass = ''
-      ret.coverclass = ' debug'
+      ret.body = ''
+      // ret.coverclass = ' debug'
       ret.url = `/view/app/?m=${Utils.ctypeToM(ctype)}&id=${nid}`
       ret.applink = `diaodiao://c.diaox2.com${ret.url}`
       ret.share = `/share/${longId}.html`
