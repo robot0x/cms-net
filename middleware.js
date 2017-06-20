@@ -79,6 +79,7 @@ module.exports = {
         // 如果 req.body 为 空字符串或裸字符串，则parse会出异常
         req.body = JSON.parse(req.body)
       } catch (e) {
+        console.log(e)
         Log.exception(e)
         // req.body = null
       }
