@@ -255,7 +255,10 @@ class MetaService {
         // 对于tag页、author页等页面渲染，或只需拿到简单的meta（比如只需要title,cover_image_url），
         // 所以我们就没有必要处理buylink，处理buylink很耗费性能。
         if (useBuylink) {
-          let buylink = await this.getBuylink(nid, meta.buylink)
+          // 使用null_cms_link作为getBuylink在meta表中是否有
+          // buylink字段的标志，否则的话，meta.buylink为undefined，
+          // 则会再通过id拿一次buylink，这是没必要的且费性能
+          let buylink = await this.getBuylink(nid, meta.buylink || 'null_cms_link')
           if (buylink) {
             meta.has_buylink = true
             meta.buylink = buylink
@@ -320,7 +323,7 @@ class MetaService {
       const promises = [authorTable.getBySource(meta.author)]
       // 根据规则拿购买链接，把meta表中的购买链接作为第二个参数，这样在条件命中时，我们就能少访问一次数据库
       if (useBuylink) {
-        promises.push(this.getBuylink(id, meta.buylink))
+        promises.push(this.getBuylink(id, meta.buylink || 'null_cms_link'))
       }
       let [author, buylink] = await Promise.all(promises)
       author.pic_uri = Utils.addUrlPrefix(author.pic_uri)
@@ -358,7 +361,11 @@ class MetaService {
       if (buyInfo.length > 0 && buyInfo[0].link) {
         return `http://c.diaox2.com/view/app/?m=buy&aid=${id}`
       } else if (cmsBuyLink) {
-        return cmsBuyLink
+        if (cmsBuyLink === 'null_cms_link') {
+          return null
+        } else {
+          return cmsBuyLink
+        }
       } else {
         return await this.metaTable.getBuylinkById(id)
       }

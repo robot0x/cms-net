@@ -17,6 +17,7 @@ class Search {
     const ret = []
     try {
       const aids = await metaTable.getAidsByCond(cond)
+      // console.log('aids:', aids)
       if (!Utils.isValidArray(aids)) return null
       const metas = await metaService.getRawMetas(
         aids,
@@ -26,6 +27,7 @@ class Search {
         true,
         true
       )
+      // console.log('metas:', metas)
       if (!Utils.isValidArray(metas)) return null
       metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
       for (let meta of metas) {
@@ -90,37 +92,79 @@ class Search {
 }
    */
   _handleMeta (meta) {
-    const { nid } = meta
-    meta.thumb = meta.thumb_image_url
-    meta.cover = meta.cover_image_url
-    meta.coverex = meta.coverex_image_url
-    meta.banner = meta.banner_image_url
-    meta.buy = meta.buylink
-    meta.title = meta.title.join(',')
-
-    let longId = Utils.toLongId(nid)
-    meta.body = ''
-    meta.thumbclass = ''
-    meta.coverclass = ' debug'
-    meta.applink = `diaodiao://c.diaox2.com/view/app/?m=${Utils.ctypeToM(meta.ctype)}&id=7691`
-    meta.url = meta.oriUrl = `/view/app/?m=${Utils.ctypeToM(meta.ctype)}&id=${nid}`
-    meta.share = `/share/${longId}.html`
-    meta.share = `/share/${longId}.html`
-    meta.serverid = longId
-    delete meta.thumb_image_url
-    delete meta.cover_image_url
-    delete meta.coverex_image_url
-    delete meta.banner_image_url
-    delete meta.bannerwidth
-    delete meta.bannerheight
-    delete meta.buylink
-    delete meta.author
-    delete meta.ctype
-    delete meta.has_buylink
-    delete meta.is_external
-    delete meta.timetopublish
-
-    return meta
+    try {
+      const {
+        nid,
+        thumb_image_url,
+        cover_image_url,
+        coverex_image_url,
+        banner_image_url,
+        buylink,
+        title,
+        title_color,
+        ctype,
+        price
+      } = meta
+      let longId = Utils.toLongId(nid)
+      let ret = Object.create(null)
+      ret.nid = nid
+      ret.type = Utils.ctypeToType(ctype)
+      ret.thumb = thumb_image_url; // eslint-disable-line
+      ret.cover = cover_image_url; // eslint-disable-line
+      ret.coverex = coverex_image_url; // eslint-disable-line
+      // 策略0：如果banner存在返回，否则不下发
+      if (banner_image_url) { // eslint-disable-line
+        ret.banner = banner_image_url // eslint-disable-line
+      }
+      ret.titlecolor = title_color; // eslint-disable-line
+      ret.buy = buylink
+      let [mtitle, titleex] = title
+      ret.title = mtitle.replace(/ {2}/, '\n')
+      // 策略1：如果titleex存在就下发，否则不下发
+      if (titleex && titleex.trim()) {
+        ret.titleex = titleex
+      }
+      // 策略2：如果文章是专刊，调整返回的title字段为 title = title + '⌘' + titleex
+      if (ctype === 3 && titleex) {
+        ret.title = ret.title + '⌘' + titleex
+      }
+      // 策略3：titlecolor字段，如果cms里有，直接返回，如果是0或者没有，设置为4294967295
+      if (!ret.titlecolor) {
+        ret.titlecolor = 4294967295
+      }
+      ret.price = price
+      // 策略4：如果有price，返回，否则返回'N/A'
+      if (!price) {
+        ret.price = 'N/A'
+      }
+      // 策略5：如果有sku，且只关联了1个，那么返回sku地址 否则无条件返回buy购买页地址，不论这篇文章是否有购买页数据
+      ret.buy = buylink
+      if (!buylink) {
+        ret.buy = `http://c.diaox2.com/view/app/?m=buy&aid=${nid}`
+      }
+      ret.body = ret.thumbclass = ''
+      ret.coverclass = ' debug'
+      ret.url = `/view/app/?m=${Utils.ctypeToM(ctype)}&id=${nid}`
+      ret.applink = `diaodiao://c.diaox2.com${ret.url}`
+      ret.share = `/share/${longId}.html`
+      ret.serverid = longId
+      // delete meta.thumb_image_url
+      // delete meta.cover_image_url
+      // delete meta.coverex_image_url
+      // delete meta.banner_image_url
+      // delete meta.bannerwidth
+      // delete meta.bannerheight
+      // delete meta.buylink
+      // delete meta.author
+      // delete meta.ctype
+      // delete meta.has_buylink
+      // delete meta.is_external
+      // delete meta.timetopublish
+      // delete meta.title_color
+      return ret
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 
