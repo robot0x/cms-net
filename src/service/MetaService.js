@@ -352,7 +352,8 @@ class MetaService {
     if (!id) return
     const skus = await SKU.getSkusByArticleId(id, false)
     if (SKU.isOnlyOneOnlineSKU(skus)) {
-      return `http://c.diaox2.com/view/app/sku/${id}/${skus[0].sid}.html`
+      // SKU的页面支持长短aid，但是为了兼容老的，故转成长id
+      return `http://c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${skus[0].sid}.html`
     } else {
       // 若SKU有0个或多个，则从diaodiao_buyinfo取购买页
       // const buy_info = await this.metaTable.exec(`SELECT * FROM diaodiao_buyinfo where aid = ${id}`)
