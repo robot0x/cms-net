@@ -2,7 +2,7 @@ const MetaService = require('../../service/MetaService')
 const fs = require('fs')
 const path = require('path')
 const metaService = new MetaService()
-// const Utils = require('../../utils/Utils')
+const Utils = require('../../utils/Utils')
 const Log = require('../../utils/Log')
 
 // 20170503170435
@@ -37,14 +37,21 @@ async function genpub (postData) {
       Log.business('[API genpub] 输入参数为：', postData)
       let { iddict, version, tool, tool2, carousel } = postData
       let cids = Object.keys(iddict)
-      let metas = await metaService.getRawMetas(cids)
+      let metas = (await metaService.getRawMetas(cids)) || []
+      if (!Array.isArray(metas)) {
+        metas = [metas]
+      }
+      let meta = Object.create(null)
+      for (let me of metas) {
+        meta[Utils.toLongId(me.nid)] = me
+      }
       const ret = {
         seq: iddict,
         version,
         tool,
         tool2,
         carousel,
-        metas
+        metas: meta
       }
       const filePath = __dirname + `/views/${genFilename()}.app`
       fs.writeFile(filePath, JSON.stringify(ret), 'utf8', err => {
