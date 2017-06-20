@@ -235,11 +235,7 @@ router.get('/', async (req, res) => {
     } else if (/meta/i.test(m)) {
       console.log('meta接口的路由被命中：', id)
       if (id && numnberReg.test(id)) {
-        getMetas({
-          id,
-          debug: req.__debug__,
-          logid: req.__logid__
-        })
+        getMetas(id)
           .then(meta => writeJSON(meta, res, 'meta_get'))
           .catch(e => happyEnd(e, res))
         // metaService.getRawMetas(id).then(meta => writeJSON(meta, res))
@@ -599,9 +595,9 @@ router.post('/', async (req, res) => {
         .catch(e => happyEnd(e, res))
     } else if (/meta/i.test(m)) {
       console.log('命中meta POST接口 ...., postData为：', postData)
-      let cids = postData.cids
-      if (Utils.isValidArray(cids)) {
-        getMetas(cids)
+      // let cids = postData.cids
+      if (Utils.isValidArray(postData)) {
+        getMetas(postData)
           .then(meta => writeJSON(meta, res, 'meta_post'))
           .catch(e => {
             Log.exception(e)

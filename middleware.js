@@ -15,9 +15,6 @@ module.exports = {
      * 就渲染；若为false，则只渲染timetopublish在规定范围内的文章。
      * 注：专题没有timetopublish（数据库中的timetopublish为0），所以这个开关对其没有任何影响
      *
-     * 同时，该开关属性也控制meta接口，若debug为true，则不管范围，只要有值就出meta；
-     * 若为false，则只出timetopublish在规定范围内的文章meta。
-     *
      * 同时，该开关属性也控制app内原生渲染数据接口若为true，则不管范围，只要有值
      * 就出数据；若为false，则只出timetopublish在规定范围内的文章数据。
      *

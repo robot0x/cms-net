@@ -122,6 +122,7 @@ class DB {
             if (error) {
               console.log('mysql query\'s error:', error)
               Log.exception(error)
+              Log.exception('error sql:', sql)
               reject(error)
             } else {
               resolve(rows)
