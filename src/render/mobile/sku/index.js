@@ -48,8 +48,7 @@ class SkuRender extends Render {
       })
       // sku页显示的图片
       let thumb = Utils.addAliImageSuffix((images[0] || {}).url) || ''
-      // 需要setDebug，不然的话，如果文章未发布，则无法预览
-      const metas = (await metaService.setDebug(true).getRawMetas(revarticles, false)) || []
+      const metas = (await metaService.getRawMetas(revarticles, false)) || []
       return this.getDoc(this.template, {
         sid,
         title,

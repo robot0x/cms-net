@@ -58,7 +58,7 @@ class RssRender extends Render {
     }
     if (!Utils.isValidArray(ctypes)) return
     // 有很多文章的timetopublush是相同的，所以，应该用 timetopublish和id联合排序，不然刷新rss页，会导致文章顺序会变
-    const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, meta.ctype, meta.timetopublish, CONCAT('//',image.url) AS thumb_image_url FROM diaodiao_article_meta as meta, diaodiao_article_image AS image WHERE meta.id = image.aid AND meta.ctype IN (${ctypes.join(',')}) AND image.type & 8 = 8 AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish, id DESC`
+    const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, meta.ctype, meta.timetopublish, CONCAT('//',image.url) AS thumb_image_url FROM diaodiao_article_meta as meta, diaodiao_article_image AS image WHERE meta.id = image.aid AND meta.ctype IN (${ctypes.join(',')}) AND image.type & 8 = 8 AND ${Utils.genTimetopublishInterval('timetopublish', true)} ORDER BY timetopublish, id DESC`
     // TODO: 数据重复bug
     // const sql = `SELECT meta.id, meta.id * 4294967297 AS longid, meta.title, meta.ctype, meta.timetopublish, CONCAT('//',image.url) AS thumb_image_url FROM diaodiao_article_meta as meta WHERE meta.ctype IN (${ctypes.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
     // const thumb = await imageTable.getSpecialImagesUrl()

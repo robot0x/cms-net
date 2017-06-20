@@ -233,7 +233,7 @@ class Utils {
   /*
    取meta时，要给所有的where条件加上时间限制
    */
-  static genTimetopublishInterval (col = 'timetopublish', debug = false) {
+  static genTimetopublishInterval (col = 'timetopublish', useValidTimetopublishInterval = false) {
     // console.log('Utils.genTimetopublishInterval debug:', debug)
     // 从 [20141108, 今天] 的数据，即截止到今天
     // between ... and ... 包含边界值
@@ -242,7 +242,7 @@ class Utils {
     //     .format('YYYYMMDD'))}) `
     let {startDate, endDate} = Utils.genStarAndEndDateForTimetopublish()
     let interval = ` (${col} BETWEEN ${startDate} AND ${endDate}) `
-    if (debug) {
+    if (!useValidTimetopublishInterval) {
       interval = ' 1=1 '
     }
     return interval

@@ -41,7 +41,7 @@ class AuthorService {
         metas = [metas]
       }
       if (metas) {
-        // timetopublish不再规定范围内，不予显示。详见middleware.js关于__debug__的说明。
+        // timetopublish不再规定范围内，不予显示。
         let {startDate, endDate} = Utils.genStarAndEndDateForTimetopublish()
         metas = metas.filter(meta => {
           return meta.timetopublish >= startDate && meta.timetopublish <= endDate

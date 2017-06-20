@@ -79,20 +79,12 @@ class MetaTable extends Table {
   }
 
   getAidsBySource (source) {
-    return this.getAidsByCond(` author = ${super.escape(source)} AND ${Utils.genTimetopublishInterval()}`)
-    // return this.getRecordsByCond('id' ,`author = ${super.escape(source)}`)
+    return this.getAidsByCond(` author = ${super.escape(source)} `)
   }
 
   async getCtypeById (id) {
     let ctypes = await this.getRecordsByCond('ctype', `id = ${id}`)
     return Utils.getFirst(ctypes)
-    // let data =  await this.exec(`SELECT ctype FROM ${this.table} WHERE id = ${id}`)
-    // let meta = Utils.getFirst(data)
-    // let ctype = null
-    // if(meta){
-    //   ctype = meta.ctype
-    // }
-    // return ctype
   }
 
   async getMetas (ids) {

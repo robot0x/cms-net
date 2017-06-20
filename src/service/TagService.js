@@ -106,13 +106,13 @@ class TagService {
       // timetopublish不再规定范围内，不予显示。详见middleware.js关于__debug__的说明。
       // apimode接口使用
       if (useTimetopublish) {
-        metaSql = `SELECT CONCAT('', id) AS aid, CONCAT('', timetopublish) AS pubtime FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
+        metaSql = `SELECT CONCAT('', id) AS aid, CONCAT('', timetopublish) AS pubtime FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval('timetopublish', true)} ORDER BY timetopublish DESC`
       } else {
         // app内tag页原生渲染数据接口要用到Ctype
         if (useCtype) {
-          metaSql = `SELECT id, CONCAT(title,titleex) AS title, ctype FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
+          metaSql = `SELECT id, CONCAT(title,titleex) AS title, ctype FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval('timetopublish', true)} ORDER BY timetopublish DESC`
         } else {
-          metaSql = `SELECT id, CONCAT(title,titleex) AS title FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval()} ORDER BY timetopublish DESC`
+          metaSql = `SELECT id, CONCAT(title,titleex) AS title FROM diaodiao_article_meta where id in (${aids.join(',')}) AND ${Utils.genTimetopublishInterval('timetopublish', true)} ORDER BY timetopublish DESC`
         }
       }
       // 此数组已经有顺序，顺序是按照timetopublish从大到小排列

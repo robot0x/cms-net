@@ -73,13 +73,12 @@ class ShowRender extends Render {
     // console.log('ret:', ret)
     return ret
   }
-  async rende (id, debug) {
+  async rende (id) {
     const { parser, metaService } = this
     if (!id) return
     try {
-      console.log('pc show render debug:', debug)
       let [metaObj, relwords, buylink] = await Promise.all([
-        metaService.setDebug(debug).getRenderData(id),
+        metaService.getRenderData(id),
         this.getRelsearchWords(),
         this.getSales(id)
       ])

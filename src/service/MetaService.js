@@ -100,8 +100,6 @@ class MetaService {
     useImageSize = false,
     useAuthorSource = false
   ) {
-    // console.log('getRawMetas debug:', this.debug)
-    // console.log('getRawMetas logid:', this.logid)
     // 参数处理
     if (!Utils.isValidArray(ids)) {
       // 如果只传入一个id，则转化为数组，否则，参数不合法，直接返回
@@ -311,14 +309,12 @@ class MetaService {
 
         contentTable.getById(id)
       ])
-      let { timetopublish } = meta
-      if (
-        !this.debug &&
-        (timetopublish < startDate ||
-          timetopublish > Utils.genStarAndEndDateForTimetopublish().endDate)
-      ) {
-        return
-      }
+      // let { timetopublish } = meta
+      // if (timetopublish < startDate ||
+      //     timetopublish > Utils.genStarAndEndDateForTimetopublish().endDate
+      // ) {
+      //   return
+      // }
       // 由于author表目前的数据很少，所以写死
       // console.log('MetaService meta.author:', meta.author)
       const promises = [authorTable.getBySource(meta.author)]

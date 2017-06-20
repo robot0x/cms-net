@@ -36,12 +36,12 @@ class ZKRender extends Render {
   //   return this
   // }
 
-  async rende (id, pageType, debug) {
+  async rende (id, pageType) {
     const { parser, metaService } = this
     if (!id) return
     try {
       // 取专刊本身的meta，用不着buylink
-      let { content, meta, images } = (await metaService.setDebug(debug).getRenderData(id)) || {}
+      let { content, meta, images } = (await metaService.getRenderData(id)) || {}
       console.log('content:', content)
       content = content || ''
       meta = meta || {title: '', titleex: ''}

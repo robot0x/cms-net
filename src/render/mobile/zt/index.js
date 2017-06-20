@@ -38,11 +38,11 @@ class ZTRender extends Render {
   //   return this
   // }
 
-  async rende (id, pageType, debug) {
+  async rende (id, pageType) {
     const { parser, metaService } = this
     if (!id) return
     try {
-      let { content, meta, images } = (await metaService.setDebug(debug).getRenderData(id)) || {}
+      let { content, meta, images } = (await metaService.getRenderData(id)) || {}
       content = content || ''
       meta = meta || {}
       images = images || []

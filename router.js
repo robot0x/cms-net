@@ -62,7 +62,7 @@ const {
  *    .then(doc => writeDoc(doc))
  * 改为：
  *   render
- *    .rende(id, pageType, debug)
+ *    .rende(id, pageType)
  *    .then(doc => writeDoc(doc))
  */
 const numnberReg = /^\d+$/
@@ -74,7 +74,7 @@ async function showAndZKAndZTRouter (m, id, pageType, req, res) {
       // .setPageType(pageType)
       // .setDebug(debug)
       // .setId(id)
-      .rende(id, pageType, debug)
+      .rende(id, pageType)
       .then(doc =>
         writeDoc(doc, res, pageType === 'share' ? 'showShare' : 'show')
       )
@@ -84,7 +84,7 @@ async function showAndZKAndZTRouter (m, id, pageType, req, res) {
       // .setPageType(pageType)
       // .setDebug(debug)
       // .setId(id)
-      .rende(id, pageType, debug)
+      .rende(id, pageType)
       .then(doc => writeDoc(doc, res, pageType === 'share' ? 'zkShare' : 'zk'))
       .catch(e => happyEnd(e, res))
   } else if (/zt/.test(m)) {
@@ -92,7 +92,7 @@ async function showAndZKAndZTRouter (m, id, pageType, req, res) {
       // .setPageType(pageType)
       // .setDebug(debug)
       // .setId(id)
-      .rende(id, pageType, debug)
+      .rende(id, pageType)
       .then(doc => writeDoc(doc, res, pageType === 'share' ? 'ztShare' : 'zt'))
       .catch(e => happyEnd(e, res))
   } else {
@@ -298,13 +298,13 @@ router.get('/show', async (req, res) => {
     src, // ?src=
     tid // ?tid=
   } = req.body
-  const debug = req.__debug__
+  // const debug = req.__debug__
   if (id) {
     if (numnberReg.test(id)) {
       show
         // .setType('show')
         // .setDebug(debug)
-        .getData(id, 'show', debug)
+        .getData(id, 'show')
         .then(result => writeJSON(result, res, 'app_show'))
         .catch(e => happyEnd(e, res))
     } else if (/pcollection/i.test(id)) {
@@ -503,7 +503,7 @@ router.get(pcShowReg, async (req, res) => {
         pShowRender
           // .setId(id)
           // .setDebug(debug)
-          .rende(id, debug)
+          .rende(id)
           .then(doc => writeDoc(doc, res, 'article'))
           .catch(e => happyEnd(e, res))
       } else if (ctype === 3) {
@@ -511,7 +511,7 @@ router.get(pcShowReg, async (req, res) => {
         pZKRender
           // .setId(id)
           // .setDebug(debug)
-          .rende(id, debug)
+          .rende(id)
           .then(doc => writeDoc(doc, res, 'pc_zk'))
           .catch(e => happyEnd(e, res))
       } else {

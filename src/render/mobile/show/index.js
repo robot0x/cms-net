@@ -67,14 +67,14 @@ class ShowRender extends Render {
   //   skus = data[Utils.toLongId(id)]
   //   return skus
   // }
-  async rende (id, pageType, debug) {
+  async rende (id, pageType) {
     const { parser } = this
     if (!id) return
     try {
       const isShare = /share/i.test(pageType)
       let [metaObj, relwords] = await Promise.all([
         // 如果是share页，则拿buylink，否则不拿
-        metaService.setDebug(debug).getRenderData(id, isShare),
+        metaService.getRenderData(id, isShare),
         this.getRelsearchWords(id)
       ])
       metaObj = metaObj || {author: {}, images: []}
