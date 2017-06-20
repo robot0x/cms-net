@@ -13,7 +13,7 @@ const Show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，�
 const show = new Show()
 const ids = require(`${SRC}/api/ids`) // 拿出所有在库文章的id
 const content = require(`${SRC}/api/content`) // 根据id拿出文章的content，content去除了所有html标签和markdown标识
-const getMetas = require(`${SRC}/api/meta`) // meta接口
+// const getMetas = require(`${SRC}/api/meta`) // meta接口
 const apimode = require(`${SRC}/api/apimode`) // apimode接口
 const MetaTable = require(`${SRC}/db/MetaTable`)
 const metaTable = new MetaTable()
@@ -235,9 +235,13 @@ router.get('/', async (req, res) => {
     } else if (/meta/i.test(m)) {
       console.log('meta接口的路由被命中：', id)
       if (id && numnberReg.test(id)) {
-        getMetas(id)
-          .then(meta => writeJSON(meta, res, 'meta_get'))
-          .catch(e => happyEnd(e, res))
+        search
+        .byIds([id])
+        .then(meta => writeJSON(meta, res, 'pubmeta'))
+        .catch(e => happyEnd(e, res))
+        // getMetas(id)
+        //   .then(meta => writeJSON(meta, res, 'meta_get'))
+        //   .catch(e => happyEnd(e, res))
         // metaService.getRawMetas(id).then(meta => writeJSON(meta, res))
       } else {
         pageNotFound(res)
@@ -597,12 +601,16 @@ router.post('/', async (req, res) => {
       console.log('命中meta POST接口 ...., postData为：', postData)
       // let cids = postData.cids
       if (Utils.isValidArray(postData)) {
-        getMetas(postData)
-          .then(meta => writeJSON(meta, res, 'meta_post'))
-          .catch(e => {
-            Log.exception(e)
-            res.end()
-          })
+        search
+        .byIds(postData)
+        .then(meta => writeJSON(meta, res, 'TR'))
+        .catch(e => happyEnd(e, res))
+        // getMetas(postData)
+        //   .then(meta => writeJSON(meta, res, 'meta_post'))
+        //   .catch(e => {
+        //     Log.exception(e)
+        //     res.end()
+        //   })
       } else {
         // TODO:返回参数错误信息
       }

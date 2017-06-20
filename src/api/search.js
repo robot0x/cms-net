@@ -6,6 +6,7 @@ const metaService = new MetaService()
 const MetaTable = require('../db/MetaTable')
 const metaTable = new MetaTable()
 const Log = require('../utils/Log')
+const _ = require('lodash')
 /**
  * TR和TS接口，因为每条数据多并且还需要查询buylink，
  * 若一次性查询的数据过多，可能会引起超时，这个要注意
@@ -37,6 +38,25 @@ class Search {
       Log.exception(error)
     }
     return ret.length > 1 ? { metas: ret } : null
+  }
+
+  async byIds (aids) {
+    Log.business(`[API SearchByIds] 输入参数为：${aids}`)
+    let metas = (await metaService.getRawMetas(
+        aids,
+        true,
+        true,
+        true,
+        true,
+        true
+      )) || []
+    if (_.isPlainObject(metas)) {
+      metas = [metas]
+    }
+    metas = metas.map(meta => {
+      return this._handleMeta(meta)
+    })
+    return { metas }
   }
 
   byTitle (title) {
