@@ -3,7 +3,6 @@ const _ = require('lodash')
 const cheerio = require('cheerio')
 const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
-const entities = require('entities')
 // const Promise = require('bluebird')
 /**
  * CMS markdown 解析器
@@ -173,15 +172,15 @@ class Parser {
               item.scheme = /^https/i.test(href) ? 'https' : 'http'
             }
             if (!item.value) {
-              item.value = entities.decodeHTML($child.text())
+              item.value = $child.text()
             }
           } else if (name === 'span' && attribs.style) {
             item.style = attribs.style
           } else if (name === 'sku') {
             try {
-              let title = entities.decodeHTML($child.find('.articletitle').text())
+              let title = $child.find('.articletitle').text()
               let image = $child.find('.articleimg')[0].attribs['src']
-              let price = entities.decodeHTML($child.find('.brand').text())
+              let price = $child.find('.brand').text()
               let id = Utils.normalize($child[0].attribs['data-href'])
               item.type = name
               item.id = id
@@ -194,16 +193,16 @@ class Parser {
             }
           } else if (name === 'editorhead') {
             item.type = name
-            item.value = entities.decodeHTML($child.text())
+            item.value = $child.text()
           } else if (name === 'editorcontent') {
             item.type = name
-            item.value = this.htmlToData($child, false)
+            item.value = this.htmlToData(this.$(child), false)
           } else if (name === 'lift') {
             try {
               item.type = name
               // console.log($child.find('em'))
               // console.log($child)
-              item.value = entities.decodeHTML($child.find('em').text())
+              item.value = $child.find('em').text()
             } catch (error) {
               Log.exception(error)
               console.log(error)
@@ -211,7 +210,7 @@ class Parser {
           } else if (name === 'lift2') {
             try {
               item.type = name
-              item.value = entities.decodeHTML($child.text())
+              item.value = $child.text()
             } catch (error) {
               Log.exception(error)
               console.log(error)
@@ -221,7 +220,7 @@ class Parser {
             item.type = name
             item.value = this.htmlToData($child.find('.box-inner'), true)
           } else if (childNodes.length === 1 && childNodes[0].type === 'text') { // 若child下有且仅有一个文本节点，则直接把文本节点值赋予value
-            item.value = entities.decodeHTML(childNodes[0].data)
+            item.value = childNodes[0].data
           } else if (name === 'img') {
             let imgAttr = child.attribs
             item.type = child.name
@@ -255,7 +254,7 @@ class Parser {
           }
         } else if (type === 'text') {
           item.type = type
-          item.value = entities.decodeHTML(data)
+          item.value = data
         }
         if (!_.isEmpty(item)) {
           contents.push(item)
