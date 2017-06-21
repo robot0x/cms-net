@@ -191,18 +191,6 @@ class ShowParser extends Parser {
         }
         openMethod = '_self'
       }
-      // 1234#youdiao
-      // if (match) {
-      //   openMethod = '_self'
-      //   // let hash = match[1]
-      //   // if (hash) {
-      //   //   href = hash
-      //   //   openMethod = '_self'
-      //   // } else {
-      //   //   href = `//c.diaox2.com/view/app/?m=show&id=${href}`
-      //   // }
-      // }
-      // console.log(href)
       return `<a target="${openMethod}" href="${href}">${text || href}</a>`
     }
 

@@ -91,12 +91,16 @@ class ShowParser extends Parser {
       // 处理a标签内含有图片的语法 end
       if (/^\d+$/.test(href)) {
         // 处理测评集合页 [这是测评集合页的链接](7216)
-        // if (href == 7216) {
-        //   href = `//c.diaox2.com/?m=pcollection`
-        // } else {
-        //   href = `${prefix}/${href}.html`
-        // }
-        href = '#'
+        if (href == 7216) {
+          href = '#'
+        } else {
+          if (href.indexOf('#') !== -1) {
+            let [id, anch] = href.split('#')
+            href = `${prefix}/article/${id}.html#${anch}`
+          } else {
+            href = `${prefix}/article/${href}.html`
+          }
+        }
         openMethod = '_self'
       } else if (/pcollection/i.test(href)) { // [这是测评集合页的链接](pcollection)
         // href = `${prefix}/?m=pcollection`
@@ -114,18 +118,6 @@ class ShowParser extends Parser {
         }
         openMethod = '_self'
       }
-      // 1234#youdiao
-      // if (match) {
-      //   openMethod = '_self'
-      //   // let hash = match[1]
-      //   // if (hash) {
-      //   //   href = hash
-      //   //   openMethod = '_self'
-      //   // } else {
-      //   //   href = `//c.diaox2.com/view/app/?m=show&id=${href}`
-      //   // }
-      // }
-      // console.log(href)
       return `<a target="${openMethod}" href="${href}">${text || href}</a>`
     }
     // renderer.link = (href, title, text) => {
