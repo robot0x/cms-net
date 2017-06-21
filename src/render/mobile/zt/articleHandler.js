@@ -41,7 +41,7 @@ module.exports = async (html, markdown) => {
       const $articleDom = $(articleDom)
       $articleDom.find('.p1').text(meta.title[0])
       $articleDom.find('.p2').text(data.article[id])
-      $articleDom.find('img').attr('src', meta.thumb_image_url)
+      $articleDom.find('img').attr('src', Utils.addProtocolHead(meta.thumb_image_url))
     }
   } catch (error) {
     console.log(error)

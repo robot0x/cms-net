@@ -38,7 +38,7 @@ module.exports = async (html, ids) => {
       const $articleDom = $(articleDom)
       $articleDom.find('.title').text(meta.title[0])
       // 加上@768_1l 减小图片大小，经测试专刊页可以减少至少10%的下载量
-      $articleDom.find('.direct').attr('src', Utils.addImageOfShowPageAliImageSuffix(meta.cover_image_url))
+      $articleDom.find('.direct').attr('src', Utils.addProtocolHead(Utils.addImageOfShowPageAliImageSuffix(meta.cover_image_url)))
     }
   } catch (error) {
     console.log(error)

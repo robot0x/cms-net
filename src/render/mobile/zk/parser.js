@@ -37,7 +37,7 @@ class ZKParser extends Parser {
         ret = `<div class="bottomshadow card" id="head">
                   <div>
                       <div class="mask" style="width: 720px; height: 468px;"></div>
-                      <img class="direct" src="//${Utils.addImageOfShowPageAliImageSuffix(cover.url)}" data-w="640" data-h="416" style="width: 720px; height: 468px;">
+                      <img class="direct" src="${Utils.addProtocolHead(Utils.addImageOfShowPageAliImageSuffix(cover.url))}" data-w="640" data-h="416" style="width: 720px; height: 468px;">
                       <div id="headtitle"><p>${title.replace(/ {2}/, '<br>')}</p></div>
                   </div>
                   <p class="headdesc">${content.replace(zkdescReg, '')}</p>
@@ -65,7 +65,7 @@ class ZKParser extends Parser {
        */
       if (/zkarticle/i.test(type)) {
         let buylink = this.getBuylinkById(id)
-        return `<div class="bottomshadow card goodthing" data-href="//c.diaox2.com/view/app/?m=show&id=${id}">
+        return `<div class="bottomshadow card goodthing" data-href="https://c.diaox2.com/view/app/?m=show&id=${id}">
                 <div class="wrapper">
                         <div class="img">
                           <img class="direct" src="" data-w="596" data-h="486" style="width: 672px; height: 547px;">

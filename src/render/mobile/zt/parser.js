@@ -51,7 +51,7 @@ class ZTParser extends Parser {
         desc = desc[1]
       }
       if (/ztarticle/i.test(type)) {
-        return `<div class="articlecard ztcard" data-href="//c.diaox2.com/view/app/?m=show&id=${id}">
+        return `<div class="articlecard ztcard" data-href="https://c.diaox2.com/view/app/?m=show&id=${id}">
                       <div class="ztleft">
                         <img src="">
                       </div>
