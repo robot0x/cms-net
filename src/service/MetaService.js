@@ -464,22 +464,22 @@ class MetaService {
 // useImageSize = false,
 // useAuthorSource = false,
 // useTag = false
-let metaService = new MetaService()
-metaService
-  .getRawMetas(
-    [8763, 9757, 9233, 1],
-    false,
-    true,
-    false,
-    false,
-    false,
-    false,
-    false,
-    true
-  )
-  .then(data => {
-    console.log(data)
-  })
+// let metaService = new MetaService()
+// metaService
+//   .getRawMetas(
+//     [8763, 9757, 9233, 1],
+//     false,
+//     true,
+//     false,
+//     false,
+//     false,
+//     false,
+//     false,
+//     true
+//   )
+//   .then(data => {
+//     console.log(data)
+//   })
 
 module.exports = MetaService
 

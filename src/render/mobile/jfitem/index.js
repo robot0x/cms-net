@@ -1,5 +1,5 @@
 const Render = require('../../')
-// const Utils = require('../../../utils/Utils')
+const Utils = require('../../../utils/Utils')
 const request = require('request')
 const Log = require('../../../utils/Log')
 /**
@@ -51,14 +51,22 @@ class JfitemRender extends Render {
   async rende (gid, pageType) {
     if (!gid) return
     try {
-      const result = await this.getRenderData(gid)
+      const result = (await this.getRenderData(gid)) || {}
       if (!result) return
       let item = result.data
-      // let keys = Object.keys(item)
-      // let ret = []
-      // for (let key of keys) {
-      //   ret.push(`${key}:'${item[key]}'`)
-      // }
+      /**
+       * 发现一个bug，在ios app内，积分商城上的图片打不开，原因是由于ios app的ATS限制，
+       * 图片链接必须得是https的
+       */
+      let { cover, thumb, pics } = item
+      item.cover = Utils.addProtocolHead(cover)
+      item.thumb = Utils.addProtocolHead(thumb)
+      if (Utils.isValidArray(pics)) {
+        pics = pics.map(pic => {
+          pic.url = Utils.addProtocolHead(pic.url)
+          return pic
+        })
+      }
       return this.getDoc(this.template, {
         data: JSON.stringify(item),
         pageType: pageType,
@@ -75,7 +83,7 @@ class JfitemRender extends Render {
 
 // const jfitem = new JfitemRender()
 // jfitem.setGid(102).rende().then(data => {
-  // console.log(data)
+// console.log(data)
 // })
 
 module.exports = JfitemRender

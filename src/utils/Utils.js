@@ -534,8 +534,9 @@ class Utils {
    * @memberof Utils
    */
   static addProtocolHead (url, protocol = 'https') {
-    if (Utils.hasProtocol(url)) return url
-    return `${protocol}://${url}`
+    if (!url) return ''
+    // 移除协议头
+    return `${protocol}://${Utils.removeProtocolHead(url)}`
   }
   // 获取文件扩展名
   // http://leftstick.github.io/tech/2016/04/23/how-to-get-the-file-extension-more-efficiently
@@ -553,6 +554,10 @@ class Utils {
 }
 Utils.HTTP_PROTOCOL_REG = /^(https?:)?\/\//i
 // console.log(Utils.addProtocolHead('diaox2.com'))
+// console.log(Utils.addProtocolHead('//diaox2.com'))
+// console.log(Utils.addProtocolHead('http://diaox2.com'))
+// console.log(Utils.addProtocolHead(''))
+// console.log(Utils.addProtocolHead(null))
 // console.log(Utils.removeProtocolHead('http://diaox2.com'))
 // console.log(Utils.removeProtocolHead('https://diaox2.com'))
 // console.log(Utils.removeProtocolHead('//diaox2.com'))
