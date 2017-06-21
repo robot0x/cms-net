@@ -4,7 +4,7 @@ const path = require('path')
 const metaService = new MetaService()
 const Utils = require('../../utils/Utils')
 const Log = require('../../utils/Log')
-
+const isDebug = process.env.NODE_ENV === 'dev'
 // 20170503170435
 function genFilename () {
   const date = new Date()
@@ -53,7 +53,7 @@ async function genpub (postData) {
       }
       let meta = Object.create(null)
       for (let me of metas) {
-        let {nid, title} = me
+        let { nid, title } = me
         me.cid = +Utils.toLongId(nid)
         me.nid = String(nid)
         me.url = `http://c.diaox2.com/view/app/?m=${Utils.ctypeToM(me.ctype)}&id=${nid}`
@@ -77,7 +77,12 @@ async function genpub (postData) {
         carousel,
         metas: meta
       }
-      const filePath = __dirname + `/views/${genFilename()}.app`
+      // 默认写在服务器约定好的目录
+      let filePath = `/home/work/view2/output/${genFilename()}.app`
+      // 如果是在本地，则写入当前目录下的views目录
+      if (isDebug) {
+        filePath = __dirname + `/views/${genFilename()}.app` // eslint-disable-line
+      }
       fs.writeFile(filePath, JSON.stringify(ret), 'utf8', err => {
         if (err) {
           console.log(err)
