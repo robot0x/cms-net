@@ -96,9 +96,9 @@ class ShowParser extends Parser {
         } else {
           if (href.indexOf('#') !== -1) {
             let [id, anch] = href.split('#')
-            href = `${prefix}/article/${id}.html#${anch}`
+            href = `${prefix}/${id}.html#${anch}`
           } else {
-            href = `${prefix}/article/${href}.html`
+            href = `${prefix}/${href}.html`
           }
         }
         openMethod = '_self'
