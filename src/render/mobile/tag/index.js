@@ -10,9 +10,9 @@ const Log = require('../../../utils/Log')
  *   http://www.diaox2.com/category/100000.html
  */
 class TagRender extends Render {
-  constructor (tid) {
+  constructor () {
     super()
-    this.setTid(tid)
+    // this.setTid(tid)
     this.template = this.readTemplate(__dirname + '/tag.ejs')
     this.parser = new Parser()
     this.tagService = new TagService()
@@ -20,10 +20,10 @@ class TagRender extends Render {
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
-  setTid (tid) {
-    this.tid = tid
-    return this
-  }
+  // setTid (tid) {
+  //   this.tid = tid
+  //   return this
+  // }
 
   _findImageByAid (images, aid) {
     for (let image of images) {
@@ -42,8 +42,7 @@ class TagRender extends Render {
       let limit = 20
       let { metas, images, name } = (await tagService
         .setLimit(limit)
-        .setTid(tid)
-        .getRenderData()) || {images: [], metas: [], name: ''}
+        .getRenderData(tid)) || {images: [], metas: [], name: ''}
       let allarticles = []
       let infos = Object.create(null)
       // let len = allarticles.length

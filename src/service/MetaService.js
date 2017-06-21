@@ -9,12 +9,13 @@ const ContentTable = require('../db/ContentTable')
 const ImageTable = require('../db/ImageTable')
 const AuthorTable = require('../db/AuthorTable')
 const BuyinfoTable = require('../db/BuyinfoTable')
+const TagIndexTable = require('../db/TagIndexTable')
 const DB = require('../db/DB')
 const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
 const SKU = require('../utils/SKU')
 // const Base = require('../Base')
-const startDate = require('../../config/app').startDate
+// const startDate = require('../../config/app').startDate
 
 class MetaService {
   constructor (id) {
@@ -24,6 +25,7 @@ class MetaService {
     this.imageTable = new ImageTable()
     this.authorTable = new AuthorTable()
     this.buyinfoTable = new BuyinfoTable()
+    this.tagIndexTable = new TagIndexTable()
     // this.setId(id)
   }
 
@@ -98,7 +100,8 @@ class MetaService {
     useBanner = false,
     useSwipe = false,
     useImageSize = false,
-    useAuthorSource = false
+    useAuthorSource = false,
+    useTag = false
   ) {
     // 参数处理
     if (!Utils.isValidArray(ids)) {
@@ -175,7 +178,7 @@ class MetaService {
         imageTypes,
         imageCols
       )) || []
-      const metas = []
+      let metas = []
       for (let me of metaAndAuthors) {
         let {
           nid,
@@ -258,7 +261,10 @@ class MetaService {
           // 使用null_cms_link作为getBuylink在meta表中是否有
           // buylink字段的标志，否则的话，meta.buylink为undefined，
           // 则会再通过id拿一次buylink，这是没必要的且费性能
-          let buylink = await this.getBuylink(nid, meta.buylink || 'null_cms_link')
+          let buylink = await this.getBuylink(
+            nid,
+            meta.buylink || 'null_cms_link'
+          )
           if (buylink) {
             meta.has_buylink = true
             meta.buylink = buylink
@@ -268,7 +274,40 @@ class MetaService {
         }
         metas.push(meta)
       }
-
+      // tag处理
+      if (useTag) {
+        console.log('ids:', ids)
+        let tags = await this.tagIndexTable.getByAids(ids)
+        console.log('tags:', tags)
+        if (!Utils.isValidArray(tags)) {
+          metas = metas.map(meta => {
+            meta.tag = ''
+            return meta
+          })
+        } else {
+          metas = metas.map(meta => {
+            let { nid } = meta
+            let theTagsOfThisMeta = tags.filter(tag => tag.aid === nid)
+            if (!Utils.isValidArray(theTagsOfThisMeta)) {
+              meta.tag = ''
+              return meta
+            }
+            let theTagsOfTag1IsYoudiaozhuanlan = theTagsOfThisMeta.filter(
+              tag => tag.tag1 === '有调专栏'
+            )
+            if (!Utils.isValidArray(theTagsOfTag1IsYoudiaozhuanlan)) {
+              meta.tag = ''
+              return meta
+            } else {
+              let theFirstTagInfoOfTag1IsYoudiaozhuanlan = Utils.getFirst(
+                theTagsOfTag1IsYoudiaozhuanlan
+              )
+              meta.tag = theFirstTagInfoOfTag1IsYoudiaozhuanlan.tag2
+              return meta
+            }
+          })
+        }
+      }
       // 如果只传一个id，则返回 {}   形式
       // 如果传有多个id，则返回 [{}] 形式
       if (ids.length === 1 && metas.length === 1) {
@@ -416,6 +455,31 @@ class MetaService {
     // })
   }
 }
+// ids = [this.id],
+// useBuylink = true,
+// isShortId = false,
+// useCoverex = false,
+// useBanner = false,
+// useSwipe = false,
+// useImageSize = false,
+// useAuthorSource = false,
+// useTag = false
+let metaService = new MetaService()
+metaService
+  .getRawMetas(
+    [8763, 9757, 9233, 1],
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true
+  )
+  .then(data => {
+    console.log(data)
+  })
 
 module.exports = MetaService
 

@@ -10,17 +10,18 @@ const Log = require('../../../utils/Log')
 class TagRender extends Render {
   constructor (tid) {
     super()
-    this.setTid(tid)
+    // this.setTid(tid)
     this.template = this.readTemplate(__dirname + '/tag.ejs')
     this.parser = new Parser()
+    this.tagService = new TagService()
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
    */
-  setTid (tid) {
-    this.tid = tid
-    return this
-  }
+  // setTid (tid) {
+  //   this.tid = tid
+  //   return this
+  // }
 
   _findImageByAid (images, aid) {
     for (let image of images) {
@@ -32,12 +33,11 @@ class TagRender extends Render {
   }
 
   async rende (tid) {
-    const { parser } = this
+    const { parser, tagService } = this
     if (!tid) return
     try {
       //  let { metas, thumbs, name } = await new TagService(this.tid).getRenderData()
-      let tagService = new TagService(tid)
-      let [metaObj, ptag] = await Promise.all([tagService.getRenderData(true, false), tagService.getParentTagByTid(tid)])
+      let [metaObj, ptag] = await Promise.all([tagService.getRenderData(tid, true, false), tagService.getParentTagByTid(tid)])
       metaObj = metaObj || {metas: [], images: [], name: ''}
       ptag = ptag || {}
       let { metas, images, name } = metaObj

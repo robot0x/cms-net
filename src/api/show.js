@@ -410,8 +410,7 @@ class Show {
    */
   async getTagData (tid) {
     let data = await tagService
-      .setTid(tid)
-      .getRenderData(true, true, false, true)
+      .getRenderData(tid, true, true, false, true)
     let ret = Object.create(null)
     ret.name = data.name
     ret.article = []

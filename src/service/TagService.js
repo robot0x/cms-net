@@ -1,18 +1,18 @@
 const TagNameTable = require('../db/TagNameTable')
 const TagIndexTable = require('../db/TagIndexTable')
 const DB = require('../db/DB')
-const MetaService = require('./MetaService')
+// const MetaService = require('./MetaService')
 const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
 
 class TagService {
-  constructor (tid) {
+  constructor () {
     this.tagNameTable = new TagNameTable()
     this.tagIndexTable = new TagIndexTable()
     // console.log('[TagService initial ....]')
     // this.metaTable = new MetaTable
-    this.metaService = new MetaService()
-    this.setTid(tid)
+    // this.metaService = new MetaService()
+    // this.setTid(tid)
     // 渲染的list只有前20条有图片
     this.setLimit(-1)
   }
@@ -21,12 +21,9 @@ class TagService {
     this.limit = limit
     return this
   }
-
-  setTid (tid) {
-    this.tid = tid
-    return this
-  }
-
+  // async getTagInfosByAids (aids) {
+  //   let tags = (await this.tagIndexTable.getByAids(aids)) || []
+  // }
   async getParentTagByTid (tid, columns = ['tid', 'name']) {
     return await this.tagNameTable.getParentTagByTid(tid, columns)
   }
@@ -76,6 +73,7 @@ class TagService {
 
   // 渲染数据接口
   async getRenderData (
+    tid,
     useImage = true,
     useThumb = true,
     useTimetopublish = false,
@@ -84,7 +82,7 @@ class TagService {
     // const { tagNameTable, tagIndexTable, metaTable } = this
     // tagNmaeTable tag的元数据表
     // tagIndexTable 文章关联的tag表
-    const { tagNameTable, tagIndexTable, limit, tid } = this
+    const { tagNameTable, tagIndexTable, limit } = this
     try {
       let item = (await tagNameTable.getByTid(tid)) || {}
       let { level, name } = item
@@ -156,7 +154,8 @@ class TagService {
   }
 }
 
-// const ts = new TagService(100000)
+// const ts = new TagService()
 // ts.getTagTree().then(data => console.log(JSON.stringify(data)))
+// ts.getTagInfosByAids([8154, 8213]).then(data => console.log(JSON.stringify(data)))
 
 module.exports = TagService

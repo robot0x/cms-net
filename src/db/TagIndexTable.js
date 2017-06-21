@@ -13,6 +13,14 @@ class TagIndexTable extends Table {
     )
   }
 
+  async getByAids (ids) {
+    if (!Array.isArray(ids)) {
+      ids = [ids]
+    }
+    let sql = `SELECT ${this.columnsStr} FROM ${this.table} WHERE aid in (${ids.join(',')}) AND tag1 <> 'page_type'`
+    return await super.exec(sql)
+  }
+
   async getByTag1 (tag1) {
     return await super.getByCond({ tag1 })
   }
