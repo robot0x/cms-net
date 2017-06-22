@@ -257,10 +257,10 @@ class Utils {
       let mSkuReg = /\/sku\/(?:\d+\/)?(\d+)\.html/
       let match = buylink.match(mSkuReg)
       let sid = match[1]
-      buylink = `//c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${sid}.html`
+      buylink = `c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${sid}.html`
     }
     //  console.log('[Utils.convertSkuUrl] output is:', buylink)
-    return buylink
+    return Utils.addProtocolHead(buylink)
   }
   static addUrlPrefix (url) {
     if (!url) return null
