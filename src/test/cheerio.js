@@ -86,9 +86,9 @@ const $ = cheerio.load(
     normalizeWhitespace: false
   }
 )
-// console.log($('#p'))
+console.log($('.test').find('br')[0])
 // console.log($('#p').attr('class'))
 // console.log($('#p')[0].attribs['class'])
 // console.log($('#p').text())
-console.log($('#h4')[0])
+// console.log($('#h4')[0])
 // console.log($('h2'))

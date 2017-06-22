@@ -38,7 +38,7 @@ module.exports = async (html, ids) => {
       const $articleDom = $(articleDom)
       let titleDom = $articleDom.find('.title')
       let title = (meta.title[0] || '').replace(/ {2}/, '<br>')
-      if (titleDom) {
+      if (titleDom[0]) {
         titleDom.text(title)
       } else {
         $articleDom.find('.mask-title').text(title)
