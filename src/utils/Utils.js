@@ -535,8 +535,13 @@ class Utils {
    */
   static addProtocolHead (url, protocol = 'https') {
     if (!url) return ''
+    let removedProtocolHeadUrl = Utils.removeProtocolHead(url)
+    // 如果移除协议头后，是以 / 开头的（例如 /cms/file/a.jpg），则不加协议头
+    if (/^\//.test(removedProtocolHeadUrl)) {
+      return removedProtocolHeadUrl
+    }
     // 移除协议头
-    return `${protocol}://${Utils.removeProtocolHead(url)}`
+    return `${protocol}://${removedProtocolHeadUrl}`
   }
   // 获取文件扩展名
   // http://leftstick.github.io/tech/2016/04/23/how-to-get-the-file-extension-more-efficiently
