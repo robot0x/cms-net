@@ -36,7 +36,13 @@ module.exports = async (html, ids) => {
         continue
       }
       const $articleDom = $(articleDom)
-      $articleDom.find('.title').text(meta.title[0])
+      let titleDom = $articleDom.find('.title')
+      let title = (meta.title[0] || '').replace(/ {2}/, '<br>')
+      if (titleDom) {
+        titleDom.text(title)
+      } else {
+        $articleDom.find('.mask-title').text(title)
+      }
       // 加上@768_1l 减小图片大小，经测试专刊页可以减少至少10%的下载量
       $articleDom.find('.direct').attr('src', Utils.addProtocolHead(Utils.addImageOfShowPageAliImageSuffix(meta.cover_image_url)))
     }

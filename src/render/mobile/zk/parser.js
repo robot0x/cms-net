@@ -65,7 +65,7 @@ class ZKParser extends Parser {
        */
       if (/zkarticle/i.test(type)) {
         let buylink = this.getBuylinkById(id)
-        return `<div class="bottomshadow card goodthing" data-href="https://c.diaox2.com/view/app/?m=show&id=${id}">
+        let ret = `<div class="bottomshadow card goodthing" data-href="https://c.diaox2.com/view/app/?m=show&id=${id}">
                 <div class="wrapper">
                         <div class="img">
                           <img class="direct" src="" data-w="596" data-h="486" style="width: 672px; height: 547px;">
@@ -76,6 +76,21 @@ class ZKParser extends Parser {
                         <div class="pseudoB"><p>查看详情</p><span data-link="${buylink}">立即购买</span></div>
                     </div>
                     ${delimiter}`
+        if (!buylink) {
+          ret = `<div class="bottomshadow card goodthing" data-href="https://c.diaox2.com/view/app/?m=show&id=${id}">
+                <div class="wrapper">
+                        <div class="img">
+                          <div class="mask" style="width: 672px; height: 529px;"></div>
+                          <img class="direct" src="" data-w="596" data-h="486" style="width: 672px; height: 547px;">
+                          <p class="mask-title"></p>
+                        </div>
+                        </div>
+                        <p class="desc">${desc}</p>
+                        <div class="pseudoB"><p>查看详情</p></div>
+                    </div>
+                    ${delimiter}`
+        }
+        return ret
       }
     }
     super.setRenderer(renderer)

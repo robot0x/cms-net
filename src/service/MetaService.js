@@ -385,28 +385,37 @@ class MetaService {
      sku的status字段：0/1/2/4, 编辑/在线/失效/...
      目前业务上只用了0和1，0未发布，1代表发布
    */
-  async getBuylink (id, cmsBuyLink = '') {
+  async getBuylink (id, cmsBuyLink = '', withId = false) {
     if (!id) return
     const skus = await SKU.getSkusByArticleId(id, false)
+    let buylink = null
     if (SKU.isOnlyOneOnlineSKU(skus)) {
       // SKU的页面支持长短aid，但是为了兼容老的，故转成长id
-      return `http://c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${skus[0].sid}.html`
+      buylink = `http://c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${skus[0].sid}.html`
+      // return `http://c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${skus[0].sid}.html`
     } else {
       // 若SKU有0个或多个，则从diaodiao_buyinfo取购买页
       // const buy_info = await this.metaTable.exec(`SELECT * FROM diaodiao_buyinfo where aid = ${id}`)
       const buyInfo = await this.buyinfoTable.getByAid(id)
       // 如果diaodiao_buyinfo表存在购买信息
       if (buyInfo.length > 0 && buyInfo[0].link) {
-        return `http://c.diaox2.com/view/app/?m=buy&aid=${id}`
-      } else if (cmsBuyLink) {
-        if (cmsBuyLink === 'null_cms_link') {
-          return null
-        } else {
-          return cmsBuyLink
-        }
+        buylink = `http://c.diaox2.com/view/app/?m=buy&aid=${id}`
+        // return `http://c.diaox2.com/view/app/?m=buy&aid=${id}`
+      } else if (cmsBuyLink && cmsBuyLink !== 'null_cms_link') {
+        buylink = cmsBuyLink
+        // return cmsBuyLink
       } else {
-        return await this.metaTable.getBuylinkById(id)
+        buylink = await this.metaTable.getBuylinkById(id)
+        // return await this.metaTable.getBuylinkById(id)
       }
+    }
+    if (withId) {
+      return {
+        cid: id,
+        link: buylink
+      }
+    } else {
+      return buylink
     }
     // console.log('getBuylink:', id)
     // 首先，http://s5.a.dx2rd.com:3000/v1/articlesku/1233 通过这个接口拿sku
