@@ -98,6 +98,10 @@ class TagService {
           tags = await tagIndexTable.getByTag2(name)
           break
       }
+      if (!tags) {
+        Log.exception(`Tag页渲染失败，输入的tid为${tid}`)
+        return
+      }
       // 拿到所有aids，通过aids拿出所有meta，这个需要写自己写sql
       const aids = tags.map(tag => tag.aid)
       let metaSql = ''
