@@ -62,13 +62,15 @@ async function genpub (postData) {
       }
       let meta = Object.create(null)
       for (let me of metas) {
-        let { nid, title } = me
+        let { nid, title, ctype } = me
         me.cid = +Utils.toLongId(nid)
         me.nid = String(nid)
         me.url = `http://c.diaox2.com/view/app/?m=${Utils.ctypeToM(me.ctype)}&id=${nid}`
         me.author.pic = me.author.pic.replace('/cms/diaodiao/', '')
-        me.cover_image_url = 'http:' + me.cover_image_url
-        me.thumb_image_url = 'http:' + me.thumb_image_url
+        if (ctype === 5) {
+          me.ctype = 1
+          me.type = Utils.ctypeToType(me.ctype)
+        }
         let [mtitle, titleex] = title
         let titles = mtitle.split(/ {2}/)
         if (titleex) {

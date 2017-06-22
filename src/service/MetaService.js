@@ -209,8 +209,8 @@ class MetaService {
         let cover_image = this._findImageByAidAndType(nid, 2, images) || {}
         let thumb_image = this._findImageByAidAndType(nid, 8, images) || {}
 
-        meta.cover_image_url = cover_image.url || ''
-        meta.thumb_image_url = thumb_image.url || ''
+        meta.cover_image_url = Utils.addProtocolHead(cover_image.url)
+        meta.thumb_image_url = Utils.addProtocolHead(thumb_image.url)
         let coverex_image = null
         let banner_image = null
         let swipe_images = null // 走马灯图，可能有多个
@@ -218,22 +218,22 @@ class MetaService {
         if (useCoverex) {
           coverex_image = this._findImageByAidAndType(nid, 4, images) || {}
           if (coverex_image) {
-            meta.coverex_image_url = coverex_image.url
+            meta.coverex_image_url = Utils.addProtocolHead(coverex_image.url)
           }
         }
 
         if (useSwipe) {
           swipe_images = this._findImageByAidAndType(nid, 16, images) || {}
           if (Utils.isValidArray(swipe_images)) {
-            meta.swipe_image_url = swipe_images.map(swipe => swipe.url)
+            meta.swipe_image_url = swipe_images.map(swipe => Utils.addProtocolHead(swipe.url))
           }
         }
 
         // 如果文章使用了banner图，就使用cms.banner，否则meta不用包含这个字段
         if (useBanner) {
           banner_image = this._findImageByAidAndType(nid, 32, images) || {}
-          if (banner_image) {
-            meta.banner = banner_image.url
+          if (banner_image && banner_image.url) {
+            meta.banner = Utils.addProtocolHead(banner_image.url)
           }
         }
 
@@ -277,9 +277,7 @@ class MetaService {
       }
       // tag处理
       if (useTag) {
-        console.log('ids:', ids)
         let tags = await this.tagIndexTable.getByAids(ids)
-        console.log('tags:', tags)
         if (!Utils.isValidArray(tags)) {
           metas = metas.map(meta => {
             meta.tag = ''
@@ -314,7 +312,7 @@ class MetaService {
         let ctype = meta.ctype
         // 如果是专题文章，cover_image_url使用占位符 https://a.diaox2.com/cms/diaodiao/assets/icon.png
         if (ctype === 9) {
-          meta.cover_image_url = 'http://a.diaox2.com/cms/diaodiao/assets/icon.png'
+          meta.cover_image_url = 'https://a.diaox2.com/cms/diaodiao/assets/icon.png'
         } else if (ctype !== 3 && useCoverex) { // 如果不是专刊文章，使用coverex，处理完毕
           meta.cover_image_url = meta.coverex_image_url
         }
