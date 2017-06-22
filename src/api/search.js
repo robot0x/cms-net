@@ -118,7 +118,6 @@ class Search {
         thumb_image_url,
         cover_image_url,
         coverex_image_url,
-        banner_image_url,
         buylink,
         title,
         title_color,
@@ -132,10 +131,6 @@ class Search {
       ret.thumb = thumb_image_url; // eslint-disable-line
       ret.cover = cover_image_url; // eslint-disable-line
       ret.coverex = coverex_image_url; // eslint-disable-line
-      // 策略0：如果banner存在返回，否则不下发
-      if (banner_image_url) { // eslint-disable-line
-        ret.banner = banner_image_url // eslint-disable-line
-      }
       ret.titlecolor = title_color; // eslint-disable-line
       ret.buy = buylink
       let [mtitle, titleex] = title
@@ -171,7 +166,6 @@ class Search {
       // delete meta.thumb_image_url
       // delete meta.cover_image_url
       // delete meta.coverex_image_url
-      // delete meta.banner_image_url
       // delete meta.bannerwidth
       // delete meta.bannerheight
       // delete meta.buylink

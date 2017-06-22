@@ -96,7 +96,7 @@ class MetaService {
     ids = [this.id],
     useBuylink = true,
     isShortId = false,
-    useCoverex = false,
+    useCoverex = true,
     useBanner = false,
     useSwipe = false,
     useImageSize = false,
@@ -229,10 +229,11 @@ class MetaService {
           }
         }
 
+        // 如果文章使用了banner图，就使用cms.banner，否则meta不用包含这个字段
         if (useBanner) {
           banner_image = this._findImageByAidAndType(nid, 32, images) || {}
           if (banner_image) {
-            meta.banner_image_url = banner_image.url
+            meta.banner = banner_image.url
           }
         }
 
@@ -308,6 +309,21 @@ class MetaService {
           })
         }
       }
+      // 图片策略
+      metas = metas.map(meta => {
+        let ctype = meta.ctype
+        // 如果是专题文章，cover_image_url使用占位符 https://a.diaox2.com/cms/diaodiao/assets/icon.png
+        if (ctype === 9) {
+          meta.cover_image_url = 'http://a.diaox2.com/cms/diaodiao/assets/icon.png'
+        } else if (ctype !== 3 && useCoverex) { // 如果不是专刊文章，使用coverex，处理完毕
+          meta.cover_image_url = meta.coverex_image_url
+        }
+        // 对于"activity"活动类型的文章，(ctype==4)，需要提供coverv3这个字段，这个字段就是cms的coverimage（注意不是coverex）
+        if (ctype === 4) {
+          meta.coverv3 = meta.cover_image_url
+        }
+        return meta
+      })
       // 如果只传一个id，则返回 {}   形式
       // 如果传有多个id，则返回 [{}] 形式
       if (ids.length === 1 && metas.length === 1) {

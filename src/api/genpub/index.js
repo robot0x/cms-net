@@ -37,12 +37,21 @@ async function genpub (postData) {
       Log.business('[API genpub] 输入参数为：', postData)
       let { iddict, version, tool, tool2, carousel } = postData
       let cids = Object.keys(iddict)
+      // ids = [this.id],
+      // useBuylink = true,
+      // isShortId = false,
+      // useCoverex = false,
+      // useBanner = false,
+      // useSwipe = false,
+      // useImageSize = false,
+      // useAuthorSource = false,
+      // useTag = false
       let metas = (await metaService.getRawMetas(
         cids,
         true,
         false,
-        false,
-        false,
+        true, // useCoverex
+        true, // useBanner
         false,
         false,
         false,
