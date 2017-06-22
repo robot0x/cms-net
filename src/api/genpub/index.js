@@ -1,9 +1,12 @@
-const MetaService = require('../../service/MetaService')
 const fs = require('fs')
 const path = require('path')
+const MetaService = require('../../service/MetaService')
 const metaService = new MetaService()
+const ContentTable = require('../../db/ContentTable')
+const contentTable = new ContentTable()
 const Utils = require('../../utils/Utils')
 const Log = require('../../utils/Log')
+const _ = require('lodash')
 const isDebug = process.env.NODE_ENV === 'dev'
 // 20170503170435
 function genFilename () {
@@ -80,6 +83,21 @@ async function genpub (postData) {
         // 如果是专题文章，cover_image_url使用占位符 https://a.diaox2.com/cms/diaodiao/assets/icon.png
         if (ctype === 9) {
           me.cover_image_url = 'https://a.diaox2.com/cms/diaodiao/assets/icon.png'
+          let markdown = await contentTable.getById(nid)
+          let ztdata = Utils.getZtDataByParseMarkdown(markdown || '')
+          let list = []
+          if (!_.isEmpty(ztdata)) {
+            let {article, ids} = ztdata
+            if (!_.isEmpty(ids)) {
+              for (let id of ids) {
+                list.push({
+                  cid: Utils.toLongId(id),
+                  summary: article[id]
+                })
+              }
+            }
+          }
+          me.cid_list = list
         } else if (ctype !== 3) { // 如果不是专刊文章，使用coverex，处理完毕
           me.cover_image_url = me.coverex_image_url
         }
