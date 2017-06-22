@@ -151,14 +151,13 @@ class MetaService {
       const metaAndAuthors = await DB.exec(sql)
       // console.log('metaAndAuthors:', metaAndAuthors);
       // console.log('[MetaService.getRawMetas]:', metaAndAuthors)
-      // type = 2为cover图，type = 8 为thumb图, type = 4 coverex图
       let imageCols = ['aid', "CONCAT('//', url) AS url", 'type']
 
       if (useImageSize) {
         imageCols.push('width')
         imageCols.push('height')
       }
-
+       //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
       let imageTypes = [2, 8]
 
       if (useCoverex) {
@@ -307,21 +306,6 @@ class MetaService {
           })
         }
       }
-      // 图片策略
-      metas = metas.map(meta => {
-        let ctype = meta.ctype
-        // 如果是专题文章，cover_image_url使用占位符 https://a.diaox2.com/cms/diaodiao/assets/icon.png
-        if (ctype === 9) {
-          meta.cover_image_url = 'https://a.diaox2.com/cms/diaodiao/assets/icon.png'
-        } else if (ctype !== 3 && useCoverex) { // 如果不是专刊文章，使用coverex，处理完毕
-          meta.cover_image_url = meta.coverex_image_url
-        }
-        // 对于"activity"活动类型的文章，(ctype==4)，需要提供coverv3这个字段，这个字段就是cms的coverimage（注意不是coverex）
-        if (ctype === 4) {
-          meta.coverv3 = meta.cover_image_url
-        }
-        return meta
-      })
       // 如果只传一个id，则返回 {}   形式
       // 如果传有多个id，则返回 [{}] 形式
       if (ids.length === 1 && metas.length === 1) {

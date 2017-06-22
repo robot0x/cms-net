@@ -55,7 +55,7 @@ async function genpub (postData) {
         false,
         false,
         false,
-        true
+        true // useTag
       )) || []
       if (!Array.isArray(metas)) {
         metas = [metas]
@@ -75,6 +75,17 @@ async function genpub (postData) {
         let titles = mtitle.split(/ {2}/)
         if (titleex) {
           titles.push(titleex)
+        }
+        // 图片策略
+        // 如果是专题文章，cover_image_url使用占位符 https://a.diaox2.com/cms/diaodiao/assets/icon.png
+        if (ctype === 9) {
+          me.cover_image_url = 'https://a.diaox2.com/cms/diaodiao/assets/icon.png'
+        } else if (ctype !== 3) { // 如果不是专刊文章，使用coverex，处理完毕
+          me.cover_image_url = me.coverex_image_url
+        }
+        // 对于"activity"活动类型的文章，(ctype==4)，需要提供coverv3这个字段，这个字段就是cms的coverimage（注意不是coverex）
+        if (ctype === 4) {
+          me.coverv3 = meta.cover_image_url
         }
         me.title = titles
         delete me.timetopublish

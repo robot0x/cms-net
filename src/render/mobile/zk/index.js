@@ -7,6 +7,7 @@ const Log = require('../../../utils/Log')
 /**
  * 渲染：
  *  1. 专刊 zhuankan (ctype = 4)    http://c.diaox2.com/view/app/?m=zk&id=3053
+ * 
  */
 class ZKRender extends Render {
   constructor (id) {
@@ -46,7 +47,7 @@ class ZKRender extends Render {
       content = content || ''
       meta = meta || {title: '', titleex: ''}
       images = images || []
-      let { title, titleex } = meta
+      let { title, titleex, ctype } = meta
       parser.markdown = content // markdown is a setter like method `setMarkdown`
       //  对于专刊，我们要先取出所引用的所有文章id
       let data = (Utils.getZkDataByParseMarkdown(content)) || {}
@@ -74,9 +75,16 @@ class ZKRender extends Render {
       let cover = images.filter(img => {
         return (img.type & 2) === 2
       })
+      let coverex = images.filter(img => {
+        return (img.type & 8) === 4
+      })
       let thumb = images.filter(img => {
         return (img.type & 8) === 8
       })
+      // 渲染策略：如果是首页，取coverex作为渲染的图，其他的都是取cover
+      if (ctype === 1) {
+        cover = coverex
+      }
       // const swipes = images.filter(img => {
       //   return (img.type & 16) === 16
       // }) || []

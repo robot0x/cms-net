@@ -41,14 +41,23 @@ class Search {
   }
 
   async byIds (aids) {
+    // ids = [this.id],
+    // useBuylink = true,
+    // isShortId = false,
+    // useCoverex = true,
+    // useBanner = false,
+    // useSwipe = false,
+    // useImageSize = false,
+    // useAuthorSource = false,
+    // useTag = false
     Log.business(`[API SearchByIds] 输入参数为：${aids}`)
     let metas = (await metaService.getRawMetas(
         aids,
-        true,
-        true,
-        true,
-        true,
-        true
+        true, // useBuylink
+        true, // isShortId
+        true, // useCoverex
+        true, // useBanner
+        true // useSwipe
       )) || []
     if (_.isPlainObject(metas)) {
       metas = [metas]
@@ -126,14 +135,21 @@ class Search {
       } = meta
       let longId = Utils.toLongId(nid)
       let ret = Object.create(null)
+      // nid字段，就是文章的短id
       ret.nid = nid
-      ret.type = Utils.ctypeToType(ctype)
+      if (ctype === 5) {
+        ret.ctype = 1
+        ret.type = Utils.ctypeToType(ret.ctype)
+      } else {
+        ret.type = Utils.ctypeToType(ctype)
+      }
       ret.thumb = thumb_image_url; // eslint-disable-line
       ret.cover = cover_image_url; // eslint-disable-line
       ret.coverex = coverex_image_url; // eslint-disable-line
       ret.titlecolor = title_color; // eslint-disable-line
       ret.buy = buylink
       let [mtitle, titleex] = title
+      // title字段，string类型，但是要将cms里面title里的连续两个空格，替换为'<br>'
       ret.title = mtitle.replace(/ {2}/, '<br>')
       // 策略1：如果titleex存在就下发，否则不下发
       if (titleex && titleex.trim()) {
