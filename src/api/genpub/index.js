@@ -53,7 +53,7 @@ async function genpub (postData) {
         cids,
         true,
         false,
-        false, // noUseCoverex
+        true, // useCoverex
         true, // useBanner
         false,
         false,
@@ -98,15 +98,15 @@ async function genpub (postData) {
             }
           }
           me.cid_list = list
+        } else if (ctype === 4) {
+          // 对于"activity"活动类型的文章，(ctype==4)，需要提供coverv3这个字段，这个字段就是cms的coverimage（注意不是coverex）
+          me.coverv3 = Utils.addProtocolHead(meta.cover_image_url, 'http')
         } else if (ctype !== 3) { // 如果不是专刊文章，使用coverex，处理完毕
           me.cover_image_url = Utils.addProtocolHead(me.coverex_image_url, 'http')
         }
-        // 对于"activity"活动类型的文章，(ctype==4)，需要提供coverv3这个字段，这个字段就是cms的coverimage（注意不是coverex）
-        if (ctype === 4) {
-          me.coverv3 = Utils.addProtocolHead(meta.cover_image_url, 'http')
-        }
         me.title = titles
         delete me.timetopublish
+        delete me.coverex_image_url
         meta[Utils.toLongId(me.nid)] = me
       }
       const ret = {
