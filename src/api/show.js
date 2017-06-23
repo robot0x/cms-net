@@ -104,7 +104,21 @@ class Show {
       ret.image = image
       let cids = data.ids
       let [rawMetas, stat] = await Promise.all([
-        metaService.getRawMetas(cids, true, true),
+        // ids = [this.id],
+        // useBuylink = true,
+        // isShortId = false,
+        // useCoverex = true,
+        // useBanner = false,
+        // useSwipe = false,
+        // useImageSize = false,
+        // useAuthorSource = false,
+        // useTag = false
+        metaService.getRawMetas(
+          cids,
+          true, // useBuylink
+          true, // isShortId
+          true // useCoverex
+        ),
         this.getStat(cids)
       ])
       let metas = []
@@ -117,7 +131,7 @@ class Show {
           rawMetas.filter(rawMeta => rawMeta.nid === cid)
         )
         if (!cardMeta) continue
-        let { title, cover_image_url, buylink, ctype, price } = cardMeta
+        let { title, cover_image_url, coverex_image_url, buylink, ctype, price } = cardMeta
         card.title = title[0]
         card.desc = data.article[cid]
         card.image = cover_image_url // eslint-disable-line
@@ -127,6 +141,10 @@ class Show {
         // 当不是好物时，不下发ctype字段
         if (ctype === 2) {
           card.price = price
+        }
+        // 渲染策略：如果是首页，取coverex作为渲染的图，其他的都是取cover
+        if (ctype === 1) {
+          card.image = coverex_image_url // eslint-disable-line
         }
         card.favo_count = st.fav || 0
         metas.push(card)
