@@ -72,7 +72,7 @@ async function genpub (postData) {
         me.author.pic = me.author.pic.replace('/cms/diaodiao/', '')
         if (ctype === 5) {
           ctype = me.ctype = 1
-          me.type = Utils.ctypeToType(me.ctype)
+          me.type = Utils.ctypeToType(ctype)
         }
         let [mtitle, titleex] = title
         let titles = mtitle.split(/ {2}/)
