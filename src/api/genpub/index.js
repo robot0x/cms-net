@@ -63,6 +63,7 @@ async function genpub (postData) {
       if (!Array.isArray(metas)) {
         metas = [metas]
       }
+      const placeholder = 'http://a.diaox2.com/cms/diaodiao/assets/icon.png'
       let meta = Object.create(null)
       for (let me of metas) {
         let { nid, title, ctype } = me
@@ -82,7 +83,9 @@ async function genpub (postData) {
         // 如果不是专刊文章，使用coverex，处理完毕，后面加上 ctype !== 4 的原因时，不要覆盖ctype为4的cover_image_url
         // 因为后面需要使用原始的cover_image_url
         if (ctype !== 3 || ctype !== 4) {
-          me.cover_image_url = Utils.addProtocolHead(me.coverex_image_url, 'http')
+          // 我们有些老的首页和经验其实是没有coverex的，所以，cover_image_url为空，但是为了确保
+          // cover_image_url一定有值，可以使用占位图告诉编辑，这篇文章是没有coverex的
+          me.cover_image_url = Utils.addProtocolHead(me.coverex_image_url, 'http') || placeholder
         }
 
         if (ctype === 4) {
@@ -92,7 +95,7 @@ async function genpub (postData) {
         // 图片策略
         // 如果是专题文章，cover_image_url使用占位符 https://a.diaox2.com/cms/diaodiao/assets/icon.png
         if (ctype === 9) {
-          me.cover_image_url = 'http://a.diaox2.com/cms/diaodiao/assets/icon.png'
+          me.cover_image_url = placeholder
           let markdown = await contentTable.getById(nid)
           let ztdata = Utils.getZtDataByParseMarkdown(markdown || '')
           let list = []
