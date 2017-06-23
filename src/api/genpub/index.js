@@ -71,7 +71,7 @@ async function genpub (postData) {
         me.url = `http://c.diaox2.com/view/app/?m=${Utils.ctypeToM(me.ctype)}&id=${nid}`
         me.author.pic = me.author.pic.replace('/cms/diaodiao/', '')
         if (ctype === 5) {
-          me.ctype = 1
+          ctype = me.ctype = 1
           me.type = Utils.ctypeToType(me.ctype)
         }
         let [mtitle, titleex] = title
@@ -79,14 +79,15 @@ async function genpub (postData) {
         if (titleex) {
           titles.push(titleex)
         }
-
-        if (ctype !== 3) { // 如果不是专刊文章，使用coverex，处理完毕
+        // 如果不是专刊文章，使用coverex，处理完毕，后面加上 ctype !== 4 的原因时，不要覆盖ctype为4的cover_image_url
+        // 因为后面需要使用原始的cover_image_url
+        if (ctype !== 3 || ctype !== 4) {
           me.cover_image_url = Utils.addProtocolHead(me.coverex_image_url, 'http')
         }
 
         if (ctype === 4) {
           // 对于"activity"活动类型的文章，(ctype==4)，需要提供coverv3这个字段，这个字段就是cms的coverimage（注意不是coverex）
-          me.coverv3 = Utils.addProtocolHead(meta.cover_image_url, 'http')
+          me.coverv3 = Utils.addProtocolHead(me.cover_image_url, 'http')
         }
         // 图片策略
         // 如果是专题文章，cover_image_url使用占位符 https://a.diaox2.com/cms/diaodiao/assets/icon.png
