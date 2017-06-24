@@ -62,7 +62,7 @@ module.exports = async (html, ids) => {
       // 加上@768_1l 减小图片大小，经测试专刊页可以减少至少10%的下载量
       let img = $articleDom.find('.direct')
       // 图片设置data-w和data-h，由前端js决定图片的大小
-      if (coverexwidth) {
+      if (coverwidth) {
         img.attr('data-w', coverwidth)
       }
       if (coverheight) {
