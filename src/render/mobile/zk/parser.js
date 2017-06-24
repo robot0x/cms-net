@@ -68,7 +68,7 @@ class ZKParser extends Parser {
         let ret = `<div class="bottomshadow card goodthing" data-href="https://c.diaox2.com/view/app/?m=show&id=${id}">
                 <div class="wrapper">
                         <div class="img">
-                          <img class="direct" src="" data-w="596" data-h="486" style="width: 672px; height: 547px;">
+                          <img class="direct" src="">
                         </div>
                         </div>
                         <p class="title"></p>
@@ -80,8 +80,8 @@ class ZKParser extends Parser {
           ret = `<div class="bottomshadow card goodthing" data-href="https://c.diaox2.com/view/app/?m=show&id=${id}">
                 <div class="wrapper">
                         <div class="img">
-                          <div class="mask" style="width: 672px; height: 529px;"></div>
-                          <img class="direct" src="" data-w="596" data-h="486" style="width: 672px; height: 547px;">
+                          <div class="mask"></div>
+                          <img class="direct" src="">
                           <p class="mask-title"></p>
                         </div>
                         </div>

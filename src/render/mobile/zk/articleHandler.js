@@ -27,8 +27,12 @@ module.exports = async (html, ids) => {
       ids,
       false, // useBuylink
       true, // isShortId
-      true // useCoverex
+      true, // useCoverex
+      false, // useBanner
+      false, // useSwipe
+      true // useImageSize
     )
+    console.log(metas)
     for (let articleDom of articleDoms) {
       // console.log(articleDom.attribs['data-href'])
       let meta = findMetaById(
@@ -40,7 +44,7 @@ module.exports = async (html, ids) => {
         $(articleDom).remove()
         continue
       }
-      let {ctype, title, cover_image_url, coverex_image_url} = meta
+      let {ctype, title, cover_image_url, coverex_image_url, coverwidth, coverheight, coverexwidth, coverexheight} = meta
       const $articleDom = $(articleDom)
       let titleDom = $articleDom.find('.title')
       title = (title[0] || '').replace(/ {2}/, '<br>')
@@ -52,9 +56,19 @@ module.exports = async (html, ids) => {
       // 渲染策略：如果是首页，取coverex作为渲染的图，其他的都是取cover
       if (ctype === 1) {
         cover_image_url = coverex_image_url　// eslint-disable-line
+        coverwidth = coverexwidth
+        coverheight = coverexheight
       }
       // 加上@768_1l 减小图片大小，经测试专刊页可以减少至少10%的下载量
-      $articleDom.find('.direct').attr('src', Utils.addProtocolHead(Utils.addImageOfShowPageAliImageSuffix(cover_image_url)))
+      let img = $articleDom.find('.direct')
+      // 图片设置data-w和data-h，由前端js决定图片的大小
+      if (coverexwidth) {
+        img.attr('data-w', coverwidth)
+      }
+      if (coverheight) {
+        img.attr('data-h', coverheight)
+      }
+      img.attr('src', Utils.addProtocolHead(Utils.addImageOfShowPageAliImageSuffix(cover_image_url)))
     }
   } catch (error) {
     console.log(error)
