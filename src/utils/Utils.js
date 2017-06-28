@@ -536,6 +536,9 @@ class Utils {
   static addProtocolHead (url, protocol = 'https') {
     if (!url) return ''
     let removedProtocolHeadUrl = Utils.removeProtocolHead(url)
+    if (protocol === '//') {
+      return `//${Utils.removeProtocolHead(url)}`
+    }
     // 如果移除协议头后，是以 / 开头的（例如 /cms/file/a.jpg），则不加协议头
     if (/^\//.test(removedProtocolHeadUrl)) {
       return removedProtocolHeadUrl
