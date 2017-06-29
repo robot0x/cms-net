@@ -67,7 +67,7 @@ const {
  */
 const numnberReg = /^\d+$/
 async function showAndZKAndZTRouter (m, id, pageType, req, res) {
-  let debug = req.__debug__
+  // let debug = req.__debug__
   console.log('pageType:', pageType)
   if (/show/.test(m)) {
     mShowRender

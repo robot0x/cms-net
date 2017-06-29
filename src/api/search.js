@@ -127,6 +127,7 @@ class Search {
         thumb_image_url,
         cover_image_url,
         coverex_image_url,
+        banner,
         buylink,
         title,
         title_color,
@@ -179,6 +180,10 @@ class Search {
       ret.applink = `diaodiao://c.diaox2.com${ret.url}`
       ret.share = `/share/${longId}.html`
       ret.serverid = longId
+      // banner字段，如果cms里有banner字段，返回banner的url，是一张图；否则没有这个key
+      if (banner) {
+        ret.banner = banner
+      }
       // delete meta.thumb_image_url
       // delete meta.cover_image_url
       // delete meta.coverex_image_url
