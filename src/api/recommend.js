@@ -37,21 +37,32 @@ function genSimpleMeta (meta) {
 //   "serverid":197568495662,
 //   "url":"\/\/c.diaox2.com\/cms\/diaodiao\/articles\/firstpage\/46_46.html"
 // }]
+/**
+ * 2017-6-29 发现在pc值得买上调用推荐接口不传id，要考虑到这种情况
+ * @param {number} id 
+ * @param {string} cb
+ */
 async function recommend (id, cb) {
-  if (!id) return null
-  Log.business('[API recommend] 输入参数为：', id)
+  // if (!id) return null
+  // Log.business('[API recommend] 输入参数为：', id)
   // diaodiao_article_recommend, diaodiao_hot_goodthing
   // 先从 diaodiao_article_recommend 拿，若没有，再去diaodiao_hot_goodthing拿，若多于15条，则截断
-  let rel_articles = null
+  let relArticles = null
   let simpleMetas = null
   try {
-    let rel_articlesSQL = `SELECT rel_article FROM diaodiao_article_recommend WHERE ori_article = ${id}`
-    rel_articles = Utils.getFirst(await DB.exec(rel_articlesSQL))
+    /**
+     * 经过跟大叔商量，如果id为空，则直接去diaodiao_hot_goodthing拿数据
+     * 所以，
+     * 如果没有传id，在router.js中已经把id置为了-1，所以relArticles一定是空的，relArticles为空就去diaodiao_hot_goodthing拿数据
+     * 正好实现了这个策略
+     */
+    let relArticlesSQL = `SELECT rel_article FROM diaodiao_article_recommend WHERE ori_article = ${id}`
+    relArticles = Utils.getFirst(await DB.exec(relArticlesSQL))
     Log.business(
-      `[API recommend] ${rel_articlesSQL}\nfetch data is ${rel_articles} `
+      `[API recommend] ${relArticlesSQL}\nfetch data is ${relArticles} `
     )
-    if (rel_articles) {
-      rel_articles = rel_articles.rel_article.split(/,/)
+    if (relArticles) {
+      relArticles = relArticles.rel_article.split(/,/)
     } else {
       // 从热门里拿时，不用 like，直接拿最新一条的热门（timestamp最大的）
       let sql = `SELECT hot_goodthing_list FROM diaodiao_hot_goodthing ORDER BY timestamp DESC LIMIT 1`
@@ -63,18 +74,18 @@ async function recommend (id, cb) {
       if (Utils.isValidArray(results)) {
         result = Utils.getFirst(results)
         if (result) {
-          rel_articles = _.union(result.hot_goodthing_list.split(',')) // 去重并去掉本id
+          relArticles = _.union(result.hot_goodthing_list.split(',')) // 去重并去掉本id
         }
       }
     }
 
-    if (!Utils.isValidArray(rel_articles)) return null
+    if (!Utils.isValidArray(relArticles)) return null
 
-    if (rel_articles.length > LIMIT) {
-      rel_articles = rel_articles.slice(0, LIMIT)
+    if (relArticles.length > LIMIT) {
+      relArticles = relArticles.slice(0, LIMIT)
     }
 
-    const metas = await metaService.getRawMetas(rel_articles, false, true)
+    const metas = await metaService.getRawMetas(relArticles, false, true)
     if (metas) {
       simpleMetas = []
       let simpleMeta = null

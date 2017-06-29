@@ -122,7 +122,8 @@ router.get('/', async (req, res) => {
       // share 或者 share=1 则pageType为share
       // share不存在或者share = 0，则pageType为inapp
       if ('share' in req.body) {
-        if (!req.body.share) { // req.body.share 不为空串，因为share是数字字符串
+        if (!req.body.share) {
+          // req.body.share 不为空串，因为share是数字字符串
           pageType = 'share'
         } else if (req.body.share != 0) {
           pageType = 'share'
@@ -236,9 +237,9 @@ router.get('/', async (req, res) => {
       console.log('meta接口的路由被命中：', id)
       if (id && numnberReg.test(id)) {
         search
-        .byIds([id])
-        .then(meta => writeJSON(meta, res, 'pubmeta'))
-        .catch(e => happyEnd(e, res))
+          .byIds([id])
+          .then(meta => writeJSON(meta, res, 'pubmeta'))
+          .catch(e => happyEnd(e, res))
         // getMetas(id)
         //   .then(meta => writeJSON(meta, res, 'meta_get'))
         //   .catch(e => happyEnd(e, res))
@@ -258,19 +259,18 @@ router.get('/', async (req, res) => {
     } else if (/recommend/i.test(m)) {
       console.log('推荐结果接口的路由被命中ID为', id)
       let { cb } = req.body // 支持jsonp
-      if (id && numnberReg.test(id)) {
-        recommend(id, cb)
-          .then(result => {
-            if (cb) {
-              writeTXT(result, res, 'recommend')
-            } else {
-              writeJSON(result, res, 'recommend')
-            }
-          })
-          .catch(e => happyEnd(e, res))
-      } else {
-        pageNotFound(res)
-      }
+      /**
+       * 2017-6-29 发现在pc值得买上调用推荐接口不传id，要考虑到这种情况，不传id的话，把id置为-1
+       */
+      recommend(id && numnberReg.test(id) ? id : -1, cb)
+        .then(result => {
+          if (cb) {
+            writeTXT(result, res, 'recommend')
+          } else {
+            writeJSON(result, res, 'recommend')
+          }
+        })
+        .catch(e => happyEnd(e, res))
     } else if (/TR/i.test(m)) {
       console.log(`文章搜索按照date的接口的路由被命中，start = ${start}, end = ${end}`)
       search
@@ -434,9 +434,13 @@ router.get(inappZdmReg, (req, res) => {
   mZDMRender
     // .setData(activityCid, goodsCid)
     // .setPageType('inapp')
-    .rende({
-      activityCid, goodsCid
-    }, 'inapp')
+    .rende(
+    {
+      activityCid,
+      goodsCid
+    },
+      'inapp'
+    )
     .then(doc => writeDoc(doc, res, 'zdmactivity'))
     .catch(e => happyEnd(e, res))
 })
@@ -452,9 +456,13 @@ router.get(shareZdmReg, (req, res) => {
   mZDMRender
     // .setData(activityCid, goodsCid)
     // .setPageType('share')
-    .rende({
-      activityCid, goodsCid
-    }, 'share')
+    .rende(
+    {
+      activityCid,
+      goodsCid
+    },
+      'share'
+    )
     .then(doc => writeDoc(doc, res, 'zdmshare'))
     .catch(e => happyEnd(e, res))
 })
@@ -602,9 +610,9 @@ router.post('/', async (req, res) => {
       // let cids = postData.cids
       if (Utils.isValidArray(postData)) {
         search
-        .byIds(postData)
-        .then(meta => writeJSON(meta, res, 'TR'))
-        .catch(e => happyEnd(e, res))
+          .byIds(postData)
+          .then(meta => writeJSON(meta, res, 'TR'))
+          .catch(e => happyEnd(e, res))
         // getMetas(postData)
         //   .then(meta => writeJSON(meta, res, 'meta_post'))
         //   .catch(e => {
@@ -707,7 +715,7 @@ function addCacheControlHeader (res, type) {
 function writeDoc (doc, res, type) {
   // Error: Can't set headers after they are sent. 如果doc为null，res.end()之后，在设置header，会报错
   // if (!doc) res.end()
-  // 做下兼容，不然doc为null是会报错：TypeError: First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object 
+  // 做下兼容，不然doc为null是会报错：TypeError: First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object
   doc = doc || ''
   try {
     addCacheControlHeader(res, type)
