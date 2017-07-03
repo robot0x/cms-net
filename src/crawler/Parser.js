@@ -314,7 +314,8 @@ class Parser {
       } else if (name === 'lift2') {
         // console.log('lift2:', innerText)
         // if (text !== null) {
-        md += `lift2 ${innerText}\`\n\n`
+        // md += `lift2 ${innerText}\`\n\n`
+        md += `lift2 ${innerText}\n\n`
         // } else {
           // md += `lift2 ${this.getShowMarkdown($child, false)}\n\n`
         // }
