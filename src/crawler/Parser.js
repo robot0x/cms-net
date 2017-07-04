@@ -294,7 +294,13 @@ class Parser {
         if (img) {
           md += `[${$child.text()}](${Utils.normalize(attribs.href)} img: ${img.attribs['data-big'] || img.attribs.src})`
         } else {
-          md += `[${$child.text()}](${Utils.normalize(attribs.href)})`
+          // 有些链接是mailto协议的，有必要处理一下
+          let reg = /^(mailto|ftp|diaodiao|youdiao|gopher|bittorrent|magnet|finger)/i
+          let href = attribs.href
+          if (!reg.test(href)) {
+            href = Utils.normalize(href)
+          }
+          md += `[${$child.text()}](${href})`
         }
       } else if (name === 'img') {
         md += `![${attribs.alt}](${attribs['data-big'] || attribs.src})`
