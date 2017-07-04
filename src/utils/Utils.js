@@ -155,7 +155,7 @@ class Utils {
   static getZkDataByParseMarkdown (markdown) {
     try {
       const zkdescReg = /^zkdesc\s+/
-      const zkdescReg2 = /^zkdesc[\s\S]+?\s+/ig
+      const zkdescReg2 = /^zkdesc\s+\S+?\s+/ig
       const allCardReg = /```zkarticle[\s\S]+?```/ig
       const idReg = /id[:：]\s*(\d+)\s+/
       const descReg = /desc[:：]\s*(.+)\s*/
