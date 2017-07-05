@@ -45,14 +45,19 @@ module.exports = (html, images, usePlaceholder = true) => {
       }
       img.attribs['data-big'] = big
       img.attribs['data-src'] = Utils.addImageOfShowPageAliImageSuffix(big)
+      // 不管是否有图，都加上lazy，因为lazy有样式，其中有 width:100%
+      // 如果我们由于同步不及时或者使用的外部的图片
+      // 则图片过大的话，会超出页面主容器，所以做个兜底
+      $(img).addClass('lazy')
     } else {
       // 就算数据库中没有这张图片，为了防止在ios9一下由于ATS的限制出现图片未加载
       img.attribs.src = Utils.addProtocolHead(img.attribs.src)
+      // 不管是否有图，都加上lazy，因为lazy有样式，其中有 width:100%
+      // 如果我们由于同步不及时或者使用的外部的图片
+      // 则图片过大的话，会超出页面主容器，所以做个兜底
+      $(img).addClass('lazy')
     }
-    // 不管是否有图，都加上lazy，因为lazy有样式，其中有 width:100%
-    // 如果我们由于同步不及时或者使用的外部的图片
-    // 则图片过大的话，会超出页面主容器，所以做个兜底
-    $(img).addClass('lazy')
+    
   }
   return container.html()
 }

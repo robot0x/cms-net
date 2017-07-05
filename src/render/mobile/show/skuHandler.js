@@ -49,7 +49,7 @@ module.exports = async (html, addAliImageArg = true) => {
     if (addAliImageArg) {
       src = Utils.addAliImageSuffix(src)
     }
-    $skuDom.find('.articleimg').attr('src', src)
+    $skuDom.find('.articleimg').attr('src', Utils.addProtocolHead(src))
     $skuDom.find('.articletitle').text(sku.title)
     $skuDom.find('.brand').text(sku.price_str)
   }
