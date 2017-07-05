@@ -7,9 +7,10 @@ selenium-debug.log
 logs/business/
 logs/exception/
 logs/http/
+src/crawler/
 src/crawler/data
 src/crawler/data/*ajson*
 src/crawler/*.sh
 src/crawler/handle*
-src/crawler/*tmp*
+src/crawler/tmp
 src/api/genpub/views
