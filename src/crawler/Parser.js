@@ -1,7 +1,7 @@
 const cheerio = require('cheerio')
 const _ = require('lodash')
 const Utils = require('../utils/Utils')
-const html = require('./8110.html')
+// const html = require('./8110.html')
 // const Log = require('../utils/Log')
 /**
  * 段落与段落之间 用 \n\n 隔开，若一个 \n 则还是在一个p标签里
@@ -170,13 +170,13 @@ class Parser {
     let children = null
     let { $ } = this
     // 预处理blockquote start
-    if (root) {
-      const quoteboxs = Array.from(container.find('.quotebox'))
-      for (let quotobox of quoteboxs) {
-        let $quotobox = this.$(quotobox)
-        $quotobox.html($quotobox.find('.box-inner').html().trim())
-      }
+    // if (root) {
+    const quoteboxs = Array.from(container.find('.quotebox'))
+    for (let quotobox of quoteboxs) {
+      let $quotobox = this.$(quotobox)
+      $quotobox.html($quotobox.find('.box-inner').html().trim())
     }
+    // }
     // 预处理blockquote end
     // 如果是第一次调用 或者 ul/ol ，则取所有的dom节点
     if (root || /ul|ol|blockquote/.test(contain.name)) {
@@ -215,7 +215,9 @@ class Parser {
         } else {
           const theChildOfchild = $child[0].childNodes
           // 需要对视频单独做处理
-          if (theChildOfchild.length === 1 && theChildOfchild[0].name === 'iframe') {
+          if (
+            theChildOfchild.length === 1 && theChildOfchild[0].name === 'iframe'
+          ) {
             md += `${id ? '$$$' + id + ' ' : ''}${blockquotePrefix}${$child.html()}\n\n`
           } else {
             md += `${id ? '$$$' + id + ' ' : ''}${blockquotePrefix}${this.getShowMarkdown($child, false)}\n\n`
@@ -242,11 +244,15 @@ class Parser {
       } else if (name === 'ul') {
         // 如果ul在blockquote中，则相对于其下的li，其ptype为blockquote，否则才为ul
         // 因为ul和ol下的li的ptype都为blockquote，所以用第四个参数 isUl 来标识改li处于ul中还是ol中
-        console.log(inBlockquoto ? 'blockquote' : ptype === 'li' ? 'blockquote' : 'ul')
+        console.log(
+          inBlockquoto ? 'blockquote' : ptype === 'li' ? 'blockquote' : 'ul'
+        )
         md += `${this.getShowMarkdown($child, false, inBlockquoto ? 'blockquote' : ptype === 'li' ? 'blockquote' : 'ul', true)}${inBlockquoto ? '\n' : '\n\n'}`
       } else if (name === 'ol') {
         // 如果ol在blockquote中，则相对于其下的li，其ptype为blockquote，否则才为ol
-        console.log(inBlockquoto ? 'blockquote' : ptype === 'li' ? 'blockquote' : 'ol')
+        console.log(
+          inBlockquoto ? 'blockquote' : ptype === 'li' ? 'blockquote' : 'ol'
+        )
         md += `${this.getShowMarkdown($child, false, inBlockquoto ? 'blockquote' : ptype === 'li' ? 'blockquote' : 'ol', false)}${inBlockquoto ? '\n' : '\n\n'}`
       } else if (name === 'li') {
         // console.log('ptype:', ptype)
@@ -276,7 +282,8 @@ class Parser {
         } else {
           md += `*${this.getShowMarkdown($child, false)}*`
         }
-      } else if (name === 'del' || name === 's') { // 我们很多文章用s作为删除线标签，所以有必要改下
+      } else if (name === 'del' || name === 's') {
+        // 我们很多文章用s作为删除线标签，所以有必要改下
         if (text !== null) {
           md += `~~${innerText}~~`
         } else {
@@ -328,13 +335,13 @@ class Parser {
         // md += `lift2 ${innerText}\`\n\n`
         md += `lift2 ${innerText}\n\n`
         // } else {
-          // md += `lift2 ${this.getShowMarkdown($child, false)}\n\n`
+        // md += `lift2 ${this.getShowMarkdown($child, false)}\n\n`
         // }
       } else if (name === 'lift') {
         // if (text !== null) {
         //   md += `lift ${innerText}\n\n`
         // } else {
-          /**
+        /**
               此处有BUG，2017-06-01
               应该直接找到lift下面的em，然后取innerText即可，而不要递归
               因为递归会再次处理em，把内容变为 *这是lift的内容*
@@ -348,7 +355,7 @@ class Parser {
                </em>
               </p>
            */
-          // md += `lift ${this.getShowMarkdown($child, false)}\n\n`
+        // md += `lift ${this.getShowMarkdown($child, false)}\n\n`
         md += `lift ${$child.find('em').text()}\n\n`
         // console.log('lift:', $child.find('em').text())
         // }
@@ -361,12 +368,12 @@ class Parser {
         // console.log()
         // console.log($child.find('.articletitle').text())
         // console.log($child.find('.brand').text())
-      //   md += `\`\`\`sku
-      //   id: ${Utils.normalize(attribs['data-href'])}
-      //   title: ${title}
-      //   price: ${price}
-      //   image: ![](${Utils.removeAliImageSuffix(image)})
-      //  \`\`\`\n`
+        //   md += `\`\`\`sku
+        //   id: ${Utils.normalize(attribs['data-href'])}
+        //   title: ${title}
+        //   price: ${price}
+        //   image: ![](${Utils.removeAliImageSuffix(image)})
+        //  \`\`\`\n`
         // md += `\`\`\`sku\n ${Utils.normalize(attribs['data-href'])}\n\`\`\`\n\n`
         // if (text !== null) {
         //   md += `\`\`\`sku\n ${innerText}\n\`\`\`\n\n`
