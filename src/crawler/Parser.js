@@ -1,7 +1,7 @@
 const cheerio = require('cheerio')
 const _ = require('lodash')
 const Utils = require('../utils/Utils')
-// const html = require('./9861.html')
+const html = require('./8110.html')
 // const Log = require('../utils/Log')
 /**
  * 段落与段落之间 用 \n\n 隔开，若一个 \n 则还是在一个p标签里
@@ -154,7 +154,7 @@ class Parser {
 
   /**
    * [this.parse 输入一段html，输出对象的markdown]
-   * @param  {jQuery Object}   [container]    [要处理的html的跟容器]
+   * @param  {jQuery Object}   [container]    [要处理的html的根容器]
    * @param  {Boolean}         [root=true]    [第一次处理根容器下的html标签时，root为true]
    * @param  {String}          [ptype]        [parent type，container的父类型，ptype为标签名]
    * @param  {Boolean}         [isUl]         [标识在blockquote下的li，是否处于ul中]
@@ -170,10 +170,12 @@ class Parser {
     let children = null
     let { $ } = this
     // 预处理blockquote start
-    const quoteboxs = Array.from(container.find('.quotebox'))
-    for (let quotobox of quoteboxs) {
-      let $quotobox = this.$(quotobox)
-      $quotobox.html($quotobox.find('.box-inner').html().trim())
+    if (root) {
+      const quoteboxs = Array.from(container.find('.quotebox'))
+      for (let quotobox of quoteboxs) {
+        let $quotobox = this.$(quotobox)
+        $quotobox.html($quotobox.find('.box-inner').html().trim())
+      }
     }
     // 预处理blockquote end
     // 如果是第一次调用 或者 ul/ol ，则取所有的dom节点
@@ -240,11 +242,14 @@ class Parser {
       } else if (name === 'ul') {
         // 如果ul在blockquote中，则相对于其下的li，其ptype为blockquote，否则才为ul
         // 因为ul和ol下的li的ptype都为blockquote，所以用第四个参数 isUl 来标识改li处于ul中还是ol中
+        console.log(inBlockquoto ? 'blockquote' : ptype === 'li' ? 'blockquote' : 'ul')
         md += `${this.getShowMarkdown($child, false, inBlockquoto ? 'blockquote' : ptype === 'li' ? 'blockquote' : 'ul', true)}${inBlockquoto ? '\n' : '\n\n'}`
       } else if (name === 'ol') {
         // 如果ol在blockquote中，则相对于其下的li，其ptype为blockquote，否则才为ol
+        console.log(inBlockquoto ? 'blockquote' : ptype === 'li' ? 'blockquote' : 'ol')
         md += `${this.getShowMarkdown($child, false, inBlockquoto ? 'blockquote' : ptype === 'li' ? 'blockquote' : 'ol', false)}${inBlockquoto ? '\n' : '\n\n'}`
       } else if (name === 'li') {
+        // console.log('ptype:', ptype)
         if (ptype === 'ul' || isUl) {
           if (text !== null) {
             md += `${blockquotePrefix} - ${innerText}\n`
@@ -483,12 +488,12 @@ class Parser {
 }
 
 // const parser = new Parser({
-//   id: 6107,
+//   id: 8110,
 //   m: 'show',
 //   type: 'firstpage',
 //   html
 // })
-// console.log(parser.parse())
+// console.log(parser.parse().markdown)
 // parser.parse()
 
 module.exports = Parser
