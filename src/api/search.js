@@ -23,7 +23,7 @@ class Search {
       const metas = await metaService.getRawMetas(
         aids,
         true,
-        true,
+        false, // isShortId
         true,
         true,
         true
@@ -54,7 +54,7 @@ class Search {
     let metas = (await metaService.getRawMetas(
         aids,
         true, // useBuylink
-        true, // isShortId
+        false, // isShortId
         true, // useCoverex
         true, // useBanner
         true // useSwipe
