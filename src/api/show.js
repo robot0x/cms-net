@@ -117,12 +117,16 @@ class Show {
           cids,
           true, // useBuylink
           true, // isShortId
-          true // useCoverex
+          true, // useCoverex
+          false,
+          false,
+          true
         ),
         this.getStat(cids)
       ])
       let metas = []
       let empty = Object.create(null)
+      console.log('rawMetas:', rawMetas)
       for (let cid of cids) {
         let card = Object.create(null)
         cid = Number(cid)
@@ -131,12 +135,14 @@ class Show {
           rawMetas.filter(rawMeta => rawMeta.nid === cid)
         )
         if (!cardMeta) continue
-        let { title, cover_image_url, coverex_image_url, buylink, ctype, price } = cardMeta
+        let { title, cover_image_url, coverex_image_url, buylink, ctype, price, coverwidth, coverheight, coverexwidth, coverexheight } = cardMeta
         card.title = title[0]
         card.desc = data.article[cid]
         card.image = cover_image_url // eslint-disable-line
         card.buylink = buylink
         card.ctype = ctype
+        card.image_w = coverwidth
+        card.image_h = coverheight
         let st = stat[Utils.toLongId(cid)] || empty
         // 当不是好物时，不下发ctype字段
         if (ctype === 2) {
@@ -145,6 +151,8 @@ class Show {
         // 渲染策略：如果是首页，取coverex作为渲染的图，其他的都是取cover
         if (ctype === 1) {
           card.image = coverex_image_url // eslint-disable-line
+          card.image_w = coverexwidth
+          card.image_h = coverexheight
         }
         card.favo_count = st.fav || 0
         metas.push(card)
