@@ -211,17 +211,28 @@ class Show {
   //   skus = data[Utils.toLongId(id)]
   //   return skus || []
   // }
+  /**
+   * 分享数据
+   *
+   * @param {number} id
+   * @param {boolean} trueM
+   * @returns
+   * @memberof Show
+   * http://content.image.alimmdn.com/cms/sites/default/files/20170530/goodthing/188QZZ.jpg
+   * 如果取thumb图的话，太小了，客户端使用微博sdk分享之后，微博的sdk会再次压缩一次图片，导致图片
+   * 变的很模糊，所以使用一张较大的图片，使用cover图，老的分享数据就是cover的
+   */
   async genShareData (id, trueM) {
     const ret = Object.create(null)
-    let [titles, coverex] = await Promise.all([
+    let [titles, cover] = await Promise.all([
       metaTable.getTitles(id),
-      imageTable.getThumbImagesUrl(id)
+      imageTable.getCoverImagesUrl(id)
     ])
     // const titles = await metaTable.getTitles(id)
-    coverex = Utils.getFirst(coverex)
+    cover = Utils.getFirst(cover)
     // ret.url = `https://c.diaox2.com/view/app/?m=${trueM}&id=${id}`
     ret.url = `https://c.diaox2.com/share/${Utils.toLongId(id)}.html`
-    ret.image = coverex
+    ret.image = cover
     return Object.assign(ret, titles)
   }
   /**
