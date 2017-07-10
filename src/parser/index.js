@@ -176,6 +176,7 @@ class Parser {
             }
           } else if (name === 'span' && attribs.style) {
             item.style = attribs.style
+            item.value = $child.text()
           } else if (name === 'sku') {
             try {
               let title = $child.find('.articletitle').text()
