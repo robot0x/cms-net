@@ -1,5 +1,20 @@
 const Log = require('./src/utils/Log')
-
+const getCharset = req => {
+  let charset = ''
+  if (!req) return charset
+  let contentType = null
+  if (typeof req === 'string') {
+    contentType = req
+  } else {
+    contentType = req.headers['content-type']
+  }
+  if (!contentType) return charset
+  const charsetReg = /; *charset=(.+)/i
+  const match = contentType.match(charsetReg)
+  if (!match) return charset
+  charset = match[1]
+  return charset.trim().toLowerCase()
+}
 module.exports = {
   /**
   * 往request对象上注入logid和__debug__
@@ -57,19 +72,47 @@ module.exports = {
       next()
     }
   },
-
-  // 处理request请求数据
+  // // 处理request请求数据
+  // bodyParse (req, res, next) {
+  //   let data = ''
+  //   // 取出请求数据
+  //   req.on("data", chunk => data += chunk); // eslint-disable-line
+  //   req.on('end', () => {
+  //     // 把请求数据放到request对象上的body属性中
+  //     // GET DELETE body为一个空行
+  //     req.body = data
+  //     // if (data && req.body) {
+  //     //   varLogger.info(`[parseBody function] the data is ${req.body}`)
+  //     // }
+  //     next()
+  //   })
+  // },
+  /**
+   * @param {object} req
+   * @param {object} res
+   * @param {function} next
+   * 这个中间件只能解析实体内容，不能解析params
+   * 会出现�bug
+   * http://apps.timwhitlock.info/unicode/inspect?s=%EF%BF%BD
+   * https://stackoverflow.com/questions/26580265/nodejs-dealing-with-characters-encoding
+   * https://www.npmjs.com/package/iconv-lite
+   */
   bodyParse (req, res, next) {
-    let data = ''
-    // 取出请求数据
-    req.on("data", chunk => data += chunk); // eslint-disable-line
+    const charset = getCharset(req) || 'utf8'
+    // 很奇怪，提前设置charset会报错
+    // req.setEncoding(charset)
+    const chunks = []
+    let totalLength = 0
+    req.on('data', chunk => {
+      // console.log('typeof chunk:', typeof chunk)
+      // console.log('instanceof Buffer:', chunk instanceof Buffer)
+      // console.log('chunk.toString:', chunk.toString())
+      chunks.push(chunk)
+      totalLength += chunk.length
+    })
     req.on('end', () => {
-      // 把请求数据放到request对象上的body属性中
-      // GET DELETE body为一个空行
+      const data = Buffer.concat(chunks, totalLength).toString(charset)
       req.body = data
-      // if (data && req.body) {
-      //   varLogger.info(`[parseBody function] the data is ${req.body}`)
-      // }
       next()
     })
   },
@@ -83,7 +126,7 @@ module.exports = {
         req.body = JSON.parse(req.body)
       } catch (e) {
         console.log(e)
-        Log.exception(e)
+        Log.exception(e, '出错的json为：', req.body)
         // req.body = null
       }
     } else if (['GET', 'DELETE'].indexOf(method) !== -1) {

@@ -64,9 +64,7 @@ class Search {
     if (_.isPlainObject(metas)) {
       metas = [metas]
     }
-    metas = metas.map(meta => {
-      return this._handleMeta(meta)
-    })
+    metas = metas.map(meta => this._handleMeta(meta))
     return { metas }
   }
 

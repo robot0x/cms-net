@@ -301,7 +301,7 @@ class Show {
         let [sku] = skus
         let { sid, sales } = sku
         try {
-          data.sku.show_part = await this._toShowpart(
+          data.sku.show_part = this._toShowpart(
             sales,
             sid,
             'sku'
