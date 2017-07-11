@@ -119,6 +119,8 @@ class MetaService {
     let source = useAuthorSource ? 'au.source,' : ''
     // 取meta需要加上时间限制，timetopublish必须处在20141108和今天之间
     // 专刊类型的timetopublish都为0，要想拿专刊类型的meta，需要坐下兼容
+    // TODO: 如果作者存在，则会返回空meta，这个需要做下兼容。比如，填写了“陈老湿”，这个是title而不是source
+    // 导致 meta.author = au.source 不成立！所以下面的sql的结果集就是空的
     const sql = `
     SELECT 
       meta.id AS nid, 
