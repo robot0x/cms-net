@@ -97,14 +97,18 @@ class ShowRender extends Render {
       let body = parser.getHTML()
       body = imageHandler(body, images)
       //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
+      /**
+       * BUG: 如果type为0的话，则
+       * img.type & 2 === img.type 一直是成立的
+       */
       let cover = images.filter(img => {
-        return (img.type & 2) === img.type
+        return (img.type & 2) === 2
       })
       let thumb = images.filter(img => {
-        return (img.type & 8) === img.type
+        return (img.type & 8) === 8
       })
       const swipes = images.filter(img => {
-        return (img.type & 16) === img.type
+        return (img.type & 16) === 16
       }) || []
       thumb = Utils.getFirst(thumb) || {}
       cover = Utils.getFirst(cover) || {}
