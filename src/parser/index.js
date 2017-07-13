@@ -221,7 +221,7 @@ class Parser {
             item.type = name
             item.value = this.htmlToData($child.find('.box-inner'), true)
           } else if (childNodes.length === 1 && childNodes[0].type === 'text') { // 若child下有且仅有一个文本节点，则直接把文本节点值赋予value
-            item.value = childNodes[0].data
+            item.value = entities.decodeHTML(childNodes[0].data)
           } else if (name === 'img') {
             let imgAttr = child.attribs
             item.type = child.name
