@@ -64,8 +64,12 @@ class ZKRender extends Render {
       // useTag = false
       let metas = await metaService.getRawMetas(
         cids,
-        true,
-        true
+        false, // useBuylink
+        true, // isShortId
+        true, // useCoverex
+        false, // useBanner
+        false, // useSwipe
+        true // useImageSize
       )
       metas = metas.map(meta => {
         meta.desc = article[meta.nid]
@@ -110,7 +114,7 @@ class ZKRender extends Render {
       thumb = Utils.getFirst(thumb) || {}
       cover = Utils.getFirst(cover) || {}
       let body = parser.getHTML(title, titleex, zkdesc, cover, metas, cids)
-      body = await articleHandler(body, cids)
+      body = await articleHandler(body, metas)
       return this.getDoc(this.template, {
         id,
         title,

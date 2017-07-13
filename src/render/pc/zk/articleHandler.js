@@ -16,7 +16,7 @@ const findMetaById = (id, metas) => {
  * @param  {[type]} images [description]
  * @return {[type]}        [description]
  */
-module.exports = async (html, ids) => {
+module.exports = async (html, metas) => {
   const $ = cheerio.load(`<div id="container">${html}</div>`, {
     decodeEntities: false
   })
@@ -24,7 +24,7 @@ module.exports = async (html, ids) => {
   try {
     const articleDoms = Array.from(container.find('.goodthing'))
     // console.log('ids:', ids)
-    const metas = await metaService.getRawMetas(ids, false, true)
+    // const metas = await metaService.getRawMetas(ids, false, true)
     // console.log('metas:', metas)
     for (let articleDom of articleDoms) {
       // console.log($(articleDom).find('a')[0].attribs['href'])
