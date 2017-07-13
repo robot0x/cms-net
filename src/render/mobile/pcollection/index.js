@@ -90,7 +90,8 @@ class PCollectionRender extends Render {
     SELECT 
        meta.id AS id, 
        meta.title AS title,
-       image.url AS url
+       image.url AS url,
+       image.height AS height
       FROM 
        diaodiao_article_meta 
       AS
@@ -104,19 +105,19 @@ class PCollectionRender extends Render {
     let results = await DB.exec(sql)
     let keys = Object.keys(ret)
     for (let res of results) {
-      let { id, title, url } = res
+      let { id, title, url, height } = res
       for (let key of keys) {
         let list = ret[key]
         list.forEach((item, index) => {
           if (item.id == id) {
-            list.splice(
-              index,
-              1,
-              Object.assign(item, {
-                title,
-                cover: '//' + url
-              })
-            )
+            let cover = '//' + url
+            // 根据李园宁说的，有两种不同尺寸的图，分别处理，保持高度320
+            if (height < 800) {
+              cover += '@640w%7c0-92-640-320a'
+            } else {
+              cover += '@640w%7c0-296-640-320a'
+            }
+            list.splice(index, 1, Object.assign(item, { title, cover }))
           }
         })
         ret[key] = list
