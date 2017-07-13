@@ -89,9 +89,13 @@ async function genpub (postData) {
         }
         let [mtitle, titleex] = title
         let titles = mtitle.split(/ {2}/)
-        if (titleex) {
-          titles.push(titleex)
+        // ctype == 3 不管title是否被分割，则一定要保证把titleex推入到数组最后，因为客户端依赖这个约定
+        if (ctype === 3) {
+          titles.push(titleex || '')
         }
+        // if (titleex) {
+        //   titles.push(titleex)
+        // }
         // 如果不是专刊文章，使用coverex，处理完毕，后面加上 ctype !== 4 的原因时，不要覆盖ctype为4的cover_image_url
         // 因为后面需要使用原始的cover_image_url
         // bug：应该使用且而不是或，不然的话，如果ctype为3，则也是默认的placeholder
