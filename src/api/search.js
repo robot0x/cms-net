@@ -28,7 +28,7 @@ class Search {
         true,
         true
       )
-      console.log('metas:', metas)
+      // console.log('metas:', metas)
       if (!Utils.isValidArray(metas)) return null
       metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
       // 按照type排序，方便编辑在pub页上看数据

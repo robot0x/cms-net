@@ -7,7 +7,6 @@ const Log = require('../../../utils/Log')
 /**
  * 渲染：
  *  1. 专刊 zhuankan (ctype = 4)    http://c.diaox2.com/view/app/?m=zk&id=3053
- * 
  */
 class ZKRender extends Render {
   constructor (id) {
@@ -52,20 +51,44 @@ class ZKRender extends Render {
       //  对于专刊，我们要先取出所引用的所有文章id
       let data = (Utils.getZkDataByParseMarkdown(content)) || {}
       let cids = data.ids || []
+      let {zkdesc, article} = data
+      // console.log('rende data:', data)
+      // ids = [this.id],
+      // useBuylink = true,
+      // isShortId = false,
+      // useCoverex = true,
+      // useBanner = false,
+      // useSwipe = false,
+      // useImageSize = false,
+      // useAuthorSource = false,
+      // useTag = false
+      let metas = await metaService.getRawMetas(
+        cids,
+        true,
+        true
+      )
+      metas = metas.map(meta => {
+        meta.desc = article[meta.nid]
+        return meta
+      })
+      // console.log('rende metas:', metas)
+      // let cids = data.ids || []
       // let buylinks = []
       // 先读diaodiao_buyinfo表
       // 根据文章id获取其buylink
-      let promises = []
-      // 取专刊引用文章的buylink
-      for (let cid of cids) {
-        // 并行去拿buylink，提高响应时间
-        promises.push(metaService.getBuylink(cid, '', true))
-      }
-      let buylinks = (await Promise.all(promises)) || []
-      buylinks = buylinks.map(buy => {
-        buy.link = Utils.convertSkuUrl(buy.link, buy.cid)
-        return buy
-      })
+
+      // let promises = []
+      // // 取专刊引用文章的buylink
+      // for (let cid of cids) {
+      //   // 并行去拿buylink，提高响应时间
+      //   promises.push(metaService.getBuylink(cid, '', true))
+      // }
+      // let buylinks = (await Promise.all(promises)) || []
+      // buylinks = buylinks.map(buy => {
+      //   buy.link = Utils.convertSkuUrl(buy.link, buy.cid)
+      //   return buy
+      // })
+
       // console.log(buylinks)
       // let bls = await Promise.all(promises)
       // console.log(bls)
@@ -86,19 +109,12 @@ class ZKRender extends Render {
       })
       thumb = Utils.getFirst(thumb) || {}
       cover = Utils.getFirst(cover) || {}
-      let body = parser
-          .setBuylinks(buylinks)
-          .setIds(cids)
-          .setCover(cover)
-          .setTitle(title)
-          .setTitleex(titleex)
-          .getHTML()
+      let body = parser.getHTML(title, titleex, zkdesc, cover, metas, cids)
       body = await articleHandler(body, cids)
       return this.getDoc(this.template, {
         id,
         title,
         body,
-        // swipes,
         thumb,
         cover,
         pageType,
