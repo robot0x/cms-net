@@ -516,7 +516,6 @@ router.get(pcShowReg, async (req, res) => {
   console.log(`PC article 路由被激活，此文章url为${req.originalUrl} ...`)
   let match = req.originalUrl.match(pcShowReg)
   let id = match[1]
-  let debug = req.__debug__
   if (/^\d+$/.test(id)) {
     // 需要判断这篇文章是专刊还是article还是专刊
     const ctype = await metaTable.getCtypeById(id)
@@ -634,6 +633,7 @@ router.post('/', async (req, res) => {
         //   })
       } else {
         // TODO:返回参数错误信息
+        writeJSON(null, res)
       }
       // metaService.getRawMetas(postData).then(meta => writeJSON(meta, res))
     } else if (/TR/i.test(m)) {
