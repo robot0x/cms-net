@@ -3,7 +3,7 @@ const _ = require('lodash')
 const cheerio = require('cheerio')
 const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
-// const Promise = require('bluebird')
+const entities = require('entities')
 /**
  * CMS markdown 解析器
  * 读取文章原始markdown文本
@@ -172,16 +172,16 @@ class Parser {
               item.scheme = /^https/i.test(href) ? 'https' : 'http'
             }
             if (!item.value) {
-              item.value = $child.text()
+              item.value = entities.decodeHTML($child.text())
             }
           } else if (name === 'span' && attribs.style) {
             item.style = attribs.style
-            item.value = $child.text()
+            item.value = entities.decodeHTML($child.text())
           } else if (name === 'sku') {
             try {
-              let title = $child.find('.articletitle').text()
+              let title = entities.decodeHTML($child.find('.articletitle').text())
               let image = $child.find('.articleimg')[0].attribs['src']
-              let price = $child.find('.brand').text()
+              let price = entities.decodeHTML($child.find('.brand').text())
               let id = Utils.normalize($child[0].attribs['data-href'])
               item.type = name
               item.id = id
@@ -194,7 +194,7 @@ class Parser {
             }
           } else if (name === 'editorhead') {
             item.type = name
-            item.value = $child.text()
+            item.value = entities.decodeHTML($child.text())
           } else if (name === 'editorcontent') {
             item.type = name
             item.value = this.htmlToData(this.$(child), false)
@@ -203,7 +203,7 @@ class Parser {
               item.type = name
               // console.log($child.find('em'))
               // console.log($child)
-              item.value = $child.find('em').text()
+              item.value = entities.decodeHTML($child.find('em').text())
             } catch (error) {
               Log.exception(error)
               console.log(error)
@@ -211,7 +211,7 @@ class Parser {
           } else if (name === 'lift2') {
             try {
               item.type = name
-              item.value = $child.text()
+              item.value = entities.decodeHTML($child.text())
             } catch (error) {
               Log.exception(error)
               console.log(error)
@@ -255,7 +255,7 @@ class Parser {
           }
         } else if (type === 'text') {
           item.type = type
-          item.value = data
+          item.value = entities.decodeHTML(data)
         }
         if (!_.isEmpty(item)) {
           contents.push(item)
