@@ -226,7 +226,7 @@ class Parser {
             let imgAttr = child.attribs
             item.type = child.name
             item.value = imgAttr.alt || ''
-            item.url = imgAttr.src
+            item.url = Utils.addProtocolHead(imgAttr.src) || ''
             item.width = imgAttr.width || ''
             item.height = imgAttr.height || ''
           } else if (name === 'iframe') {
