@@ -1,6 +1,10 @@
 const request = require('request')
 const Promise = require('bluebird')
 const Utils = require('./Utils')
+/**
+ * SKU相关接口RPC调用封装
+ * @class SKU
+ */
 class SKU {
   static _parse (sku, prop) {
     let val = sku[prop]
@@ -15,6 +19,28 @@ class SKU {
       }
     }
     return sku
+  }
+  /**
+   * http://s5.a.dx2rd.com:3000/v1/getsimplesku/1
+   * @static
+   * @param {number} sid
+   * @returns sku
+   * @memberof SKU
+   */
+  static async getSimpleSku (sid) {
+    try {
+      const result = await Promise.promisify(request)(SKU.GET_SIMPLE_SKU + sid)
+      const res = JSON.parse(result.body)
+      // console.log('[getSimpleSku] res', res)
+      const { state, message, data } = res
+      if (!/SUCCESS/i.test(state)) {
+        console.log(message || '调用getsimplesku接口失败')
+        return null
+      }
+      return Utils.getFirst(data)
+    } catch (error) {
+      return null
+    }
   }
   /**
    * 根据文章id拿文章关联的sku数组
@@ -55,15 +81,21 @@ class SKU {
    * @memberof SKU
    */
   static isOnlyOneOnlineSKU (skus) {
-    return Utils.isValidArray(skus) && skus.length === 1 && skus[0].status === 1
+    return (
+      Utils.isValidArray(skus) && skus.length === 1 && skus[0].status === 1
+    )
   }
 }
 SKU.ARTICLE_SKU = 'http://s5.a.dx2rd.com:3000/v1/articlesku/'
+SKU.GET_SIMPLE_SKU = 'http://s5.a.dx2rd.com:3000/v1/getsimplesku/'
 
 // SKU.getSkusByArticleId(5163, false).then(skus => {
 //   console.log('no parse:', skus)
 // })
 // SKU.getSkusByArticleId(5163).then(skus => {
 //   console.log('parse:', skus)
+// })
+// SKU.getSimpleSku(1).then(res => {
+//   console.log(res)
 // })
 module.exports = SKU

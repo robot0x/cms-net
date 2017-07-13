@@ -6,6 +6,7 @@ const Utils = require(`${SRC}/utils/Utils`)
 const Log = require(`${SRC}/utils/Log`)
 const renders = require(`${SRC}/render/renders`)
 const genpub = require(`${SRC}/api/genpub`) // pub页数据生成接口
+const getsimplesku = require(`${SRC}/api/getsimplesku`) // pub页数据生成接口
 const relsearch = require(`${SRC}/api/relsearch`) // 相关搜索接口
 const recommend = require(`${SRC}/api/recommend`) // 推荐结果接口
 const search = require(`${SRC}/api/search`) // 文章搜索。按照title搜索，按照date搜索
@@ -290,6 +291,18 @@ router.get('/', async (req, res) => {
     } else {
       pageNotFound(res)
     }
+  } else {
+    pageNotFound(res)
+  }
+})
+
+// 获取sku数据，把其sales属性变形成客户端要用的形式
+router.get('/getsimplesku', async (req, res) => {
+  let { id } = req.body
+  if (id) {
+    getsimplesku(id)
+        .then(data => writeJSON(data, res, 'getsimplesku'))
+        .catch(e => happyEnd(e, res))
   } else {
     pageNotFound(res)
   }
