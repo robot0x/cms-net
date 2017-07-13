@@ -64,7 +64,7 @@ class ZKRender extends Render {
       // useTag = false
       let metas = await metaService.getRawMetas(
         cids,
-        false, // useBuylink
+        true, // useBuylink
         true, // isShortId
         true, // useCoverex
         false, // useBanner
