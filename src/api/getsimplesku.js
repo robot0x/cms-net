@@ -1,5 +1,7 @@
 const SKU = require('../utils/SKU')
 const Utils = require('../utils/Utils')
+const BuyinfoTable = require('../db/BuyinfoTable')
+const buyinfoTable = new BuyinfoTable()
 /**
  *
  *
@@ -15,10 +17,10 @@ const Utils = require('../utils/Utils')
 "id": 123,//skuID用于4.0需求sku失效用户可以进行反馈
 "type":"link"//用于判断跳转类型 3x版本都为link
 */
-function _toShowpart (sales, id, type) {
+function _toPart (sales, id, type) {
   let showpart = []
   for (let sale of sales) {
-    // console.log('_toShowpart sale:', sale)
+    // console.log('_toPart sale:', sale)
     let ele = Object.create(null)
     // 必须确定这一条是sku还是buyinfo，不然的话，就不知道id是sid还是buyinfo的id
     ele.tag = type
@@ -53,15 +55,21 @@ function _toShowpart (sales, id, type) {
   return showpart
 }
 
-async function getsimplesku (sid) {
-  let sku = (await SKU.getSimpleSku(sid)) || []
-  let ret = _toShowpart(sku.sales, sid, 'sku')
+async function getsimplesku (id, tag = 'sku') {
+  let ret = null
+  if (/sku/i.test(tag)) {
+    let sku = (await SKU.getSimpleSku(id)) || []
+    ret = _toPart(sku.sales, id, 'sku')
+  } else if (/buy/i.test(tag)) {
+    const sales = await buyinfoTable.getById(id)
+    ret = await this._toPart(sales, null, 'buy')
+  }
   return {
     pick_up_part: ret
   }
 }
 
-getsimplesku(1).then(res => {
+getsimplesku(1, 'buy').then(res => {
   console.log(res)
 })
 

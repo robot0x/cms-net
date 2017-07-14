@@ -22,7 +22,7 @@
 <script src="<%-prefix%>/cms/diaodiao/assets/api204.js"></script>
 </head>
 <body id="<%-4294967297 * id%>" class="<%-id%>_<%-id%>" data-type="<%-type%>" data-share="0" data-render="<%-version%>">
-	<div class="total" data-thumb="<%-'//' + thumb.url%>" data-cover="<%-'//' + cover.url%>" data-self="<%-prefix%>/view/app/?m=show&id=<%-id%>">
+	<div class="total" data-thumb="<%-'http://' + thumb.url%>" data-cover="<%-'http://' + cover.url%>" data-self="http:<%-prefix%>/view/app/?m=show&id=<%-id%>">
 		<div class="goodsheading">
 			<% if( swipes.length > 0) {%>
 				<div class="cycle-slideshow" data-cycle-swipe=true data-fx=scrollHorz data-cycle-swipe-fx=scrollHorz data-manual-fx=scrollHorz data-cycle-speed="400" data-cycle-manual-speed="200" data-cycle-timeout="2000" data-cycle-auto-height="64:37">

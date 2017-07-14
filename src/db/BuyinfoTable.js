@@ -11,6 +11,11 @@ class BuyinfoTable extends Table {
       null
     )
   }
+  getById (buyId) {
+    return this.exec(
+      `SELECT ${this.columnsStr} FROM ${this.table} WHERE buy_id = ${buyId}`
+    )
+  }
   // getByAid (id) {
   //   return this.exec(`SELECT ${this.columnsStr} FROM ${this.table} WHERE buy_id = ${id}`)
   // }

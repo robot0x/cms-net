@@ -101,8 +101,6 @@ class Table {
     return this.getByCond(`aid = ${id}`)
   }
 
-
-
   /**
    * 根据传入的条件获取数据
    */

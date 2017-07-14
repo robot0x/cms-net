@@ -311,7 +311,7 @@ class Show {
         }
       } else {
         const sales = await buyinfoTable.getByAid(id)
-        data.sku.pick_up_part = await this._toPart(sales, null, 'buyinfo')
+        data.sku.pick_up_part = await this._toPart(sales, null, 'buy')
       }
       data.share_data = shareData
       return data
@@ -394,7 +394,7 @@ class Show {
       if (id) {
         ele.id = id
       }
-      if (type === 'buyinfo') {
+      if (type === 'buy') {
         ele.buy_link = sale.link || sale.link_pc
         ele.id = sale.buy_id
       }
