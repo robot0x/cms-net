@@ -45,6 +45,9 @@ module.exports = async (html, addAliImageArg = true) => {
     let sid = skuDom.attribs['data-sid']
     const $skuDom = $(skuDom)
     let sku = findSkuBySid(skus, sid)
+    // 发现如果在markdown中填了SKU，但是在SKU系统中还没有录入相应的SKU，则会导致SKU为undefined
+    // 做一个防御，尽最大可能渲染出页面，然后页面出现异常，让编辑或用户报，不然连页面都显示不出来
+    if (!sku) continue
     let src = Utils.getFirst(sku.images).url
     if (addAliImageArg) {
       src = Utils.addAliImageSuffix(src)
