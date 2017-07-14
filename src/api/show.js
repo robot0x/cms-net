@@ -289,19 +289,19 @@ class Show {
                 "type":"link"
             }
          ]
-      在电商上线之前，pick_up_part 没有值
+      在电商上线之前，show_part 没有值
       如果sku有且仅有一条数据，则把sales数组变形成上述show_part形式
       否则的话，则从diaodiao_buylink表拿数据，把拿到的多条数据变形成show_part形式
       电商上线之后，show_part是我们自己的电商连接，pick_up_part是除了我们自己之外的其他链接
      */
       data.sku = Object.create(null)
-      data.sku.pick_up_part = []
+      data.sku.show_part = []
       // 策略跟 MetaService.getBuyLink是一样的
       if (SKU.isOnlyOneOnlineSKU(skus)) {
         let [sku] = skus
         let { sid, sales } = sku
         try {
-          data.sku.show_part = this._toShowpart(
+          data.sku.show_part = this._toPart(
             sales,
             sid,
             'sku'
@@ -311,7 +311,7 @@ class Show {
         }
       } else {
         const sales = await buyinfoTable.getByAid(id)
-        data.sku.show_part = await this._toShowpart(sales, null, 'buyinfo')
+        data.sku.pick_up_part = await this._toPart(sales, null, 'buyinfo')
       }
       data.share_data = shareData
       return data
@@ -366,16 +366,19 @@ class Show {
   "id": 123,//skuID用于4.0需求sku失效用户可以进行反馈
   "type":"link"//用于判断跳转类型 3x版本都为link
   */
-  _toShowpart (sales, id, type) {
-    let showpart = []
+  _toPart (sales, id, type) {
+    let parts = []
     for (let sale of sales) {
-      console.log('_toShowpart sale:', sale)
+      console.log('_toPart sale:', sale)
       let ele = Object.create(null)
       // 必须确定这一条是sku还是buyinfo，不然的话，就不知道id是sid还是buyinfo的id
       ele.tag = type
       ele.type = 'link'
       ele.channel = sale.mart
-      // 随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a href=/view/app/?m=show&id=2127&ch=experience>这里</a>
+      // 如果描述信息是这样的 "不能直邮，需要转运，日亚转运攻略见<a href=/view/app/?m=show&id=2127&ch=experience>这里</a>"
+      // 则转换为 "不能直邮，需要转运，日亚转运攻略见<<这里>>"
+      // 同时判断a标签的href是我们自己的链接还是外部链接。大部分清空下描述信息是没有a标签的，所以，返回给客户端的字段中没有
+      // spec和spec_link字段
       let {text, href, spec} = Utils.handleATag(sale.intro) || {}
       ele.des = text
       if (href) {
@@ -395,9 +398,9 @@ class Show {
         ele.buy_link = sale.link || sale.link_pc
         ele.id = sale.buy_id
       }
-      showpart.push(ele)
+      parts.push(ele)
     }
-    return showpart
+    return parts
   }
   /**
    * @param {string} src

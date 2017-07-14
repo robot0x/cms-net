@@ -27,6 +27,10 @@ function _toShowpart (sales, id, type) {
     // 随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a href=/view/app/?m=show&id=2127&ch=experience>这里</a>
     let { text, href, spec } = Utils.handleATag(sale.intro) || {}
     ele.des = text
+    // 如果描述信息是这样的 "不能直邮，需要转运，日亚转运攻略见<a href=/view/app/?m=show&id=2127&ch=experience>这里</a>"
+    // 则转换为 "不能直邮，需要转运，日亚转运攻略见<<这里>>"
+    // 同时判断a标签的href是我们自己的链接还是外部链接。大部分清空下描述信息是没有a标签的，所以，返回给客户端的字段中没有
+    // spec和spec_link字段
     if (href) {
       ele.spec = spec
       ele.spec_link = href
@@ -52,7 +56,9 @@ function _toShowpart (sales, id, type) {
 async function getsimplesku (sid) {
   let sku = (await SKU.getSimpleSku(sid)) || []
   let ret = _toShowpart(sku.sales, sid, 'sku')
-  return Utils.getFirst(ret)
+  return {
+    pick_up_part: ret
+  }
 }
 
 getsimplesku(1).then(res => {
