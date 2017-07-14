@@ -73,7 +73,7 @@ const cache = {
    * sku页
    */
   sku: {
-    maxAge: 86400
+    maxAge: 7200
   },
   /**
    * /?m=rss&type=firstpage|zhuankan|zhuanti
