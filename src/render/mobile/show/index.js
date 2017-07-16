@@ -139,7 +139,6 @@ class ShowRender extends Render {
       } else if (/w{3}/i.test(authorType)) {
         author.value = `<a href="${author.link}">${(Utils.removeProtocolHead(author.link) || '').replace(/\/$/, '')}</a>`
       }
-      // 处理intro的html标签
       return this.getDoc(isShare ? this.shareTemplate : this.showTemplate, {
         id,
         body,
