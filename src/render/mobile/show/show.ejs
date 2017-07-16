@@ -79,12 +79,12 @@
 				<div id="author_info" data-author="<%=author.source%>" data-href="<%-prefix%>/view/app/?m=author&src=<%-author.source%>">
 					<div id="author1">
 						<img id="authorportrait" src="<%-author.pic_uri%>" />
-						<p id="authortitle"><%=author.title%></p>
-						<p id="authordesc"><%=author.value%></p>
+						<p id="authortitle"><%-author.title%></p>
+						<p id="authordesc"><%-author.value%></p>
 					</div>
 					<hr class="authorhr">
 					<div id="author2">
-						<p>简介： <%=author.intro%></p>
+						<p>简介： <%-author.intro%></p>
 					</div>
 				</div>
 			</div>

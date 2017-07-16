@@ -132,6 +132,14 @@ class ShowRender extends Render {
         has_buylink = false  // eslint-disable-line
         buylink = ''
       }
+      // 处理author，如果type为www，则value为link，如果type为wechat，则value为naming + value
+      let authorType = author.type
+      if (/wechat/i.test(authorType)) {
+        author.value = author.naming + author.value
+      } else if (/w{3}/i.test(authorType)) {
+        author.value = `<a href="${author.link}">${(Utils.removeProtocolHead(author.link) || '').replace(/\/$/, '')}</a>`
+      }
+      // 处理intro的html标签
       return this.getDoc(isShare ? this.shareTemplate : this.showTemplate, {
         id,
         body,
