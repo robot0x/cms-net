@@ -8,6 +8,7 @@ const renders = require(`${SRC}/render/renders`)
 const genpub = require(`${SRC}/api/genpub`) // pub页数据生成接口
 const getsimplesku = require(`${SRC}/api/getsimplesku`) // pub页数据生成接口
 const relsearch = require(`${SRC}/api/relsearch`) // 相关搜索接口
+const metadump = require(`${SRC}/api/metadump`) // 返回meta表中所有的数据，包含：ctype、title、author三个字段
 const recommend = require(`${SRC}/api/recommend`) // 推荐结果接口
 const search = require(`${SRC}/api/search`) // 文章搜索。按照title搜索，按照date搜索
 const Show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，按照date搜索
@@ -306,6 +307,13 @@ router.get('/getsimplesku', async (req, res) => {
   } else {
     pageNotFound(res)
   }
+})
+
+// 返回meta表中所有的数据，包含：ctype、title、author三个字段
+router.get('/metadump', async (req, res) => {
+  metadump()
+          .then(result => writeJSON(result, res, 'metadump'))
+          .catch(e => happyEnd(e, res))
 })
 
 // APP内正文页、专刊页渲染接口
