@@ -257,7 +257,9 @@ class Parser {
           item.type = type
           item.value = entities.decodeHTML(data)
         }
-        if (!_.isEmpty(item)) {
+        // 发现会有这种 {type: null, value: []} 例如 1551 这篇文章最后就会出现一个这种数据结构
+        // 如果item.type不符合要求，则不要推入contents中
+        if (!_.isEmpty(item) && !/null|undefined/i.test(item.type)) {
           contents.push(item)
         }
       }
