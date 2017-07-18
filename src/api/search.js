@@ -15,12 +15,13 @@ const _ = require('lodash')
 
 class Search {
   async doQuery (cond) {
-    let ret = {metas: []}
+    let metas = []
+    let ret = { metas }
     try {
       const aids = await metaTable.getAidsByCond(cond)
       console.log('[doQuery] aids:', aids)
       if (!Utils.isValidArray(aids)) return null
-      const metas = await metaService.getRawMetas(
+      metas = await metaService.getRawMetas(
         aids,
         true,
         false, // isShortId
@@ -39,8 +40,8 @@ class Search {
     } catch (error) {
       Log.exception(error)
     }
-    if (ret.length > 1) {
-      ret.metas = ret
+    if (metas.length > 1) {
+      ret.metas = metas
     }
     return ret
   }
