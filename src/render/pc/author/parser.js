@@ -1,14 +1,8 @@
 // const Parser = require('../../../parser')
 
 class AuthorParser {
-  setMetas (metas) {
-    this.metas = metas
-    return this
-  }
-
-  getHTML (len) {
+  getHTML (metas, len) {
     let html = ''
-    let { metas } = this
     let metaslen = metas.length
     if (metaslen > len) {
       metas = metas.slice(0, len)

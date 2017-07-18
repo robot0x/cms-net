@@ -48,7 +48,7 @@ class AuthorRender extends Render {
         allarticles: JSON.stringify(allarticles),
         infos: JSON.stringify(infos),
         author,
-        body: parser.setMetas(metas).getHTML(20),
+        body: parser.getHTML(metas, 20),
         prefix: this.prefix,
         version: this.version
       })

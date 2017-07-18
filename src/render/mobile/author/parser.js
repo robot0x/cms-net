@@ -1,13 +1,12 @@
 // const Parser = require('../../../parser')
 class AuthorParser {
-  setMetas (metas) {
-    this.metas = metas
-    return this
-  }
+  // setMetas (metas) {
+  //   this.metas = metas
+  //   return this
+  // }
 
-  getHTML (len) {
+  getHTML (metas, len) {
     let html = ''
-    let { metas } = this
     // console.log('14:', metas)
     let metaslen = metas.length
     if (metaslen > len) {

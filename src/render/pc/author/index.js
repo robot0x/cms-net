@@ -34,7 +34,7 @@ class AuthorRender extends Render {
       } else {
         return this.getDoc(this.template, {
           author,
-          body: parser.setMetas(metas).getHTML(20),
+          body: parser.getHTML(metas),
           version: this.version
         })
       }
