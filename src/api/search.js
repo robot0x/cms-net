@@ -28,8 +28,9 @@ class Search {
         true,
         true
       )
+      let ret = {metas: []}
       // console.log('metas:', metas)
-      if (!Utils.isValidArray(metas)) return null
+      if (!Utils.isValidArray(metas)) return ret
       metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
       // 按照type排序，方便编辑在pub页上看数据
       metas.sort((m1, m2) => Utils.typeToCtype(m2.type) - Utils.typeToCtype(m1.type))
@@ -39,7 +40,10 @@ class Search {
     } catch (error) {
       Log.exception(error)
     }
-    return ret.length > 1 ? { metas: ret } : null
+    if (ret.length > 1) {
+      ret.metas = ret
+    }
+    return ret
   }
 
   async byIds (aids) {
