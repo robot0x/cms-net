@@ -56,7 +56,8 @@ class Show {
       if (goods) {
         goods = goods.map(good => {
           return {
-            image: good.thumb,
+            // image: good.thumb,
+            image: good.cover,
             title: good.title,
             ctype: Utils.typeToCtype(good.type),
             article_id: Utils.toShortId(good.serverid)

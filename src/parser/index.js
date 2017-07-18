@@ -163,6 +163,7 @@ class Parser {
             // #jieguo
             if (id === 'pcollection') {
               // item.url = 'pcollection'
+              item.scheme = 'https'
               item.url = 'c.diaox2.com/view/app/?m=pcollection'
             } else if (/^(\d+)?#.+$/.test(href)) {
               item.url = href.substring(href.lastIndexOf('#'))
