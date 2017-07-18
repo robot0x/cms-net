@@ -15,12 +15,11 @@ const _ = require('lodash')
 
 class Search {
   async doQuery (cond) {
-    let metas = []
-    let ret = { metas }
+    let ret = { metas: [] }
     try {
       const aids = await metaTable.getAidsByCond(cond)
-      if (!Utils.isValidArray(aids)) return null
-      metas = await metaService.getRawMetas(
+      if (!Utils.isValidArray(aids)) return ret
+      const metas = await metaService.getRawMetas(
         aids,
         true,
         false, // isShortId
@@ -33,13 +32,10 @@ class Search {
       // 按照type排序，方便编辑在pub页上看数据
       metas.sort((m1, m2) => Utils.typeToCtype(m2.type) - Utils.typeToCtype(m1.type))
       for (let meta of metas) {
-        ret.push(this._handleMeta(meta))
+        ret.metas.push(this._handleMeta(meta))
       }
     } catch (error) {
       Log.exception(error)
-    }
-    if (metas.length > 1) {
-      ret.metas = metas
     }
     return ret
   }
@@ -55,6 +51,7 @@ class Search {
     // useAuthorSource = false,
     // useTag = false
     Log.business(`[API SearchByIds] 输入参数为：${aids}`)
+    let ret = {metas: []}
     let metas = (await metaService.getRawMetas(
         aids,
         true, // useBuylink
@@ -66,7 +63,10 @@ class Search {
     if (_.isPlainObject(metas)) {
       metas = [metas]
     }
+    if (!Utils.isValidArray(metas)) return ret
     metas = metas.map(meta => this._handleMeta(meta))
+    // 按照type排序，方便编辑在pub页上看数据
+    metas.sort((m1, m2) => Utils.typeToCtype(m2.type) - Utils.typeToCtype(m1.type))
     return { metas }
   }
 
