@@ -46,7 +46,7 @@ function _toPart (sales, id, type) {
     if (id) {
       ele.id = id
     }
-    if (type === 'buyinfo') {
+    if (type === 'buy') {
       ele.buy_link = sale.link || sale.link_pc
       ele.id = sale.buy_id
     }
@@ -62,7 +62,7 @@ async function getsimplesku (id, tag = 'sku') {
     ret = _toPart(sku.sales, id, 'sku')
   } else if (/buy/i.test(tag)) {
     const sales = await buyinfoTable.getById(id)
-    ret = await this._toPart(sales, null, 'buy')
+    ret = _toPart(sales, null, 'buy')
   }
   return {
     pick_up_part: ret

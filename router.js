@@ -6,7 +6,7 @@ const Utils = require(`${SRC}/utils/Utils`)
 const Log = require(`${SRC}/utils/Log`)
 const renders = require(`${SRC}/render/renders`)
 const genpub = require(`${SRC}/api/genpub`) // pub页数据生成接口
-const getsimplesku = require(`${SRC}/api/getsimplesku`) // pub页数据生成接口
+const getbuyinfo = require(`${SRC}/api/getbuyinfo`) // pub页数据生成接口
 const relsearch = require(`${SRC}/api/relsearch`) // 相关搜索接口
 const metadump = require(`${SRC}/api/metadump`) // 返回meta表中所有的数据，包含：ctype、title、author三个字段
 const recommend = require(`${SRC}/api/recommend`) // 推荐结果接口
@@ -298,11 +298,11 @@ router.get('/', async (req, res) => {
 })
 
 // 获取sku数据，把其sales属性变形成客户端要用的形式
-router.get('/getsimplesku', async (req, res) => {
-  let { id } = req.body
+router.get('/buyinfo', async (req, res) => {
+  let { id, tag } = req.body
   if (id) {
-    getsimplesku(id)
-        .then(data => writeJSON(data, res, 'getsimplesku'))
+    getbuyinfo(id, tag)
+        .then(data => writeJSON(data, res, 'buyinfo'))
         .catch(e => happyEnd(e, res))
   } else {
     pageNotFound(res)

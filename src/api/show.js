@@ -147,8 +147,6 @@ class Show {
           card.sid = buylink.sid
         } else if (buylink.bid) {
           card.bid = buylink.bid
-        } else if (buylink.cid) {
-          card.cid = cid
         }
         card.ctype = ctype
         card.image_w = coverwidth
