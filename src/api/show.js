@@ -118,15 +118,18 @@ class Show {
           true, // useBuylink
           true, // isShortId
           true, // useCoverex
-          false,
-          false,
-          true
+          false, // useBanner
+          false, // useSwipe
+          true, // useImageSize
+          false, // useAuthorSource
+          false, // useTag
+          true // useDataIdOfBuylink
         ),
         this.getStat(cids)
       ])
       let metas = []
       let empty = Object.create(null)
-      console.log('rawMetas:', rawMetas)
+      // console.log('rawMetas:', rawMetas)
       for (let cid of cids) {
         let card = Object.create(null)
         cid = Number(cid)
@@ -139,7 +142,14 @@ class Show {
         card.title = title[0]
         card.desc = data.article[cid]
         card.image = cover_image_url // eslint-disable-line
-        card.buylink = buylink
+        card.buylink = buylink.link
+        if (buylink.sid) {
+          card.sid = buylink.sid
+        } else if (buylink.bid) {
+          card.bid = buylink.bid
+        } else if (buylink.cid) {
+          card.cid = cid
+        }
         card.ctype = ctype
         card.image_w = coverwidth
         card.image_h = coverheight

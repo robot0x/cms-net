@@ -101,7 +101,8 @@ class MetaService {
     useSwipe = false,
     useImageSize = false,
     useAuthorSource = false,
-    useTag = false
+    useTag = false,
+    useDataIdOfBuylink = false
   ) {
     // 参数处理
     if (!Utils.isValidArray(ids)) {
@@ -159,7 +160,7 @@ class MetaService {
         imageCols.push('width')
         imageCols.push('height')
       }
-       //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
+      //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
       let imageTypes = [2, 8]
 
       if (useCoverex) {
@@ -207,51 +208,53 @@ class MetaService {
         meta.type = Utils.ctypeToType(ctype)
         // is_external是否是外部文章，现在几乎没有了，所以默认为false
         meta.is_external = false
-        let cover_image = this._findImageByAidAndType(nid, 2, images) || {}
-        let thumb_image = this._findImageByAidAndType(nid, 8, images) || {}
+        let coverImage = this._findImageByAidAndType(nid, 2, images) || {}
+        let thumbImage = this._findImageByAidAndType(nid, 8, images) || {}
 
-        meta.cover_image_url = Utils.addProtocolHead(cover_image.url)
-        meta.thumb_image_url = Utils.addProtocolHead(thumb_image.url)
-        let coverex_image = null
-        let banner_image = null
-        let swipe_images = null // 走马灯图，可能有多个
+        meta.cover_image_url = Utils.addProtocolHead(coverImage.url)
+        meta.thumb_image_url = Utils.addProtocolHead(thumbImage.url)
+        let coverexImage = null
+        let bannerImage = null
+        let swipeImages = null // 走马灯图，可能有多个
 
         if (useCoverex) {
-          coverex_image = this._findImageByAidAndType(nid, 4, images) || {}
-          if (coverex_image) {
-            meta.coverex_image_url = Utils.addProtocolHead(coverex_image.url)
+          coverexImage = this._findImageByAidAndType(nid, 4, images) || {}
+          if (coverexImage) {
+            meta.coverex_image_url = Utils.addProtocolHead(coverexImage.url)
           }
         }
 
         if (useSwipe) {
-          swipe_images = this._findImageByAidAndType(nid, 16, images) || {}
-          if (Utils.isValidArray(swipe_images)) {
-            meta.swipe_image_url = swipe_images.map(swipe => Utils.addProtocolHead(swipe.url))
+          swipeImages = this._findImageByAidAndType(nid, 16, images) || {}
+          if (Utils.isValidArray(swipeImages)) {
+            meta.swipe_image_url = swipeImages.map(swipe =>
+              Utils.addProtocolHead(swipe.url)
+            )
           }
         }
 
         // 如果文章使用了banner图，就使用cms.banner，否则meta不用包含这个字段
         if (useBanner) {
-          banner_image = this._findImageByAidAndType(nid, 32, images) || {}
-          if (banner_image && banner_image.url) {
-            meta.banner = Utils.addProtocolHead(banner_image.url)
+          bannerImage = this._findImageByAidAndType(nid, 32, images) || {}
+          if (bannerImage && bannerImage.url) {
+            meta.banner = Utils.addProtocolHead(bannerImage.url)
           }
         }
 
         if (useImageSize) {
-          meta.coverwidth = cover_image.width || 0
-          meta.coverheight = cover_image.height || 0
-          meta.thumbwidth = thumb_image.width || 0
-          meta.thumbheight = thumb_image.height || 0
+          meta.coverwidth = coverImage.width || 0
+          meta.coverheight = coverImage.height || 0
+          meta.thumbwidth = thumbImage.width || 0
+          meta.thumbheight = thumbImage.height || 0
 
-          if (useCoverex && coverex_image) {
-            meta.coverexwidth = coverex_image.width || 0
-            meta.coverexheight = coverex_image.height || 0
+          if (useCoverex && coverexImage) {
+            meta.coverexwidth = coverexImage.width || 0
+            meta.coverexheight = coverexImage.height || 0
           }
 
-          if (useBanner && banner_image) {
-            meta.bannerwidth = banner_image.width || 0
-            meta.bannerheight = banner_image.height || 0
+          if (useBanner && bannerImage) {
+            meta.bannerwidth = bannerImage.width || 0
+            meta.bannerheight = bannerImage.height || 0
           }
         }
 
@@ -265,7 +268,9 @@ class MetaService {
           // 则会再通过id拿一次buylink，这是没必要的且费性能
           let buylink = await this.getBuylink(
             nid,
-            meta.buylink || 'null_cms_link'
+            meta.buylink || 'null_cms_link',
+            false,
+            useDataIdOfBuylink
           )
           if (buylink) {
             meta.has_buylink = true
@@ -387,38 +392,72 @@ class MetaService {
      sku的status字段：0/1/2/4, 编辑/在线/失效/...
      目前业务上只用了0和1，0未发布，1代表发布
    */
-  async getBuylink (id, cmsBuyLink = '', withId = false) {
+  async getBuylink (id, cmsBuyLink = '', withId = false, useDataIdOfBuylink) {
     if (!id) return
     const skus = await SKU.getSkusByArticleId(id, false)
     let buylink = null
+    let sid = 0
+    let bid = 0
+    let cid = 0
     if (SKU.isOnlyOneOnlineSKU(skus)) {
       // SKU的页面支持长短aid，但是为了兼容老的，故转成长id
-      buylink = `http://c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${skus[0].sid}.html`
+      sid = skus[0].sid
+      buylink = `http://c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${sid}.html`
       // return `http://c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${skus[0].sid}.html`
     } else {
       // 若SKU有0个或多个，则从diaodiao_buyinfo取购买页
       // const buy_info = await this.metaTable.exec(`SELECT * FROM diaodiao_buyinfo where aid = ${id}`)
       const buyInfo = await this.buyinfoTable.getByAid(id)
       // 如果diaodiao_buyinfo表存在购买信息
-      if (buyInfo.length > 0 && buyInfo[0].link) {
-        buylink = `http://c.diaox2.com/view/app/?m=buy&aid=${id}`
+      if (buyInfo.length > 0) {
+        let firstBuyInfo = buyInfo[0]
+        if (firstBuyInfo.link) {
+          bid = firstBuyInfo.buy_id
+          buylink = `http://c.diaox2.com/view/app/?m=buy&aid=${id}`
+        }
         // return `http://c.diaox2.com/view/app/?m=buy&aid=${id}`
       } else if (cmsBuyLink && cmsBuyLink !== 'null_cms_link') {
         buylink = cmsBuyLink
+        cid = id
         // return cmsBuyLink
       } else {
         buylink = await this.metaTable.getBuylinkById(id)
+        if (buylink) {
+          cid = id
+        }
         // return await this.metaTable.getBuylinkById(id)
       }
     }
+    let ret = null
     if (withId) {
-      return {
+      ret = {
         cid: id,
         link: buylink
       }
     } else {
-      return buylink
+      ret = buylink
     }
+
+    if (useDataIdOfBuylink) {
+      if (typeof buylink === 'string') {
+        ret = {
+          link: buylink
+        }
+      }
+      if (sid) {
+        ret.sid = sid
+      } else if (bid) {
+        ret.bid = bid
+      } else if (cid) {
+        ret.bid = cid
+      }
+    }
+    console.log('[getBuylink] sid:', sid)
+    console.log('[getBuylink] bid:', bid)
+    console.log('[getBuylink] cid:', cid)
+    console.log('[getBuylink]:', ret)
+    return ret
+
     // console.log('getBuylink:', id)
     // 首先，http://s5.a.dx2rd.com:3000/v1/articlesku/1233 通过这个接口拿sku
     // return new Promise((resolve, reject) => {
