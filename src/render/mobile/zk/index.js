@@ -36,7 +36,7 @@ class ZKRender extends Render {
   //   return this
   // }
 
-  async rende (id, pageType) {
+  async rende (id, pageType, isRecommendTest = false) {
     const { parser, metaService } = this
     if (!id) return
     try {
@@ -122,6 +122,7 @@ class ZKRender extends Render {
         thumb,
         cover,
         pageType,
+        isRecommendTest,
         downloadAddr: this.downloadAddr,
         prefix: this.prefix,
         version: this.version

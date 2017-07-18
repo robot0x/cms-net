@@ -10,6 +10,7 @@ const getbuyinfo = require(`${SRC}/api/getbuyinfo`) // pub页数据生成接口
 const relsearch = require(`${SRC}/api/relsearch`) // 相关搜索接口
 const metadump = require(`${SRC}/api/metadump`) // 返回meta表中所有的数据，包含：ctype、title、author三个字段
 const recommend = require(`${SRC}/api/recommend`) // 推荐结果接口
+const newrec = require(`${SRC}/api/newrec`) // 推荐结果测试接口
 const search = require(`${SRC}/api/search`) // 文章搜索。按照title搜索，按照date搜索
 const Show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，按照date搜索
 const show = new Show()
@@ -68,7 +69,7 @@ const {
  *    .then(doc => writeDoc(doc))
  */
 const numnberReg = /^\d+$/
-async function showAndZKAndZTRouter (m, id, pageType, req, res) {
+async function showAndZKAndZTRouter (m, id, pageType, req, res, isRecommendTest = false) {
   // let debug = req.__debug__
   console.log('pageType:', pageType)
   if (/show/.test(m)) {
@@ -76,7 +77,7 @@ async function showAndZKAndZTRouter (m, id, pageType, req, res) {
       // .setPageType(pageType)
       // .setDebug(debug)
       // .setId(id)
-      .rende(id, pageType)
+      .rende(id, pageType, isRecommendTest)
       .then(doc =>
         writeDoc(doc, res, pageType === 'share' ? 'showShare' : 'show')
       )
@@ -86,7 +87,7 @@ async function showAndZKAndZTRouter (m, id, pageType, req, res) {
       // .setPageType(pageType)
       // .setDebug(debug)
       // .setId(id)
-      .rende(id, pageType)
+      .rende(id, pageType, isRecommendTest)
       .then(doc => writeDoc(doc, res, pageType === 'share' ? 'zkShare' : 'zk'))
       .catch(e => happyEnd(e, res))
   } else if (/zt/.test(m)) {
@@ -116,6 +117,7 @@ router.get('/', async (req, res) => {
     gid, // m=jfitem
     title // m=TS
   } = req.body
+  let isRecommendTest = 'test' in req.body
   // 有m说明是渲染器
   if (m && (m = m.trim().toLowerCase())) {
     // firstpage/goodthing/exprience/zk/zt
@@ -140,7 +142,7 @@ router.get('/', async (req, res) => {
             // redirect(res, `//${req.headers.host}/?m=${trueM}&id=${id}`)
             redirect(res, `//c.diaox2.com/view/app/?m=${trueM}&id=${id}`)
           } else {
-            showAndZKAndZTRouter(m, id, pageType, req, res)
+            showAndZKAndZTRouter(m, id, pageType, req, res, isRecommendTest)
           }
         } else {
           console.log('pageNotFound ....')
@@ -270,6 +272,19 @@ router.get('/', async (req, res) => {
             writeTXT(result, res, 'recommend')
           } else {
             writeJSON(result, res, 'recommend')
+          }
+        })
+        .catch(e => happyEnd(e, res))
+    } else if (/newrec/i.test(m)) {
+      // 推荐测试接口
+      console.log('推荐结果接口的路由被命中ID为', id)
+      let { cb } = req.body // 支持jsonp
+      newrec(id && numnberReg.test(id) ? id : -1, cb)
+        .then(result => {
+          if (cb) {
+            writeTXT(result, res, 'newrec')
+          } else {
+            writeJSON(result, res, 'newrec')
           }
         })
         .catch(e => happyEnd(e, res))
