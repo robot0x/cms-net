@@ -15,10 +15,10 @@ const _ = require('lodash')
 
 class Search {
   async doQuery (cond) {
-    const ret = []
+    let ret = {metas: []}
     try {
       const aids = await metaTable.getAidsByCond(cond)
-      // console.log('aids:', aids)
+      console.log('[doQuery] aids:', aids)
       if (!Utils.isValidArray(aids)) return null
       const metas = await metaService.getRawMetas(
         aids,
@@ -28,8 +28,7 @@ class Search {
         true,
         true
       )
-      let ret = {metas: []}
-      // console.log('metas:', metas)
+      console.log('[doQuery] metas:', metas)
       if (!Utils.isValidArray(metas)) return ret
       metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
       // 按照type排序，方便编辑在pub页上看数据
