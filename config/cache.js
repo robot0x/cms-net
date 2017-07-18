@@ -172,10 +172,10 @@ const cache = {
   /**
    * GET /?m=recommend&id=1234
    * 推荐接口
-   * 缓存8个小时
+   * 缓存4个小时
    */
   recommend: {
-    maxAge: 28800
+    maxAge: 14400
   },
 
   /**
