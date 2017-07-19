@@ -191,10 +191,8 @@ class Parser {
               item.price = price
               item.image = image
               try {
-                item.sales = {
-                  show_part: [],
-                  pick_up_part: Utils.skuDataConvert(JSON.parse(skuSales))
-                }
+                item.show_part = []
+                item.pick_up_part = Utils.skuDataConvert(JSON.parse(skuSales))
               } catch (error) {
                 console.log(error)
                 item.sales = []

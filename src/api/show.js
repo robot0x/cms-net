@@ -39,7 +39,16 @@ class Show {
     try {
       let [content, meta, images, goods] = await Promise.all([
         contentTable.getById(id),
-        metaService.getRawMetas(id, false, true, false, false, true, false, true),
+        metaService.getRawMetas(
+          id,
+          false,
+          true,
+          false,
+          false,
+          true,
+          false,
+          true
+        ),
         imageTable.getByAid(id),
         recommend(id)
       ])
@@ -137,10 +146,21 @@ class Show {
           rawMetas.filter(rawMeta => rawMeta.nid === cid)
         )
         if (!cardMeta) continue
-        let { title, cover_image_url, coverex_image_url, buylink, ctype, price, coverwidth, coverheight, coverexwidth, coverexheight } = cardMeta
+        let {
+          title,
+          cover_image_url,
+          coverex_image_url,
+          buylink,
+          ctype,
+          price,
+          coverwidth,
+          coverheight,
+          coverexwidth,
+          coverexheight
+        } = cardMeta
         card.title = title[0]
         card.desc = data.article[cid]
-        card.image = cover_image_url // eslint-disable-line
+        card.image = cover_image_url; // eslint-disable-line
         card.buylink = buylink
         card.ctype = ctype
         card.image_w = coverwidth
@@ -152,32 +172,30 @@ class Show {
         }
         // 渲染策略：如果是首页，取coverex作为渲染的图，其他的都是取cover
         if (ctype === 1) {
-          card.image = coverex_image_url // eslint-disable-line
+          card.image = coverex_image_url; // eslint-disable-line
           card.image_w = coverexwidth
           card.image_h = coverexheight
         }
         card.favo_count = st.fav || 0
         // 处理sku
         let skus = skuData[cid] || []
-        card.sales = {
-          show_part: [],
-          pick_up_part: []
-        }
-        if (Utils.isValidArray(skus)) {
-          for (let sku of skus) {
-            card.sales.pick_up_part.push({
-              type: 'sku',
-              data: Utils.skuDataConvert(sku.sales)
-            })
-          }
-        }
-        const sales = (await buyinfoTable.getByAid(cid)) || []
-        for (let sale of sales) {
-          card.sales.pick_up_part.push({
-            type: 'buy',
-            data: Utils.skuDataConvert(sale)
+        card.skus = []
+        for (let sku of skus) {
+          card.skus.push({
+            show_part: [],
+            pick_up_part: Utils.skuDataConvert(sku.sales)
           })
         }
+        /**
+         * 20170718李园宁说，现在已经做了多sku的展示，就需要老的购买页数据了
+         */
+        // const sales = (await buyinfoTable.getByAid(cid)) || []
+        // for (let sale of sales) {
+        //   card.sales.pick_up_part.push({
+        //     type: 'buy',
+        //     data: Utils.skuDataConvert(sale)
+        //   })
+        // }
         metas.push(card)
       }
       ret.ctype = meta.ctype
@@ -318,23 +336,26 @@ class Show {
       否则的话，则从diaodiao_buylink表拿数据，把拿到的多条数据变形成show_part形式
       电商上线之后，show_part是我们自己的电商连接，pick_up_part是除了我们自己之外的其他链接
      */
-      data.sku = Object.create(null)
-      data.sku.show_part = []
-      data.sku.pick_up_part = []
+      data.skus = []
+      // data.sku.show_part = []
+      // data.sku.pick_up_part = []
       // 策略跟 MetaService.getBuyLink是一样的
       for (let sku of skus) {
-        data.sku.pick_up_part.push({
-          type: 'sku',
-          data: Utils.skuDataConvert(sku.sales)
+        data.skus.push({
+          show_part: [],
+          pick_up_part: Utils.skuDataConvert(sku.sales)
         })
       }
-      const sales = (await buyinfoTable.getByAid(id)) || []
-      for (let sale of sales) {
-        data.sku.pick_up_part.push({
-          type: 'buy',
-          data: Utils.skuDataConvert(sale, 'buy')
-        })
-      }
+      /**
+       * 20170718李园宁说，现在已经做了多sku的展示，就需要老的购买页数据了
+       */
+      // const sales = (await buyinfoTable.getByAid(id)) || []
+      // for (let sale of sales) {
+      //   data.sku.pick_up_part.push({
+      //     type: 'buy',
+      //     data: Utils.skuDataConvert(sale, 'buy')
+      //   })
+      // }
       data.share_data = shareData
       return data
     } catch (error) {
@@ -413,8 +434,7 @@ class Show {
    * 根据tag id拿到tag页的渲染数据
    */
   async getTagData (tid) {
-    let data = await tagService
-      .getRenderData(tid, true, true, false, true)
+    let data = await tagService.getRenderData(tid, true, true, false, true)
     let ret = Object.create(null)
     ret.name = data.name
     ret.article = []
