@@ -182,6 +182,8 @@ class Show {
         card.skus = []
         for (let sku of skus) {
           card.skus.push({
+            sid: sku.sid,
+            title: sku.title,
             show_part: [],
             pick_up_part: Utils.skuDataConvert(sku.sales)
           })
@@ -342,6 +344,8 @@ class Show {
       // 策略跟 MetaService.getBuyLink是一样的
       for (let sku of skus) {
         data.skus.push({
+          sid: sku.sid,
+          title: sku.title,
           show_part: [],
           pick_up_part: Utils.skuDataConvert(sku.sales)
         })
