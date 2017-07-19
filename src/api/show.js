@@ -184,7 +184,7 @@ class Show {
           card.skus.push({
             sid: sku.sid,
             title: sku.title,
-            image: ((sku.image || [])[0] || {}).url || '',
+            image: ((sku.images || [])[0] || {}).url || '',
             // TODO: 将来我们电商上线之后，sku会有我们自己的商品（gid）或者我们自己的微店和淘宝链接
             // 这些需要放show_part里
             show_part: [],
@@ -348,7 +348,7 @@ class Show {
       for (let sku of skus) {
         data.skus.push({
           sid: sku.sid,
-          image: ((sku.image || [])[0] || {}).url || '',
+          image: ((sku.images || [])[0] || {}).url || '',
           title: sku.title,
           show_part: [],
           pick_up_part: Utils.skuDataConvert(sku.sales)
