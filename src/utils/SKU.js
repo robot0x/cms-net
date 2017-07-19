@@ -43,6 +43,52 @@ class SKU {
     }
   }
   /**
+   * 根据文章id列表拿文章关联的sku数组
+   *
+   * @static
+   * @param {array} ids 文章长id
+   * @param {boolean} [parse=false] 是否parse image 和 sales
+   * @returns
+   *
+   * @memberof SKU
+   */
+  static getSkusByArticleIds (ids, parse = true) {
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          url: SKU.ARTICLE_SKU,
+          method: 'POST',
+          json: true,
+          headers: { 'content-type': 'application/json' },
+          body: { cids: Utils.toLongId(ids) }
+        },
+        (error, response, body) => {
+          if (error) reject(error)
+          if (response.statusCode !== 200 || /SUCCESS/i.test(body.state)) {
+            let { data } = body
+            let ret = Object.create(null)
+            Object.keys(data).forEach(longId => {
+              if (parse) {
+                ret[Utils.toShortId(longId)] = data[longId].map(sku => {
+                  SKU._parse(sku, 'images')
+                  SKU._parse(sku, 'sales')
+                  SKU._parse(sku, 'revarticles')
+                  SKU._parse(sku, 'tags')
+                  return sku
+                })
+              } else {
+                ret[Utils.toShortId(longId)] = data[longId]
+              }
+            })
+            resolve(ret)
+          } else {
+            reject('接口返回错误的状态吗', response.statusCode)
+          }
+        }
+      )
+    })
+  }
+  /**
    * 根据文章id拿文章关联的sku数组
    *
    * @static
@@ -98,4 +144,7 @@ SKU.GET_SIMPLE_SKU = 'http://s5.a.dx2rd.com:3000/v1/getsimplesku/'
 // SKU.getSimpleSku(1).then(res => {
 //   console.log(res)
 // })
+SKU.getSkusByArticleIds([1, 2, 3]).then(res => {
+  console.log(res)
+})
 module.exports = SKU

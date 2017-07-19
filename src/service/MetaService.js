@@ -101,8 +101,7 @@ class MetaService {
     useSwipe = false,
     useImageSize = false,
     useAuthorSource = false,
-    useTag = false,
-    useDataIdOfBuylink = false
+    useTag = false
   ) {
     // 参数处理
     if (!Utils.isValidArray(ids)) {
@@ -268,9 +267,7 @@ class MetaService {
           // 则会再通过id拿一次buylink，这是没必要的且费性能
           let buylink = await this.getBuylink(
             nid,
-            meta.buylink || 'null_cms_link',
-            false,
-            useDataIdOfBuylink
+            meta.buylink || 'null_cms_link'
           )
           if (buylink) {
             meta.has_buylink = true
@@ -392,7 +389,7 @@ class MetaService {
      sku的status字段：0/1/2/4, 编辑/在线/失效/...
      目前业务上只用了0和1，0未发布，1代表发布
    */
-  async getBuylink (id, cmsBuyLink = '', withId = false, useDataIdOfBuylink) {
+  async getBuylink (id, cmsBuyLink = '', withId = false) {
     if (!id) return
     const skus = await SKU.getSkusByArticleId(id, false)
     let buylink = null
@@ -437,70 +434,7 @@ class MetaService {
     } else {
       ret = buylink
     }
-
-    if (useDataIdOfBuylink) {
-      if (typeof buylink === 'string') {
-        ret = {
-          link: buylink
-        }
-      }
-      if (sid) {
-        ret.sid = sid
-      } else if (bid) {
-        ret.bid = bid
-      } else if (cid) {
-        ret.bid = cid
-      }
-    }
-    console.log('[getBuylink] sid:', sid)
-    console.log('[getBuylink] bid:', bid)
-    console.log('[getBuylink] cid:', cid)
-    console.log('[getBuylink]:', ret)
     return ret
-
-    // console.log('getBuylink:', id)
-    // 首先，http://s5.a.dx2rd.com:3000/v1/articlesku/1233 通过这个接口拿sku
-    // return new Promise((resolve, reject) => {
-    //   let skus = await SKU.getSkusByArticleId(id)
-    //   request(
-    //     `http://s5.a.dx2rd.com:3000/v1/articlesku/${id}`,
-    //     async (err, body) => {
-    //       if (err) {
-    //         resolve(null)
-    //       }
-    //       try {
-    //         const { data } = JSON.parse(body.body)
-    //         const skus = data[Utils.toLongId(id)]
-    //         // 如果只有1个sku且这个sku的status为1（即已经发布了），则把SKU页作为购买页
-    //         // 比如 1229 这篇文章关联的sku有且仅有一个，但这个sku的staus却为0，所以不满足条件
-    //         if (
-    //           Utils.isValidArray(skus) &&
-    //           skus.length === 1 &&
-    //           skus[0].status === 1
-    //         ) {
-    //           resolve(
-    //             `http://c.diaox2.com/view/app/sku/${id}/${skus[0].sid}.html`
-    //           )
-    //         } else {
-    //           // 若SKU有0个或多个，则从diaodiao_buyinfo取购买页
-    //           // const buy_info = await this.metaTable.exec(`SELECT * FROM diaodiao_buyinfo where aid = ${id}`)
-    //           const buy_info = await this.buyinfoTable.getByAid(id)
-    //           // 如果diaodiao_buyinfo表存在购买信息
-    //           if (buy_info.length > 0 && buy_info[0].link) {
-    //             resolve(`http://c.diaox2.com/view/app/?m=buy&aid=${id}`)
-    //           } else if (cms_buy_link) {
-    //             resolve(cms_buy_link)
-    //           } else {
-    //             resolve(await this.metaTable.getBuylinkById(id))
-    //           }
-    //         }
-    //       } catch (e) {
-    //         Log.exception(e)
-    //         resolve(null)
-    //       }
-    //     }
-    //   )
-    // })
   }
 }
 // ids = [this.id],

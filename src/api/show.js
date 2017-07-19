@@ -104,7 +104,7 @@ class Show {
       ret.desc = desc
       ret.image = image
       let cids = data.ids
-      let [rawMetas, stat] = await Promise.all([
+      let [rawMetas, stat, skuData] = await Promise.all([
         // ids = [this.id],
         // useBuylink = true,
         // isShortId = false,
@@ -121,12 +121,10 @@ class Show {
           true, // useCoverex
           false, // useBanner
           false, // useSwipe
-          true, // useImageSize
-          false, // useAuthorSource
-          false, // useTag
-          true // useDataIdOfBuylink
+          true // useImageSize
         ),
-        this.getStat(cids)
+        this.getStat(cids),
+        SKU.getSkusByArticleIds(cids, false)
       ])
       let metas = []
       let empty = Object.create(null)
@@ -138,6 +136,7 @@ class Show {
         let cardMeta = Utils.getFirst(
           rawMetas.filter(rawMeta => rawMeta.nid === cid)
         )
+       
         if (!cardMeta) continue
         let { title, cover_image_url, coverex_image_url, buylink, ctype, price, coverwidth, coverheight, coverexwidth, coverexheight } = cardMeta
         card.title = title[0]
@@ -164,6 +163,21 @@ class Show {
           card.image_h = coverexheight
         }
         card.favo_count = st.fav || 0
+        // 处理sku
+        let skus = skuData[cid]
+        if (SKU.isOnlyOneOnlineSKU(skus)) {
+          card.sales = {
+            show_part: [],
+            pick_up_part: Utils.skuDataConvert(skus[0].sales)
+          }
+        } else {
+          const sales = await buyinfoTable.getByAid(cid)
+          data.sku.pick_up_part = Utils.skuDataConvert(sales, 'buy')
+          card.sales = {
+            show_part: [],
+            pick_up_part: Utils.skuDataConvert(sales)
+          }
+        }
         metas.push(card)
       }
       ret.ctype = meta.ctype
@@ -309,19 +323,14 @@ class Show {
       // 策略跟 MetaService.getBuyLink是一样的
       if (SKU.isOnlyOneOnlineSKU(skus)) {
         let [sku] = skus
-        let { sid, sales } = sku
         try {
-          data.sku.pick_up_part = Utils.skuDataConvert(
-            sales,
-            sid,
-            'sku'
-          )
+          data.sku.pick_up_part = Utils.skuDataConvert(sku.sales)
         } catch (error) {
           data.sku.pick_up_part = []
         }
       } else {
         const sales = await buyinfoTable.getByAid(id)
-        data.sku.pick_up_part = Utils.skuDataConvert(sales, null, 'buy')
+        data.sku.pick_up_part = Utils.skuDataConvert(sales, 'buy')
       }
       data.share_data = shareData
       return data
@@ -346,14 +355,6 @@ class Show {
         (error, response, body) => {
           if (error) reject(error)
           if (response.statusCode === 200) {
-            // const { res } = body
-            // console.log(res)
-            // const keys = Object.keys(res)
-            // const ret = Object.create(null)
-            // keys.forEach(key => {
-            //   ret[key] = res[key].click
-            // })
-            // console.log('ret:', ret)
             resolve(body.res)
           } else {
             reject('接口返回错误的状态吗', response.statusCode)
@@ -361,56 +362,6 @@ class Show {
         }
       )
     })
-  }
-  /**
-   *
-   *
-   * @param {any} sales
-   * @param {any} type
-   *
-   * @memberof Show
-  "channel": "淘宝",
-  "buy_link": "www.baidu.com",
-  "des": "软边白板已下架，此链接为铝边白板的链接",
-  "price": 233,
-  "id": 123,//skuID用于4.0需求sku失效用户可以进行反馈
-  "type":"link"//用于判断跳转类型 3x版本都为link
-  */
-  _toPart (sales, id, type) {
-    let parts = []
-    for (let sale of sales) {
-      console.log('_toPart sale:', sale)
-      let ele = Object.create(null)
-      // 必须确定这一条是sku还是buyinfo，不然的话，就不知道id是sid还是buyinfo的id
-      ele.tag = type
-      ele.type = 'link'
-      ele.channel = sale.mart
-      // 如果描述信息是这样的 "不能直邮，需要转运，日亚转运攻略见<a href=/view/app/?m=show&id=2127&ch=experience>这里</a>"
-      // 则转换为 "不能直邮，需要转运，日亚转运攻略见<<这里>>"
-      // 同时判断a标签的href是我们自己的链接还是外部链接。大部分清空下描述信息是没有a标签的，所以，返回给客户端的字段中没有
-      // spec和spec_link字段
-      let {text, href, spec} = Utils.handleATag(sale.intro) || {}
-      ele.des = text
-      if (href) {
-        ele.spec = spec
-        ele.spec_link = href
-      }
-      ele.price = sale.price
-      ele.buy_link =
-        sale.link_m_cps ||
-        sale.link_pc_cps ||
-        sale.link_m_raw ||
-        sale.link_pc_raw
-      if (id) {
-        ele.id = id
-      }
-      if (type === 'buy') {
-        ele.buy_link = sale.link || sale.link_pc
-        ele.id = sale.buy_id
-      }
-      parts.push(ele)
-    }
-    return parts
   }
   /**
    * @param {string} src
