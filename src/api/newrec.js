@@ -45,7 +45,7 @@ function genSimpleMeta (meta) {
 async function recommend (id, cb) {
   // if (!id) return null
   // Log.business('[API recommend] 输入参数为：', id)
-  // diaodiao_article_recommend, diaodiao_hot_goodthing
+  // diaodiao_article_newrec, diaodiao_hot_goodthing
   // 先从 diaodiao_article_newrec 拿，若没有，再去diaodiao_hot_goodthing拿，若多于15条，则截断
   let relArticles = null
   let simpleMetas = null
