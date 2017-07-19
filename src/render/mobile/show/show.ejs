@@ -108,6 +108,10 @@
 	<% } %>
 </script>
 <script src="<%-prefix%>/cms/diaodiao/assets/ddios330.js"></script>
-<script src="<%-prefix%>/cms/diaodiao/assets/show203.js"></script>
+<% if( isRecommendTest ) {%>
+<script src="<%-prefix%>/cms/diaodiao/assets/showtest.js"></script>
+<% } else { %>
+  <script src="<%-prefix%>/cms/diaodiao/assets/show203.js"></script>
+<% } %>
 <script src="<%-prefix%>/cms/diaodiao/assets/wx.js"></script>
 </html>

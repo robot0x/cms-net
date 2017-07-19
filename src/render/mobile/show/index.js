@@ -67,7 +67,7 @@ class ShowRender extends Render {
   //   skus = data[Utils.toLongId(id)]
   //   return skus
   // }
-  async rende (id, pageType) {
+  async rende (id, pageType, isRecommendTest = false) {
     const { parser } = this
     if (!id) return
     try {
@@ -158,6 +158,7 @@ class ShowRender extends Render {
         //  如果有购买链接且购买链接是sku页，则需要转成 /sku/longid/sid.html这种形式，用来进行统计
         buylink: Utils.convertSkuUrl(buylink, id),
         pageType: pageType,
+        isRecommendTest,
         downloadAddr: this.downloadAddr,
         prefix: this.prefix,
         version: this.version

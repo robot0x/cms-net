@@ -122,6 +122,7 @@ class ZKRender extends Render {
         thumb,
         cover,
         pageType,
+        isRecommendTest,
         downloadAddr: this.downloadAddr,
         prefix: this.prefix,
         version: this.version
