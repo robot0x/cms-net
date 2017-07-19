@@ -158,18 +158,25 @@ class Show {
         }
         card.favo_count = st.fav || 0
         // 处理sku
-        let skus = skuData[cid]
-        if (SKU.isOnlyOneOnlineSKU(skus)) {
-          card.sales = {
-            show_part: [],
-            pick_up_part: Utils.skuDataConvert(skus[0].sales)
+        let skus = skuData[cid] || []
+        card.sales = {
+          show_part: [],
+          pick_up_part: []
+        }
+        if (Utils.isValidArray(skus)) {
+          for (let sku of skus) {
+            card.sales.pick_up_part.push({
+              type: 'sku',
+              data: Utils.skuDataConvert(sku.sales)
+            })
           }
-        } else {
-          const sales = await buyinfoTable.getByAid(cid)
-          card.sales = {
-            show_part: [],
-            pick_up_part: Utils.skuDataConvert(sales)
-          }
+        }
+        const sales = (await buyinfoTable.getByAid(cid)) || []
+        for (let sale of sales) {
+          card.sales.pick_up_part.push({
+            type: 'buy',
+            data: Utils.skuDataConvert(sale)
+          })
         }
         metas.push(card)
       }
@@ -284,6 +291,7 @@ class Show {
       promises.push(this.genShareData(id, trueM))
       let [data, skus, shareData] = await Promise.all(promises)
       data = data || {}
+      skus = skus || []
       /**
      * show_part: [
             {
@@ -314,16 +322,18 @@ class Show {
       data.sku.show_part = []
       data.sku.pick_up_part = []
       // 策略跟 MetaService.getBuyLink是一样的
-      if (SKU.isOnlyOneOnlineSKU(skus)) {
-        let [sku] = skus
-        try {
-          data.sku.pick_up_part = Utils.skuDataConvert(sku.sales)
-        } catch (error) {
-          data.sku.pick_up_part = []
-        }
-      } else {
-        const sales = await buyinfoTable.getByAid(id)
-        data.sku.pick_up_part = Utils.skuDataConvert(sales, 'buy')
+      for (let sku of skus) {
+        data.sku.pick_up_part.push({
+          type: 'sku',
+          data: Utils.skuDataConvert(sku.sales)
+        })
+      }
+      const sales = (await buyinfoTable.getByAid(id)) || []
+      for (let sale of sales) {
+        data.sku.pick_up_part.push({
+          type: 'buy',
+          data: Utils.skuDataConvert(sale, 'buy')
+        })
       }
       data.share_data = shareData
       return data

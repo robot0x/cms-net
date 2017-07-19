@@ -16,6 +16,10 @@ class Utils {
   */
   static skuDataConvert (sales, type = 'sku') {
     let parts = []
+    if (!sales) return parts
+    if (!Array.isArray(sales)) {
+      sales = [sales]
+    }
     for (let sale of sales) {
       console.log('_toPart sale:', sale)
       let ele = Object.create(null)
@@ -41,7 +45,7 @@ class Utils {
       if (type === 'buy') {
         ele.buy_link = sale.link || sale.link_pc
       }
-      ele.tag = type
+      // ele.tag = type
       parts.push(ele)
     }
     return parts
