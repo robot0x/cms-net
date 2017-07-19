@@ -124,7 +124,7 @@ class Show {
           true // useImageSize
         ),
         this.getStat(cids),
-        SKU.getSkusByArticleIds(cids, false)
+        SKU.getSkusByArticleIds(cids, true)
       ])
       let metas = []
       let empty = Object.create(null)
@@ -136,18 +136,12 @@ class Show {
         let cardMeta = Utils.getFirst(
           rawMetas.filter(rawMeta => rawMeta.nid === cid)
         )
-       
         if (!cardMeta) continue
         let { title, cover_image_url, coverex_image_url, buylink, ctype, price, coverwidth, coverheight, coverexwidth, coverexheight } = cardMeta
         card.title = title[0]
         card.desc = data.article[cid]
         card.image = cover_image_url // eslint-disable-line
-        card.buylink = buylink.link
-        if (buylink.sid) {
-          card.sid = buylink.sid
-        } else if (buylink.bid) {
-          card.bid = buylink.bid
-        }
+        card.buylink = buylink
         card.ctype = ctype
         card.image_w = coverwidth
         card.image_h = coverheight
@@ -172,7 +166,6 @@ class Show {
           }
         } else {
           const sales = await buyinfoTable.getByAid(cid)
-          data.sku.pick_up_part = Utils.skuDataConvert(sales, 'buy')
           card.sales = {
             show_part: [],
             pick_up_part: Utils.skuDataConvert(sales)

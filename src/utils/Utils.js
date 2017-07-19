@@ -41,6 +41,7 @@ class Utils {
       if (type === 'buy') {
         ele.buy_link = sale.link || sale.link_pc
       }
+      ele.tag = type
       parts.push(ele)
     }
     return parts
