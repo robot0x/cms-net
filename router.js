@@ -69,7 +69,14 @@ const {
  *    .then(doc => writeDoc(doc))
  */
 const numnberReg = /^\d+$/
-async function showAndZKAndZTRouter (m, id, pageType, req, res, isRecommendTest = false) {
+async function showAndZKAndZTRouter (
+  m,
+  id,
+  pageType,
+  req,
+  res,
+  isRecommendTest = false
+) {
   // let debug = req.__debug__
   console.log('pageType:', pageType)
   if (/show/.test(m)) {
@@ -317,8 +324,8 @@ router.get('/buyinfo', async (req, res) => {
   let { id, tag } = req.body
   if (id) {
     getbuyinfo(id, tag)
-        .then(data => writeJSON(data, res, 'buyinfo'))
-        .catch(e => happyEnd(e, res))
+      .then(data => writeJSON(data, res, 'buyinfo'))
+      .catch(e => happyEnd(e, res))
   } else {
     pageNotFound(res)
   }
@@ -327,41 +334,34 @@ router.get('/buyinfo', async (req, res) => {
 // 返回meta表中所有的数据，包含：ctype、title、author三个字段
 router.get('/metadump', async (req, res) => {
   metadump()
-          .then(result => writeJSON(result, res, 'metadump'))
-          .catch(e => happyEnd(e, res))
+    .then(result => writeJSON(result, res, 'metadump'))
+    .catch(e => happyEnd(e, res))
 })
-
-// APP内正文页、专刊页渲染接口
-router.get('/show', async (req, res) => {
-  let {
-    id, // ?id=
-    src, // ?src=
-    tid // ?tid=
-  } = req.body
+// APP内正文页、专刊页原生渲染数据接口
+router.get('/show/:id', async (req, res) => {
+  const id = req.params.id
   // const debug = req.__debug__
-  if (id) {
-    if (numnberReg.test(id)) {
-      show
-        // .setType('show')
-        // .setDebug(debug)
-        .getData(id, 'show')
-        .then(result => writeJSON(result, res, 'app_show'))
-        .catch(e => happyEnd(e, res))
-    } else if (/pcollection/i.test(id)) {
-      mPCollectionRender
-        .getRendeData()
-        .then(result => writeJSON(result, res, 'pcollection'))
-        .catch(e => happyEnd(e, res))
-    }
-  } else if (src && src.trim()) {
+  if (numnberReg.test(id)) {
     show
-      // .setType('author')
-      .getData(src, 'author')
+      // .setType('show')
+      // .setDebug(debug)
+      .getData(id, 'show')
       .then(result => writeJSON(result, res, 'app_show'))
       .catch(e => happyEnd(e, res))
-  } else if (tid && numnberReg.test(tid)) {
+  } else if (/^pcollection$/i.test(id)) {
+    mPCollectionRender
+      .getRendeData()
+      .then(result => writeJSON(result, res, 'pcollection'))
+      .catch(e => happyEnd(e, res))
+  } else {
+    pageNotFound(res)
+  }
+})
+// APP内tag页原生渲染数据接口
+router.get('/show/tag/:tid', async (req, res) => {
+  const tid = req.params.tid
+  if (numnberReg.test(tid)) {
     show
-      // .setType('tag')
       .getData(tid, 'tag')
       .then(result => writeJSON(result, res, 'app_show'))
       .catch(e => happyEnd(e, res))
@@ -369,6 +369,57 @@ router.get('/show', async (req, res) => {
     pageNotFound(res)
   }
 })
+// APP内作者页原生渲染数据接口
+router.get('/show/author/:src', async (req, res) => {
+  const src = req.params.src
+  if (src && src.trim()) {
+    show
+      .getData(src, 'author')
+      .then(result => writeJSON(result, res, 'app_show'))
+      .catch(e => happyEnd(e, res))
+  } else {
+    pageNotFound(res)
+  }
+})
+
+// // APP内正文页、专刊页渲染接口
+// router.get('/show', async (req, res) => {
+//   let {
+//     id, // ?id=
+//     src, // ?src=
+//     tid // ?tid=
+//   } = req.body
+//   // const debug = req.__debug__
+//   if (id) {
+//     if (numnberReg.test(id)) {
+//       show
+//         // .setType('show')
+//         // .setDebug(debug)
+//         .getData(id, 'show')
+//         .then(result => writeJSON(result, res, 'app_show'))
+//         .catch(e => happyEnd(e, res))
+//     } else if (/pcollection/i.test(id)) {
+//       mPCollectionRender
+//         .getRendeData()
+//         .then(result => writeJSON(result, res, 'pcollection'))
+//         .catch(e => happyEnd(e, res))
+//     }
+//   } else if (src && src.trim()) {
+//     show
+//       // .setType('author')
+//       .getData(src, 'author')
+//       .then(result => writeJSON(result, res, 'app_show'))
+//       .catch(e => happyEnd(e, res))
+//   } else if (tid && numnberReg.test(tid)) {
+//     show
+//       // .setType('tag')
+//       .getData(tid, 'tag')
+//       .then(result => writeJSON(result, res, 'app_show'))
+//       .catch(e => happyEnd(e, res))
+//   } else {
+//     pageNotFound(res)
+//   }
+// })
 
 // 拿出所有在库文章的id，可以按照指定条件排序
 router.get('/ids', async (req, res) => {
