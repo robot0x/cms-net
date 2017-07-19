@@ -3,6 +3,42 @@ const appConfig = require('../../config/app')
 const moment = require('moment')
 const startDate = require('../../config/app').startDate
 class Utils {
+  static skuDataConvert (sales, id, type) {
+    let parts = []
+    for (let sale of sales) {
+      console.log('_toPart sale:', sale)
+      let ele = Object.create(null)
+      // 必须确定这一条是sku还是buyinfo，不然的话，就不知道id是sid还是buyinfo的id
+      ele.tag = type
+      ele.type = 'link'
+      ele.channel = sale.mart
+      // 如果描述信息是这样的 "不能直邮，需要转运，日亚转运攻略见<a href=/view/app/?m=show&id=2127&ch=experience>这里</a>"
+      // 则转换为 "不能直邮，需要转运，日亚转运攻略见<<这里>>"
+      // 同时判断a标签的href是我们自己的链接还是外部链接。大部分清空下描述信息是没有a标签的，所以，返回给客户端的字段中没有
+      // spec和spec_link字段
+      let {text, href, spec} = Utils.handleATag(sale.intro) || {}
+      ele.des = text
+      if (href) {
+        ele.spec = spec
+        ele.spec_link = href
+      }
+      ele.price = sale.price
+      ele.buy_link =
+        sale.link_m_cps ||
+        sale.link_pc_cps ||
+        sale.link_m_raw ||
+        sale.link_pc_raw
+      if (id) {
+        ele.id = id
+      }
+      if (type === 'buy') {
+        ele.buy_link = sale.link || sale.link_pc
+        ele.id = sale.buy_id
+      }
+      parts.push(ele)
+    }
+    return parts
+  }
   /**
    * 传入形如：
    *  随意伸缩魔法衣架；不能直邮，需要转运，日本转运攻略见<a href=/view/app/?m=show&id=2127&ch=experience>这里</a>

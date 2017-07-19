@@ -184,11 +184,18 @@ class Parser {
               let image = $child.find('.articleimg')[0].attribs['src']
               let price = entities.decodeHTML($child.find('.brand').text())
               let id = Utils.normalize($child[0].attribs['data-href'])
+              let skuSales = $child.find('span[data-sku-sales]').text()
               item.type = name
               item.id = id
               item.title = title
               item.price = price
               item.image = image
+              try {
+                item.sales = Utils.skuDataConvert(JSON.parse(skuSales), id, 'sku')
+              } catch (error) {
+                console.log(error)
+                item.sales = []
+              }
             } catch (error) {
               Log.exception(error)
               console.log(error)

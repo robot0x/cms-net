@@ -50,7 +50,7 @@ class Show {
       // 批处理文章内引用的图片，根据image表中的记录，给img标签赋值（width\height\alt等）
       html = imageHandler(html, images, false)
       // 批处理文章内引用的sku，根据sid通过getsimplesku接口拿数据，然后更新与sku相关的标签
-      html = await skuHandler(html, false)
+      html = await skuHandler(html, false, true)
       parser.html = html
       let contents = parser.getData()
       if (goods) {
@@ -305,22 +305,23 @@ class Show {
      */
       data.sku = Object.create(null)
       data.sku.show_part = []
+      data.sku.pick_up_part = []
       // 策略跟 MetaService.getBuyLink是一样的
       if (SKU.isOnlyOneOnlineSKU(skus)) {
         let [sku] = skus
         let { sid, sales } = sku
         try {
-          data.sku.show_part = this._toPart(
+          data.sku.pick_up_part = Utils.skuDataConvert(
             sales,
             sid,
             'sku'
           )
         } catch (error) {
-          data.sku.show_part = []
+          data.sku.pick_up_part = []
         }
       } else {
         const sales = await buyinfoTable.getByAid(id)
-        data.sku.pick_up_part = this._toPart(sales, null, 'buy')
+        data.sku.pick_up_part = Utils.skuDataConvert(sales, null, 'buy')
       }
       data.share_data = shareData
       return data

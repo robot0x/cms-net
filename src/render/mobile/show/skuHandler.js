@@ -33,7 +33,7 @@ const getSkusBySids = sids => {
 /**
  * [对html内的sku标签进行处理，加上]
  */
-module.exports = async (html, addAliImageArg = true) => {
+module.exports = async (html, addAliImageArg = true, useSales = false) => {
   const $ = cheerio.load(`<div id="container">${html}</div>`, {
     decodeEntities: false
   })
@@ -55,6 +55,10 @@ module.exports = async (html, addAliImageArg = true) => {
     $skuDom.find('.articleimg').attr('src', Utils.addProtocolHead(src))
     $skuDom.find('.articletitle').text(sku.title)
     $skuDom.find('.brand').text(sku.price_str)
+    // app原生数据渲染接口中type = sku的数据片段会用到sku的数据
+    if (useSales) {
+      $skuDom.append(`<span style="display:none;" data-sku-sales="sku_sales">${JSON.stringify(sku.sales)}</span>`)
+    }
   }
   // console.log(container.html())
   return container.html()
