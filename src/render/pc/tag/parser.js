@@ -28,7 +28,7 @@ class TagParser {
             <a href="//www.diaox2.com/article/${id}.html" class="img-container" target="_blank"><img alt=">${title}" onload="adjust(this);"data-w="640" data-h="370" src="${cover_image_url}"></a>
         </dt>
           <dd>
-            <p><a href="//www.diaox2.com/article/9668.html" target="_blank">${title}</a></p>
+            <p><a href="//www.diaox2.com/article/${id}.html" target="_blank">${title}</a></p>
             <ul class="icon-list unknown clearfix" data-id="${longid}">
               <li class="icon-item f-l">
                 <i class="icon icon-s"></i>
