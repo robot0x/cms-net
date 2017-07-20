@@ -53,7 +53,8 @@ class Show {
         recommend(id, null, true)
       ])
       // (useBuylink = true, isShortId = false, useCoverex = false, useBanner = false, useSwipe = false , useImageSize = false)
-      let { swipe_image_url, title, price, author } = meta
+      let { swipe_image_url, title, price, author, timetopublish } = meta
+      // console.log('[getArticleData] meta:', meta)
       parser.markdown = content
       let html = parser.getHTML()
       // 批处理文章内引用的图片，根据image表中的记录，给img标签赋值（width\height\alt等）
@@ -98,6 +99,7 @@ class Show {
         ctype,
         header: {
           title: Utils.getFirst(title),
+          pubtime: timetopublish,
           price: { type: 'price', value: price },
           banners: swipe_image_url,
           author: { url: author.pic, value: author.name, source: author.source }
