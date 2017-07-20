@@ -6,7 +6,7 @@ const _ = require('lodash')
 const Log = require('../utils/Log')
 const LIMIT = 15 // 限制15条
 
-function genSimpleMeta (meta) {
+function genSimpleMeta (meta, usePrice = false) {
   if (meta) {
     // let { nid, title, type, ctype } = meta
     let { nid, title, ctype } = meta
@@ -16,7 +16,7 @@ function genSimpleMeta (meta) {
     } else if (title.length === 1) {
       [title] = title
     }
-    return {
+    let ret = {
       title,
       titleex,
       type: meta.type,
@@ -25,6 +25,10 @@ function genSimpleMeta (meta) {
       serverid: Utils.toLongId(nid),
       url: `//c.diaox2.com/view/app/?m=${Utils.ctypeToM(ctype)}&id=${nid}`
     }
+    if (usePrice) {
+      ret.price = meta.price
+    }
+    return ret
   }
   return null
 }
@@ -41,8 +45,9 @@ function genSimpleMeta (meta) {
  * 2017-6-29 发现在pc值得买上调用推荐接口不传id，要考虑到这种情况
  * @param {number} id 
  * @param {string} cb
+ * @param {boolean} usePrice
  */
-async function recommend (id, cb) {
+async function recommend (id, cb, usePrice = false) {
   // if (!id) return null
   // Log.business('[API recommend] 输入参数为：', id)
   // diaodiao_article_newrec, diaodiao_hot_goodthing
@@ -91,13 +96,13 @@ async function recommend (id, cb) {
       let simpleMeta = null
       if (Array.isArray(metas)) {
         for (let meta of metas) {
-          simpleMeta = genSimpleMeta(meta)
+          simpleMeta = genSimpleMeta(meta, usePrice)
           if (simpleMeta) {
             simpleMetas.push(simpleMeta)
           }
         }
       } else if (!_.isEmpty(metas)) {
-        simpleMeta = genSimpleMeta(metas)
+        simpleMeta = genSimpleMeta(metas, usePrice)
         if (simpleMeta) {
           simpleMetas.push(simpleMeta)
         }

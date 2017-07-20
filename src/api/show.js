@@ -10,11 +10,11 @@ const parser = new Parser()
 const Log = require('../utils/Log')
 const Utils = require('../utils/Utils')
 const SKU = require('../utils/SKU')
-// const DB = require('../db/DB')
 const ContentTable = require('../db/ContentTable')
 const contentTable = new ContentTable()
-const BuyinfoTable = require('../db/BuyinfoTable')
-const buyinfoTable = new BuyinfoTable()
+// const DB = require('../db/DB')
+// const BuyinfoTable = require('../db/BuyinfoTable')
+// const buyinfoTable = new BuyinfoTable()
 const MetaService = require('../service/MetaService')
 const metaService = new MetaService()
 const AuthorService = require('../service/AuthorService')
@@ -50,7 +50,7 @@ class Show {
           true
         ),
         imageTable.getByAid(id),
-        recommend(id)
+        recommend(id, null, true)
       ])
       // (useBuylink = true, isShortId = false, useCoverex = false, useBanner = false, useSwipe = false , useImageSize = false)
       let { swipe_image_url, title, price, author } = meta
@@ -69,7 +69,8 @@ class Show {
             image: good.cover,
             title: good.title,
             ctype: Utils.typeToCtype(good.type),
-            article_id: Utils.toShortId(good.serverid)
+            article_id: Utils.toShortId(good.serverid),
+            price: good.price
           }
         })
       } else {
@@ -192,7 +193,7 @@ class Show {
           })
         }
         /**
-         * 20170718李园宁说，现在已经做了多sku的展示，就需要老的购买页数据了
+         * 20170718李园宁说，现在已经做了多sku的展示，就不需要老的购买页数据了
          */
         // const sales = (await buyinfoTable.getByAid(cid)) || []
         // for (let sale of sales) {
