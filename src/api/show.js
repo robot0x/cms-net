@@ -341,6 +341,7 @@ class Show {
         [data, shareData] = await Promise.all(promises)
       }
       data = data || {}
+      skus = skus || []
       /**
      * show_part: [
             {
