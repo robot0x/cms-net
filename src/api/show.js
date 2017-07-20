@@ -331,11 +331,16 @@ class Show {
           promises.push(this.getZTData(id, ctype))
           break
       }
-      promises.push(SKU.getSkusByArticleId(id))
+      let data, skus, shareData
       promises.push(this.genShareData(id, trueM))
-      let [data, skus, shareData] = await Promise.all(promises)
+      // 只有正文页才需要调用 articlesku 接口拿sku
+      if (trueM === 'show') {
+        promises.push(SKU.getSkusByArticleId(id));
+        [data, skus, shareData] = await Promise.all(promises)
+      } else {
+        [data, shareData] = await Promise.all(promises)
+      }
       data = data || {}
-      skus = skus || []
       /**
      * show_part: [
             {
@@ -385,7 +390,7 @@ class Show {
       //     data: Utils.skuDataConvert(sale, 'buy')
       //   })
       // }
-      data.share_data = shareData
+      data.share_data = shareData || {}
       return data
     } catch (error) {
       console.log(error)
