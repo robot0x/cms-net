@@ -63,16 +63,34 @@ class Show {
       parser.html = html
       let contents = parser.getData()
       if (goods) {
+        let shouldGetStatCids = []
         goods = goods.map(good => {
-          return {
+          // 如果猜你喜欢中有price就下发price，否则，下发收藏数
+          let {cover, title, type, serverid, price} = good
+          let article_id = Utils.toShortId(serverid) // eslint-disable-line
+          let newGood = {
             // image: good.thumb,
-            image: good.cover,
-            title: good.title,
-            ctype: Utils.typeToCtype(good.type),
-            article_id: Utils.toShortId(good.serverid),
-            price: good.price
+            image: cover,
+            title: title,
+            ctype: Utils.typeToCtype(type),
+            article_id
           }
+          if (price && price.trim() && !/N\/A/i.test(price)) {
+            newGood.price = price
+          } else {
+            shouldGetStatCids.push(serverid)
+          }
+          return newGood
         })
+        if (Utils.isValidArray(shouldGetStatCids)) {
+          let stat = await this.getStat(shouldGetStatCids)
+          goods = goods.map(good => {
+            let serverid = Utils.toLongId(good.article_id)
+            if (shouldGetStatCids.indexOf(serverid) === -1) return good
+            good.favo_count = (stat[serverid] || Object.create(null)).fav || 0
+            return good
+          })
+        }
       } else {
         goods = []
       }
