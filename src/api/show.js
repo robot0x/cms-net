@@ -336,7 +336,7 @@ class Show {
       // 只有正文页才需要调用 articlesku 接口拿sku
       if (trueM === 'show') {
         promises.push(SKU.getSkusByArticleId(id));
-        [data, skus, shareData] = await Promise.all(promises)
+        [data, shareData, skus] = await Promise.all(promises)
       } else {
         [data, shareData] = await Promise.all(promises)
       }
