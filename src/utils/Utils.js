@@ -4,8 +4,8 @@ const moment = require('moment')
 const startDate = require('../../config/app').startDate
 class Utils {
   /**
-   * @param {any} sales
-   * @param {any} type
+   * @param {array | object} sales
+   * @param {string} type
    * @memberof Show
   "channel": "淘宝",
   "buy_link": "www.baidu.com",
