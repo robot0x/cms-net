@@ -47,7 +47,7 @@ class SkuRender extends Render {
         // return Utils.addAliImageSuffix(image.url)
       })
       // sku页显示的图片
-      let thumb = Utils.addAliImageSuffix((images[0] || {}).url) || ''
+      let thumb = Utils.addProtocolHead(Utils.addAliImageSuffix((images[0] || {}).url))
       const metas = (await metaService.getRawMetas(revarticles, false)) || []
       return this.getDoc(this.template, {
         sid,
