@@ -67,7 +67,10 @@ class ZTRender extends Render {
 
       thumb = Utils.getFirst(thumb) || {}
       cover = Utils.getFirst(cover) || {}
-
+      let downloadAddr = this.downloadAddr
+      if (/jike/i.test(pageType)) {
+        downloadAddr = this.jikeDownloadAddr
+      }
       return this.getDoc(this.template, {
         id,
         title,
@@ -76,7 +79,7 @@ class ZTRender extends Render {
         thumb,
         cover,
         pageType,
-        downloadAddr: this.downloadAddr,
+        downloadAddr,
         prefix: this.prefix,
         version: this.version
       })

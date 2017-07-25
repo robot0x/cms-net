@@ -191,11 +191,12 @@ class Parser {
               item.title = title
               item.price = price
               item.image = image
+              item.pick_up_part = []
+              item.show_part = []
+              console.log('skuSales:', skuSales)
               try {
-                item.show_part = []
                 item.pick_up_part = Utils.skuDataConvert(JSON.parse(skuSales))
               } catch (error) {
-                item.pick_up_part = []
                 console.log(error)
                 Log.exception(error)
                 Log.exception('[htmlToData]解析type为sku的数据发生错误：', skuSales)

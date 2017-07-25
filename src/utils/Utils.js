@@ -21,7 +21,7 @@ class Utils {
       sales = [sales]
     }
     for (let sale of sales) {
-      console.log('_toPart sale:', sale)
+      // console.log('_toPart sale:', sale)
       let ele = Object.create(null)
       // 必须确定这一条是sku还是buyinfo，不然的话，就不知道id是sid还是buyinfo的id
       ele.type = 'link'

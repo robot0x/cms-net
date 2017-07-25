@@ -21,13 +21,13 @@
 <body data-type="zhuanti" id="<%-4294967297 * id%>" data-render="<%-version%>">
   <div class="total" data-id="<%-4294967297 * id%>" data-thumb="http://a.diaox2.com/cms/sites/default/files/20160803/zt/woxihuandewenju.JPG" data-self="http:<%-prefix%>/view/app/?m=zt&id=%-id%>">
 
-    <% if( pageType === 'share') {%>
+    <% if(/share|jike/i.test(pageType)) {%>
       <div class="banner tpl" data-href="<%-downloadAddr%>"><img class="bannerleft" src="<%-prefix%>/cms/diaodiao/assets/icontodown.png"><p class="bannerhigh">品质生活导购平台</p><p class="bannerlow">尽在<span> 有调</span></p><div class="bannerright">点此下载</div></div>
     <% } %>
 
     <div class="content">
       <%-body %>
-      <% if( pageType === 'share') {%>
+      <% if(/share|jike/i.test(pageType)) {%>
     		<div class="botmenu" style="width: 414px;">
     			<table>
     				<tbody>
@@ -80,7 +80,7 @@
           console.log("update failed, with error "+c);
       })
   }
-  <% if( pageType === 'share') {%>
+  <% if(/share|jike/i.test(pageType)) {%>
     $(document).ready(function(){
       add_access({"action": "navigate", "value": "Zhuanti", "user": uid, "isIOS": isIOS}, "log");	//log this
       bind_log_click(".articlecard", "data-href", "zhuantiarticlecard");

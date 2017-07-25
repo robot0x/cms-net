@@ -6,7 +6,6 @@ const Utils = require(`${SRC}/utils/Utils`)
 const Log = require(`${SRC}/utils/Log`)
 const renders = require(`${SRC}/render/renders`)
 const genpub = require(`${SRC}/api/genpub`) // pub页数据生成接口
-// const getbuyinfo = require(`${SRC}/api/getbuyinfo`) // pub页数据生成接口
 const relsearch = require(`${SRC}/api/relsearch`) // 相关搜索接口
 const metadump = require(`${SRC}/api/metadump`) // 返回meta表中所有的数据，包含：ctype、title、author三个字段
 const recommend = require(`${SRC}/api/recommend`) // 推荐结果接口
@@ -99,7 +98,7 @@ async function showAndZKAndZTRouter (
       // .then(doc => writeDoc(doc, res, pageType === 'share' ? 'zkShare' : 'zk'))
       .then(doc => writeDoc(doc, res, pageType))
       .catch(e => happyEnd(e, res))
-  } else if (/zt/.test(m) && pageType !== 'jike') { // 专题页不用即刻渲染
+  } else if (/zt/.test(m)) {
     mZTRender
       // .setPageType(pageType)
       // .setDebug(debug)
@@ -489,27 +488,28 @@ router.post('/content', async (req, res) => {
 // })
 
 // 正文和专刊页的jike渲染页
-const jikeidReg = /\/jike\/(\d+)\.html/
-router.get(jikeidReg, async (req, res) => {
-  let match = req.originalUrl.match(jikeidReg)
-  let id = Utils.toShortId(match[1])
-  console.log('jike页路由被命中 ....', id)
-  if (id && numnberReg.test(id)) {
-    const trueM = Utils.ctypeToM(await metaTable.getCtypeById(id))
-    showAndZKAndZTRouter(trueM, id, 'jike', req, res)
-  } else {
-    pageNotFound(res)
-  }
-})
+// const jikeidReg = /\/jike\/(\d+)\.html/
+// router.get(jikeidReg, async (req, res) => {
+//   let match = req.originalUrl.match(jikeidReg)
+//   let id = Utils.toShortId(match[1])
+//   console.log('jike页路由被命中 ....', id)
+//   if (id && numnberReg.test(id)) {
+//     const trueM = Utils.ctypeToM(await metaTable.getCtypeById(id))
+//     showAndZKAndZTRouter(trueM, id, 'jike', req, res)
+//   } else {
+//     pageNotFound(res)
+//   }
+// })
 // m=show OR m=zk OR m=zt的share页
-const longidReg = /\/share\/(\d+)\.html/
+const longidReg = /\/(share|jike)\/(\d+)\.html/i
 router.get(longidReg, async (req, res) => {
   let match = req.originalUrl.match(longidReg)
-  let id = Utils.toShortId(match[1])
-  console.log('share页路由被命中 ....', id)
-  if (id && numnberReg.test(id)) {
+  let rout = match[1]
+  let id = Utils.toShortId(match[2])
+  console.log(`${rout}页路由被命中 .... id为：${id}`)
+  if (rout && id && numnberReg.test(id)) {
     const trueM = Utils.ctypeToM(await metaTable.getCtypeById(id))
-    showAndZKAndZTRouter(trueM, id, 'share', req, res)
+    showAndZKAndZTRouter(trueM, id, rout, req, res)
   } else {
     pageNotFound(res)
   }
