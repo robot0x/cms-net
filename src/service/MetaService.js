@@ -101,7 +101,8 @@ class MetaService {
     useSwipe = false,
     useImageSize = false,
     useAuthorSource = false,
-    useTag = false
+    useTag = false,
+    useLastUpdateTime = false
   ) {
     // 参数处理
     if (!Utils.isValidArray(ids)) {
@@ -117,6 +118,8 @@ class MetaService {
       ids = Utils.toShortId(ids)
     }
     let source = useAuthorSource ? 'au.source,' : ''
+    // TR接口要用到，是用来排序的，最新修改的文章要排在最前面
+    let lastUpdateTime = useLastUpdateTime ? 'meta.last_update_time,' : ''
     // 取meta需要加上时间限制，timetopublish必须处在20141108和今天之间
     // 专刊类型的timetopublish都为0，要想拿专刊类型的meta，需要坐下兼容
     // TODO: 如果作者存在，则会返回空meta，这个需要做下兼容。比如，填写了“陈老湿”，这个是title而不是source
@@ -132,6 +135,7 @@ class MetaService {
       meta.buylink,
       meta.timetopublish,
       ${source}
+      ${lastUpdateTime}
       au.pic_uri,
       au.title AS author_name
     FROM 

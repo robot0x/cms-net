@@ -19,18 +19,32 @@ class Search {
     try {
       const aids = await metaTable.getAidsByCond(cond)
       if (!Utils.isValidArray(aids)) return ret
+      // ids = [this.id],
+      // useBuylink = true,
+      // isShortId = false,
+      // useCoverex = true,
+      // useBanner = false,
+      // useSwipe = false,
+      // useImageSize = false,
+      // useAuthorSource = false,
+      // useTag = false,
+      // useLastUpdateTime = false
       const metas = await metaService.getRawMetas(
         aids,
-        true,
+        true,  // useBuylink
         false, // isShortId
-        true,
-        true,
-        true
+        true,  // useCoverex
+        true,  // useBanner
+        true,  // useSwipe
+        false, // useImageSize
+        false, // useAuthorSource
+        false, // useTag
+        true   // useLastUpdateTime
       )
       if (!Utils.isValidArray(metas)) return ret
-      metas.sort((m1, m2) => m2.timetopublish - m1.timetopublish)
-      // 按照type排序，方便编辑在pub页上看数据
-      metas.sort((m1, m2) => Utils.typeToCtype(m2.type) - Utils.typeToCtype(m1.type))
+      // 按照type排序，方便编辑在pub页上看数据，ctype越小，排序越靠上
+      metas.sort((m1, m2) => Utils.typeToCtype(m1.type) - Utils.typeToCtype(m2.type))
+      metas.sort((m1, m2) => m2.last_update_time - m1.last_update_time)
       for (let meta of metas) {
         ret.metas.push(this._handleMeta(meta))
       }
@@ -186,18 +200,6 @@ class Search {
       if (banner) {
         ret.banner = banner
       }
-      // delete meta.thumb_image_url
-      // delete meta.cover_image_url
-      // delete meta.coverex_image_url
-      // delete meta.bannerwidth
-      // delete meta.bannerheight
-      // delete meta.buylink
-      // delete meta.author
-      // delete meta.ctype
-      // delete meta.has_buylink
-      // delete meta.is_external
-      // delete meta.timetopublish
-      // delete meta.title_color
       return ret
     } catch (error) {
       console.log(error)
