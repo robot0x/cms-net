@@ -195,8 +195,9 @@ class Parser {
                 item.show_part = []
                 item.pick_up_part = Utils.skuDataConvert(JSON.parse(skuSales))
               } catch (error) {
+                item.pick_up_part = []
                 console.log(error)
-                item.sales = []
+                Log.exception(error)
               }
             } catch (error) {
               Log.exception(error)

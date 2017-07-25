@@ -22,7 +22,7 @@ const authorService = new AuthorService()
 const TagService = require('../service/TagService')
 const tagService = new TagService()
 const request = require('request')
-const recommend = require('./recommend')
+// const recommend = require('./recommend')
 const Promise = require('bluebird')
 // const Base = require('../Base')
 class Show {
