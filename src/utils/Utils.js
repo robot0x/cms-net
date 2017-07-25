@@ -707,5 +707,5 @@ Utils.HTTP_PROTOCOL_REG = /^(https?:)?\/\//i
 // console.log(Utils.handleATag('运攻略见<a class="a" href="/view/app/?m=show&id=2127&ch=experience" style="color:#e60012;"><span>呵呵<span></a>呀 >2'))
 // console.log(Utils.handleATag('运攻略见<a class="a" href="http://baidu.com" style="color:#e60012;"><span>呵呵<span></a>呀 >2'))
 // console.log(Utils.handleATag('天王盖地虎'))
-
+// console.log(Utils.handleATag('日亚自营，不能直邮，需要转运，日亚转运攻略见 <a href=/view/app/?m=show&id=2127&ch=experience>这里</a>'))
 module.exports = Utils
