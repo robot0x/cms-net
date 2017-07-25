@@ -73,6 +73,7 @@ class Search {
         true, // useBanner
         true // useSwipe
       )) || []
+    console.log('metas:', metas)
     if (_.isPlainObject(metas)) {
       metas = [metas]
     }

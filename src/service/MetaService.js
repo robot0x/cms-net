@@ -160,6 +160,7 @@ class MetaService {
         promises.push(this.getBuylink(ids))
       }
       let [metaAndAuthors, buylinks] = await Promise.all(promises)
+      console.log('buylinks:', buylinks)
       buylinks = buylinks || []
       // console.log('metaAndAuthors:', metaAndAuthors);
       // console.log('[MetaService.getRawMetas]:', metaAndAuthors)
