@@ -198,6 +198,7 @@ class Parser {
                 item.pick_up_part = []
                 console.log(error)
                 Log.exception(error)
+                Log.exception('[htmlToData]解析type为sku的数据发生错误：', skuSales)
               }
             } catch (error) {
               Log.exception(error)
