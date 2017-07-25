@@ -73,6 +73,7 @@ class ShowRender extends Render {
     if (!id) return
     try {
       const isShare = /share/i.test(pageType)
+      const isJike = /jike/i.test(pageType)
       let [metaObj, relwords] = await Promise.all([
         // 如果是share页，则拿buylink，否则不拿
         metaService.getRenderData(id, isShare),
@@ -129,7 +130,9 @@ class ShowRender extends Render {
       if (ctype === 4) {
         timetopublish = ''
       }
-      if (!isShare) {
+      // 除了share页和jike页外，只剩下了show页，show页是不需要has_buylink和buylink字段的
+      // share页和jike页如果有buylink，是需要在下方bar上放上购买链接的
+      if (!isShare && !isJike) {
         has_buylink = false  // eslint-disable-line
         buylink = ''
       }
@@ -144,7 +147,7 @@ class ShowRender extends Render {
       let downloadAddr = this.downloadAddr
       if (isShare) {
         template = this.shareTemplate
-      } else if (/jike/i.test(pageType)) {
+      } else if (isJike) {
         template = this.jikeTemplate
         downloadAddr = this.jikeDownloadAddr
       }
