@@ -37,7 +37,8 @@ class Show {
    */
   async getArticleData (id, ctype) {
     try {
-      let [content, meta, images, goods] = await Promise.all([
+      // let [content, meta, images, goods] = await Promise.all([
+      let [content, meta, images] = await Promise.all([
         contentTable.getById(id),
         metaService.getRawMetas(
           id,
@@ -49,8 +50,8 @@ class Show {
           false,
           true
         ),
-        imageTable.getByAid(id),
-        recommend(id, null, true)
+        imageTable.getByAid(id)
+        // ,recommend(id, null, true)
       ])
       // (useBuylink = true, isShortId = false, useCoverex = false, useBanner = false, useSwipe = false , useImageSize = false)
       let { swipe_image_url, title, price, author, timetopublish } = meta
@@ -63,38 +64,38 @@ class Show {
       html = await skuHandler(html, false, true)
       parser.html = html
       let contents = parser.getData()
-      if (goods) {
-        let shouldGetStatCids = []
-        goods = goods.map(good => {
-          // 如果猜你喜欢中有price就下发price，否则，下发收藏数
-          let {cover, title, type, serverid, price} = good
-          let article_id = Utils.toShortId(serverid) // eslint-disable-line
-          let newGood = {
-            // image: good.thumb,
-            image: cover,
-            title: title,
-            ctype: Utils.typeToCtype(type),
-            article_id
-          }
-          if (price && price.trim() && !/N\/A/i.test(price)) {
-            newGood.price = price
-          } else {
-            shouldGetStatCids.push(serverid)
-          }
-          return newGood
-        })
-        if (Utils.isValidArray(shouldGetStatCids)) {
-          let stat = await this.getStat(shouldGetStatCids)
-          goods = goods.map(good => {
-            let serverid = Utils.toLongId(good.article_id)
-            if (shouldGetStatCids.indexOf(serverid) === -1) return good
-            good.favo_count = (stat[serverid] || Object.create(null)).fav || 0
-            return good
-          })
-        }
-      } else {
-        goods = []
-      }
+      // if (goods) {
+      //   let shouldGetStatCids = []
+      //   goods = goods.map(good => {
+      //     // 如果猜你喜欢中有price就下发price，否则，下发收藏数
+      //     let {cover, title, type, serverid, price} = good
+      //     let article_id = Utils.toShortId(serverid) // eslint-disable-line
+      //     let newGood = {
+      //       // image: good.thumb,
+      //       image: cover,
+      //       title: title,
+      //       ctype: Utils.typeToCtype(type),
+      //       article_id
+      //     }
+      //     if (price && price.trim() && !/N\/A/i.test(price)) {
+      //       newGood.price = price
+      //     } else {
+      //       shouldGetStatCids.push(serverid)
+      //     }
+      //     return newGood
+      //   })
+      //   if (Utils.isValidArray(shouldGetStatCids)) {
+      //     let stat = await this.getStat(shouldGetStatCids)
+      //     goods = goods.map(good => {
+      //       let serverid = Utils.toLongId(good.article_id)
+      //       if (shouldGetStatCids.indexOf(serverid) === -1) return good
+      //       good.favo_count = (stat[serverid] || Object.create(null)).fav || 0
+      //       return good
+      //     })
+      //   }
+      // } else {
+      //   goods = []
+      // }
       return {
         ctype,
         header: {
@@ -104,8 +105,8 @@ class Show {
           banners: swipe_image_url,
           author: { url: author.pic, value: author.name, source: author.source }
         },
-        contents,
-        goods
+        contents
+        // ,goods
       }
     } catch (e) {
       console.log(e)
@@ -206,6 +207,8 @@ class Show {
             sid: sku.sid,
             title: sku.title,
             image: ((sku.images || [])[0] || {}).url || '',
+            price: sku.price_str || '',
+            brand: sku.brand || '',
             // TODO: 将来我们电商上线之后，sku会有我们自己的商品（gid）或者我们自己的微店和淘宝链接
             // 这些需要放show_part里
             show_part: [],
@@ -378,6 +381,8 @@ class Show {
           image: ((sku.images || [])[0] || {}).url || '',
           title: sku.title,
           show_part: [],
+          price: sku.price_str || '',
+          brand: sku.brand || '',
           pick_up_part: Utils.skuDataConvert(sku.sales)
         })
       }
