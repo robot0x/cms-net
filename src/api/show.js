@@ -374,7 +374,6 @@ class Show {
       data.skus = []
       // data.sku.show_part = []
       // data.sku.pick_up_part = []
-      // 策略跟 MetaService.getBuyLink是一样的
       for (let sku of skus) {
         data.skus.push({
           sid: sku.sid,

@@ -75,35 +75,6 @@ class ZKRender extends Render {
         meta.desc = article[meta.nid]
         return meta
       })
-      // console.log('rende metas:', metas)
-      // let cids = data.ids || []
-      // let buylinks = []
-      // 先读diaodiao_buyinfo表
-      // 根据文章id获取其buylink
-
-      // let promises = []
-      // // 取专刊引用文章的buylink
-      // for (let cid of cids) {
-      //   // 并行去拿buylink，提高响应时间
-      //   promises.push(metaService.getBuylink(cid, '', true))
-      // }
-      // let buylinks = (await Promise.all(promises)) || []
-      // buylinks = buylinks.map(buy => {
-      //   buy.link = Utils.convertSkuUrl(buy.link, buy.cid)
-      //   return buy
-      // })
-
-      // console.log(buylinks)
-      // let bls = await Promise.all(promises)
-      // console.log(bls)
-      // 潜在bug，如果ids的长度和bls的长度不一致就会问题，因为
-      // 有些好物可能没有购买链接或者根本不是好物，我们专刊也可以引用首页
-      // for (let i = 0, len = cids.length; i < len; i++) {
-      //   let buylink = bls[i]
-      //   let cid = cids[i]
-      //   // let buylink = await metaService.getBuylink(cid)
-      //   buylinks.push({ cid, link: Utils.convertSkuUrl(buylink, cid) })
-      // }
       //  0未设置类型,没有被使用/第1位-内容图(1)/第2位cover图(2)/第3位coverex图(4)/第4位thumb图(8)/第5位swipe图(16)/第6位banner图(32)
       let cover = images.filter(img => {
         return (img.type & 2) === 2

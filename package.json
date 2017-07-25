@@ -10,7 +10,7 @@
     "port": 3001
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node cms-net.js",
     "start": "pm2 start cms-net.js",
     "restart": "pm2 restart cms-net",
     "nstart": "node cms-net.js",

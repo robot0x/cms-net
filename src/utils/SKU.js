@@ -144,7 +144,7 @@ SKU.GET_SIMPLE_SKU = 'http://s5.a.dx2rd.com:3000/v1/getsimplesku/'
 // SKU.getSimpleSku(1).then(res => {
 //   console.log(res)
 // })
-// SKU.getSkusByArticleIds([1, 2, 3]).then(res => {
+// SKU.getSkusByArticleIds([42232413431401, 44500156164217]).then(res => {
 //   console.log(res)
 // })
 module.exports = SKU

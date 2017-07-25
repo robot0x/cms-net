@@ -101,6 +101,13 @@ class Table {
     return this.getByCond(`aid = ${id}`)
   }
 
+   /**
+   * 根据文章id列表获取多条数据
+   */
+  getByAids (ids) {
+    return this.getByCond(`aid in (${ids.join(',')})`)
+  }
+
   /**
    * 根据传入的条件获取数据
    */

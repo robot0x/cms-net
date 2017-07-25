@@ -142,14 +142,6 @@ class TagService {
       ret.name = name
       // limit没必要传，因为这个值就是调用的地方set进去的
       return ret
-      // return { metas, images, name }
-      // return {metas, images, limit: this.limit, name}
-      // console.log(metas)
-      // console.log(thumbs);
-      // console.log('aids.length:', aids.length)
-      // console.log('metas:', metas)
-      // console.log(aids.length)
-      // return  { metas:  await metaTable.getMetas(aids)}
     } catch (e) {
       console.log(e)
       Log.exception(e)

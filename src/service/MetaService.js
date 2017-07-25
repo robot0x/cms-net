@@ -14,6 +14,7 @@ const DB = require('../db/DB')
 const Utils = require('../utils/Utils')
 const Log = require('../utils/Log')
 const SKU = require('../utils/SKU')
+const _ = require('lodash')
 // const Base = require('../Base')
 // const startDate = require('../../config/app').startDate
 
@@ -117,7 +118,7 @@ class MetaService {
     if (!isShortId) {
       ids = Utils.toShortId(ids)
     }
-    let source = useAuthorSource ? 'au.source,' : ''
+    let source = useAuthorSource ? 'au.source AS source,' : ''
     // TR接口要用到，是用来排序的，最新修改的文章要排在最前面
     let lastUpdateTime = useLastUpdateTime ? 'meta.last_update_time,' : ''
     // 取meta需要加上时间限制，timetopublish必须处在20141108和今天之间
@@ -154,7 +155,12 @@ class MetaService {
     `
     // console.log('getRawMetas\'s sql:', sql)
     try {
-      const metaAndAuthors = await DB.exec(sql)
+      let promises = [DB.exec(sql)]
+      if (useBuylink) {
+        promises.push(this.getBuylink(ids))
+      }
+      let [metaAndAuthors, buylinks] = await Promise.all(promises)
+      buylinks = buylinks || []
       // console.log('metaAndAuthors:', metaAndAuthors);
       // console.log('[MetaService.getRawMetas]:', metaAndAuthors)
       let imageCols = ['aid', "CONCAT('//', url) AS url", 'type']
@@ -184,6 +190,7 @@ class MetaService {
         imageCols
       )) || []
       let metas = []
+
       for (let me of metaAndAuthors) {
         let {
           nid,
@@ -202,7 +209,10 @@ class MetaService {
         let meta = Object.create(null) // 使用超轻量对象，提升性能
         meta.timetopublish = timetopublish
         // author字段变形
-        meta.author = { pic: pic_uri, name: author_name, source }
+        meta.author = { pic: pic_uri, name: author_name }
+        if (useAuthorSource) {
+          meta.author.source = source
+        }
         // 这个可能在app内用来控制title的颜色
         meta.title_color = meta.titlecolor || 4294967295
         meta.title = title
@@ -269,13 +279,13 @@ class MetaService {
           // 使用null_cms_link作为getBuylink在meta表中是否有
           // buylink字段的标志，否则的话，meta.buylink为undefined，
           // 则会再通过id拿一次buylink，这是没必要的且费性能
-          let buylink = await this.getBuylink(
-            nid,
-            meta.buylink || 'null_cms_link'
-          )
+          let buylink = Utils.getFirst(buylinks.filter(info => info.id === nid))
           if (buylink) {
             meta.has_buylink = true
-            meta.buylink = buylink
+            meta.buylink = buylink.link
+          } else if (me.buylink) {
+            meta.has_buylink = true
+            meta.buylink = me.buylink
           } else {
             meta.has_buylink = false
           }
@@ -319,7 +329,6 @@ class MetaService {
       if (ids.length === 1 && metas.length === 1) {
         return Utils.getFirst(metas)
       } else {
-        // console.log('getRawMetas:', metas)
         return metas.length > 0 ? metas : null
       }
     } catch (e) {
@@ -384,7 +393,67 @@ class MetaService {
       return null
     }
   }
-
+  async getBuylink (ids, getBuylinkFromMetaTable = false) {
+    if (!ids) return
+    // 如果ids为一个数组，则返回一个数组，否则返回一个对象
+    let getOne = true
+    if (Array.isArray(ids)) {
+      getOne = false
+    }
+    if (getOne) {
+      ids = [ids]
+    }
+    ids = Utils.toShortId(ids)
+    let cmsBuyLink = ''
+    if (typeof getBuylinkFromMetaTable === 'string') {
+      cmsBuyLink = getBuylinkFromMetaTable
+      getBuylinkFromMetaTable = true
+    }
+    const [skuData, buyinfos] = await Promise.all([
+      SKU.getSkusByArticleIds(ids, false),
+      this.buyinfoTable.getByAids(ids)
+    ])
+    let ret = []
+    // console.log('ids:', ids)
+    for (let id of ids) {
+      let skus = skuData[id]
+      let data = Object.create(null)
+      let buyinfo = Utils.getFirst(buyinfos.filter(info => info.aid === id))
+      // console.log('skus:', skus.length)
+      // console.log('buyinfos:', buyinfos.length)
+      // console.log('buyinfo:', buyinfo)
+      // console.log('valid SKU:', SKU.isOnlyOneOnlineSKU(skus))
+      if (SKU.isOnlyOneOnlineSKU(skus)) {
+        // console.log('sku ....')
+        data.id = id
+        data.link = `https://c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${skus[0].sid}.html`
+      } else if (buyinfo && buyinfo.link) {
+        // console.log('buyinfo ....')
+        data.id = id
+        data.link = `https://c.diaox2.com/view/app/?m=buy&aid=${id}`
+      } else if (getBuylinkFromMetaTable) {
+        data.id = id
+        if (!cmsBuyLink) {
+          cmsBuyLink = await this.metaTable.getBuylinkById(id)
+        } else if (cmsBuyLink === 'null_cms_link') {
+          cmsBuyLink = ''
+        }
+        data.link = cmsBuyLink
+      }
+      if (!_.isEmpty(data)) {
+        ret.push(data)
+      }
+    }
+    if (getOne) {
+      [ret] = ret
+      if (ret) {
+        ret = ret.link || ''
+      } else {
+        ret = ''
+      }
+    }
+    return ret
+  }
   /**
    * 如果文章仅有1个sku，那么将这个sku的链接http://c.diaox2.com/view/app/sku/cid/sid.html，作为购买链接，has_buy_link = true，处理结束
      如果文章有0个或者多个sku，那么看文章有没有老的传统购买页，如果有，将http://c.diaox2.com/view/app/?m=buy&aid=nid，作为购买链接，has_buy_link = true，处理结束
@@ -393,130 +462,104 @@ class MetaService {
      sku的status字段：0/1/2/4, 编辑/在线/失效/...
      目前业务上只用了0和1，0未发布，1代表发布
    */
-  async getBuylink (id, cmsBuyLink = '', withId = false) {
-    if (!id) return
-    const skus = await SKU.getSkusByArticleId(id, false)
-    let buylink = null
-    let sid = 0
-    let bid = 0
-    let cid = 0
-    if (SKU.isOnlyOneOnlineSKU(skus)) {
-      // SKU的页面支持长短aid，但是为了兼容老的，故转成长id
-      sid = skus[0].sid
-      buylink = `http://c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${sid}.html`
-      // return `http://c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${skus[0].sid}.html`
-    } else {
-      // 若SKU有0个或多个，则从diaodiao_buyinfo取购买页
-      // const buy_info = await this.metaTable.exec(`SELECT * FROM diaodiao_buyinfo where aid = ${id}`)
-      const buyInfo = await this.buyinfoTable.getByAid(id)
-      // 如果diaodiao_buyinfo表存在购买信息
-      if (buyInfo.length > 0) {
-        let firstBuyInfo = buyInfo[0]
-        if (firstBuyInfo.link) {
-          bid = firstBuyInfo.buy_id
-          buylink = `http://c.diaox2.com/view/app/?m=buy&aid=${id}`
-        }
-        // return `http://c.diaox2.com/view/app/?m=buy&aid=${id}`
-      } else if (cmsBuyLink && cmsBuyLink !== 'null_cms_link') {
-        buylink = cmsBuyLink
-        cid = id
-        // return cmsBuyLink
-      } else {
-        buylink = await this.metaTable.getBuylinkById(id)
-        if (buylink) {
-          cid = id
-        }
-        // return await this.metaTable.getBuylinkById(id)
-      }
-    }
-    let ret = null
-    if (withId) {
-      ret = {
-        cid: id,
-        link: buylink
-      }
-    } else {
-      ret = buylink
-    }
-    return ret
-  }
+  // async getBuylink (id, cmsBuyLink = '', withId = false) {
+  //   if (!id) return
+  //   const skus = await SKU.getSkusByArticleId(id, false)
+  //   let buylink = null
+  //   let sid = 0
+  //   if (SKU.isOnlyOneOnlineSKU(skus)) {
+  //     // SKU的页面支持长短aid，但是为了兼容老的，故转成长id
+  //     sid = skus[0].sid
+  //     buylink = `https://c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${sid}.html`
+  //     // return `http://c.diaox2.com/view/app/sku/${Utils.toLongId(id)}/${skus[0].sid}.html`
+  //   } else {
+  //     // 若SKU有0个或多个，则从diaodiao_buyinfo取购买页
+  //     // const buy_info = await this.metaTable.exec(`SELECT * FROM diaodiao_buyinfo where aid = ${id}`)
+  //     const buyInfo = await this.buyinfoTable.getByAid(id)
+  //     // 如果diaodiao_buyinfo表存在购买信息
+  //     if (buyInfo.length > 0) {
+  //       let firstBuyInfo = buyInfo[0]
+  //       if (firstBuyInfo.link) {
+  //         buylink = `https://c.diaox2.com/view/app/?m=buy&aid=${id}`
+  //       }
+  //       // return `http://c.diaox2.com/view/app/?m=buy&aid=${id}`
+  //     } else if (cmsBuyLink && cmsBuyLink !== 'null_cms_link') {
+  //       buylink = cmsBuyLink
+  //       // return cmsBuyLink
+  //     } else {
+  //       buylink = await this.metaTable.getBuylinkById(id)
+  //     }
+  //   }
+  //   let ret = null
+  //   if (withId) {
+  //     ret = {
+  //       cid: id,
+  //       link: buylink
+  //     }
+  //   } else {
+  //     ret = buylink
+  //   }
+  //   return ret
+  // }
 }
 // ids = [this.id],
 // useBuylink = true,
 // isShortId = false,
-// useCoverex = false,
+// useCoverex = true,
 // useBanner = false,
 // useSwipe = false,
 // useImageSize = false,
 // useAuthorSource = false,
-// useTag = false
+// useTag = false,
+// useLastUpdateTime = false
 // let metaService = new MetaService()
 // metaService
 //   .getRawMetas(
-//     [8763, 9757, 9233, 1],
-//     false,
+//     // [8763, 9757, 9233, 1],
+//     [2177, 1598, 590, 9833, 1],
 //     true,
 //     false,
 //     false,
 //     false,
 //     false,
 //     false,
-//     true
+//     true,
+//     false
 //   )
 //   .then(data => {
 //     console.log(data)
 //   })
-
+// metaService.getBuylink(9833).then(data => {
+//   console.log('(1)9833:', data)
+// })
+// metaService.getBuylink2(9833).then(data => {
+//   console.log('(2)9833:', data)
+// })
+// metaService.getBuylink(1138).then(data => {
+//   console.log('(1)1138:', data)
+// })
+// metaService.getBuylink2(1138).then(data => {
+//   console.log('(2)1138:', data)
+// })
+// metaService.getBuylink(1047).then(data => {
+//   console.log('(1)1047:', data)
+// })
+// metaService.getBuylink2(1047).then(data => {
+//   console.log('(2)1047:', data)
+// })
+// metaService.getBuylink(1598).then(data => {
+//   console.log('(1)1598:', data)
+// })
+// metaService.getBuylink2(1598).then(data => {
+//   console.log('(2)1598:', data)
+// })
+// metaService.getBuylink(2177).then(data => {
+//   console.log('(1)2177:', data)
+// })
+// metaService.getBuylink2(2177).then(data => {
+//   console.log('(2)2177:', data)
+// })
+// metaService.getBuylink([2177, 1598, 590, 9833]).then(data => {
+//   console.log('(2)[2177, 1598, 590, 9833]:', data)
+// })
 module.exports = MetaService
-
-// async getRawMeta (id = this.id) {
-//   try {
-//     const {imageTable, metaTable, authorTable} = this
-//     // const data = await this.fetchAll(id)
-//     // [2, 8] type = 2 是cover图，type = 8 是thumb图
-//     const images = await imageTable.getSpecialImagesUrl(id, [2, 8])
-//     const meta = await metaTable
-//                         .setColumns(['title', 'titleex', 'titlecolor', 'ctype', 'price', 'buylink', 'author'])
-//                         .getById(id)
-//     const author = await authorTable
-//                         .setColumns(['pic_uri', 'title'])
-//                         .getBySource(meta.source)
-//     const mbuylink = await this.getBuylink(id, meta.buylink)
-//     if (mbuylink) {
-//       meta.has_buylink = true
-//       meta.buylink = mbuylink
-//     } else {
-//       meta.has_buylink = false
-//     }
-//     let {title, titleex, titlecolor, ctype, price, buylink, has_buylink} = meta
-//     let cover_image_url = images.filter(image => {
-//       return (image.type & 2) === 2
-//     })
-//     let thumb_image_url = images.filter(image => {
-//       return (image.type & 8) === 8
-//     })
-//     if(Utils.isValidArray(cover_image_url)){
-//       cover_image_url = 'http://' + cover_image_url[0].url
-//     }
-//     if(Utils.isValidArray(thumb_image_url)){
-//       thumb_image_url = 'http://' + thumb_image_url[0].url
-//     }
-//     title = titleex? [title, titleex] : [title]
-//     return {
-//       nid: id,
-//       is_external: false,
-//       title_color: titlecolor || 4294967295,
-//       title,
-//       price,
-//       ctype,
-//       has_buylink,
-//       buylink,
-//       author: { pic: author.pic_uri, name: author.title },
-//       cover_image_url,
-//       thumb_image_url
-//     }
-//   } catch (e) {
-//     console.log(e)
-//     throw new Error(e)
-//   }
-// }
