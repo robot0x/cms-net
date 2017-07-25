@@ -86,7 +86,8 @@ async function showAndZKAndZTRouter (
       // .setId(id)
       .rende(id, pageType, isRecommendTest)
       .then(doc =>
-        writeDoc(doc, res, pageType === 'share' ? 'showShare' : 'show')
+        // writeDoc(doc, res, pageType === 'share' ? 'showShare' : 'show')
+        writeDoc(doc, res, pageType)
       )
       .catch(e => happyEnd(e, res))
   } else if (/zk/.test(m)) {
@@ -95,9 +96,10 @@ async function showAndZKAndZTRouter (
       // .setDebug(debug)
       // .setId(id)
       .rende(id, pageType, isRecommendTest)
-      .then(doc => writeDoc(doc, res, pageType === 'share' ? 'zkShare' : 'zk'))
+      // .then(doc => writeDoc(doc, res, pageType === 'share' ? 'zkShare' : 'zk'))
+      .then(doc => writeDoc(doc, res, pageType))
       .catch(e => happyEnd(e, res))
-  } else if (/zt/.test(m)) {
+  } else if (/zt/.test(m) && pageType !== 'jike') { // 专题页不用即刻渲染
     mZTRender
       // .setPageType(pageType)
       // .setDebug(debug)
@@ -321,7 +323,6 @@ router.get('/', async (req, res) => {
   }
 })
 
-
 // 返回meta表中所有的数据，包含：ctype、title、author三个字段
 router.get('/metadump', async (req, res) => {
   metadump()
@@ -487,6 +488,19 @@ router.post('/content', async (req, res) => {
 //   }
 // })
 
+// 正文和专刊页的jike渲染页
+const jikeidReg = /\/jike\/(\d+)\.html/
+router.get(jikeidReg, async (req, res) => {
+  let match = req.originalUrl.match(jikeidReg)
+  let id = Utils.toShortId(match[1])
+  console.log('jike页路由被命中 ....', id)
+  if (id && numnberReg.test(id)) {
+    const trueM = Utils.ctypeToM(await metaTable.getCtypeById(id))
+    showAndZKAndZTRouter(trueM, id, 'jike', req, res)
+  } else {
+    pageNotFound(res)
+  }
+})
 // m=show OR m=zk OR m=zt的share页
 const longidReg = /\/share\/(\d+)\.html/
 router.get(longidReg, async (req, res) => {

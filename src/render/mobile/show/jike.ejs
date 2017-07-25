@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<meta http-equiv="description" content="「有调」每天讲述精致的生活方式，推荐那些真正高品质的好东西，帮你低价买到优质海淘商品。下载有调，享受生活。">
+<title><%-title %></title>
+<link rel="icon" href="//a.diaox2.com/cms/diaodiao/assets/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" media="only screen and (min-device-width: 1280px)" type="text/css" href="<%-prefix%>/cms/diaodiao/assets/pc330.css" />
+<link rel="stylesheet" media="only screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-device-width: 1280px), only screen and (-webkit-min-device-pixel-ratio: 3) and (max-width:1028px)" type="text/css" href="<%-prefix%>/cms/diaodiao/assets/phone330.css" />
+<script src="//apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.lazy.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cycle2.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cycle2.swipe.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.cookie.min.js"></script>
+<script src="//c.diaox2.com/cms/diaodiao/assets/jquery.json-2.4.min.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/api204.js"></script>
+</head>
+<body id="<%-4294967297 * id%>" class="<%-id%>_<%-id%>" data-type="<%-type%>" data-share="1" data-render="<%-version%>">
+	<div class="total" data-thumb="<%-'http://' + thumb.url%>" data-cover="<%-'http://' + cover.url%>" data-self="http://<%-prefix%>/view/app/?m=show&id=<%-id%>">
+		<div class="banner tpl" data-href="<%-downloadAddr%>"><img class="bannerleft" src="<%-prefix%>/cms/diaodiao/assets/icontodown.png">
+			<p class="bannerhigh">品质生活导购平台</p>
+			<p class="bannerlow">尽在<span> 有调</span></p>
+			<div class="bannerright">点此下载</div>
+		</div>
+
+		<div class="goodsheading">
+			<% if( swipes.length > 0) {%>
+				<div class="cycle-slideshow" data-cycle-swipe=true data-fx=scrollHorz data-cycle-swipe-fx=scrollHorz data-manual-fx=scrollHorz data-cycle-speed="400" data-cycle-manual-speed="200" data-cycle-timeout="2000" data-cycle-auto-height="64:37">
+					<% swipes.forEach(function(image){ %>
+						<img
+							class="lazy"
+							alt="<%=image.alt%>"
+							title="<%=image.title%>"
+							src="<%-prefix%>/cms/diaodiao/assets/pixel.gif"
+							data-big="<%='//' + image.url%>"
+							data-src="<%='//' + image.url + (image.extension_name === 'gif' ? '@768w_1l' : '') %>"
+							width="<%=image.width%>"
+							data-w="<%=image.width%>"
+							height="<%=image.height%>"
+							data-h="<%=image.height%>"/>
+					<% }) %>
+				</div>
+			<% } %>
+			<h1><%=title %></h1>
+			<table>
+				<tbody>
+					<tr>
+						<td class="headprice"> 
+							<% if( price.trim() ) {%>
+								<span class="text"><%=price%></span>
+							<% } else {%>
+								<span class="headtime"><%=date%></span>
+							<% } %>
+						</td>
+						<td class="headauthor">
+							<a href="<%-prefix%>/view/app/?m=author&src=<%-author.source%>">
+								<img src="<%=author.pic_uri%>" /><%-author.title%>
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="content bottomshadow">
+			<%-body %>
+			<div class="interact"></div>
+		</div>
+
+		<div class="summary">
+			<!--comment-->
+			<!--share下面有banner，这个结构也有，顺序调整到这里-->
+			<div class="bottomshadow">
+				<div class="headgrayband"></div>
+				<div class="sephead">
+					<div class="sepinner">
+						<img src="<%-prefix%>/cms/diaodiao/assets/timecmt.png" /><span>最新评论</span>
+					</div>
+					<hr>
+				</div>
+				<div class="comment_body">
+					<div id="lasttimecomment" class="clearfix"></div>
+				</div>
+			</div>
+
+			<div class='versionnotice' data-href="<%-downloadAddr%>">
+				<!--downlink TODO-->
+				<div>
+					<img src="<%-prefix%>/cms/diaodiao/assets/icontodown.png" /><span>下载有调参与讨论</span>
+				</div>
+			</div>
+
+			<!--author-->
+			<div class="bottomshadow">
+				<div class="headgrayband"></div>
+				<div class="sephead">
+					<div class="sepinner">
+						<img src="<%-prefix%>/cms/diaodiao/assets/srcfrom.png" /><span>本文作者</span>
+					</div>
+				</div>
+				<hr class="authorhr">
+				<div id="author_info" data-author="<%=author.source%>" data-href="<%-prefix%>/view/app/?m=author&src=<%-author.source%>">
+					<div id="author1">
+						<img id="authorportrait" src="<%-author.pic_uri%>" />
+						<p id="authortitle"><%=author.title%></p>
+						<p id="authordesc"><%=author.value%></p>
+					</div>
+					<hr class="authorhr">
+					<div id="author2">
+						<p>简介： <%=author.intro%></p>
+					</div>
+				</div>
+			</div>
+			<!--related
+        <div class="bottomshadow">
+        <div class="headgrayband"></div>
+        <div class="sephead">
+            <div class="sepinner">
+                <img src="/cms/diaodiao/assets/guesslike.png" /><span>猜你喜欢</span>
+            </div>
+        </div>
+        <div id="relcardlist">
+           <div id="relcardlast" class="clearfix"></div>
+        </div>
+    </div>
+        -->
+			<div id="hotanchor"></div>
+			<div id="commentanchor"></div>
+			<div class="clearfix last"></div>
+			<!--summary last-->
+		</div>
+
+		<div class="bottomspace"></div>
+		<div class="bottomspace"></div>
+
+		<div class="botmenu">
+			<table>
+				<tbody>
+					<tr>
+						<% if( has_buylink ) {%>
+							  <td style="width:50%" id="bot_down" class="downlink" data-href="<%-downloadAddr%>">
+								<img src="<%-prefix%>/cms/diaodiao/assets/icontodown.png">
+								<span>下载有调</span>
+							  </td>
+                			  <td style="width:50%" id="bot_buy">
+							   <p class="buylink" data-href="<%-buylink%>">立即购买</p>
+							  </td>
+						<% } else { %>
+							<td style="width:100%" id="bot_intro"><img src="//c.diaox2.com/cms/diaodiao/assets/icontodown.png" /><span>有调</span><span>品质生活导购平台</span>
+								<div class="downlink" data-href="<%-downloadAddr%>">立即下载</div>
+							</td>
+						<% } %>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="banner tpl" data-href="<%-downloadAddr%>"><img class="bannerleft" src="<%-prefix%>/cms/diaodiao/assets/icontodown.png">
+			<p class="bannerhigh">品质生活导购平台</p>
+			<p class="bannerlow">尽在<span> 有调</span></p>
+			<div class="bannerright">点此下载</div>
+		</div>
+	</div>
+</body>
+<script>
+<% if( relwords ) {%>
+	g_relsearch = [<%-relwords%>];
+<% } else { %>
+	g_relsearch = [];
+<% } %>
+<% if( shouldUsedSku ) {%>
+	g_ab = [<%-JSON.stringify(shouldUsedSku)%>];
+<% } else { %>
+	g_ab = null;
+<% } %>
+</script>
+<!-- adapt goes first, influent share.js UI size -->
+<script src="<%-prefix%>/cms/diaodiao/assets/adapt.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/sharejike.js"></script>
+<script src="<%-prefix%>/cms/diaodiao/assets/wx.js"></script>
+</html>

@@ -18,9 +18,9 @@
 <script src="<%-prefix%>/cms/diaodiao/assets/jquery.json-2.4.min.js"></script>
 <script src="<%-prefix%>/cms/diaodiao/assets/api201.js"></script>
 </head>
-<body id="<%-4294967297 * id%>" class="<%-id%>_<%-id%>" data-type="zhuankan" data-share="<%-pageType === 'share'? 1 : 0%>" data-render="<%-version%>">
+<body id="<%-4294967297 * id%>" class="<%-id%>_<%-id%>" data-type="zhuankan" data-share="<%-/share|jike/i.test(pageType)? 1 : 0%>" data-render="<%-version%>">
 	<div class="total" data-thumb="<%-'//' + thumb.url%>" data-cover="<%-'//' + cover.url%>" data-self="<%-prefix%>/view/app/?m=show&id=<%-id%>">
-		<% if( pageType === 'share') {%>
+		<% if( /share|jike/i.test(pageType)) {%>
 			<div class="banner tpl" data-href="<%-downloadAddr%>"><img class="bannerleft" src="<%-prefix%>/cms/diaodiao/assets/icontodown.png"><p class="bannerhigh">品质生活导购平台</p><p class="bannerlow">尽在<span> 有调</span></p><div class="bannerright">点此下载</div></div>
 		<% } %>
 		<%-body %>
@@ -42,7 +42,7 @@
 			</tbody>
 		</table>
 	</div>
-	<% if( pageType === 'share') {%>
+	<% if( /share|jike/i.test(pageType)) {%>
 		<div class="botmenu" style="width: 414px;">
 			<table>
 				<tbody>
@@ -61,15 +61,17 @@
 	<div class="bottomspace"></div>
 	<div class="bottomspace"></div>
 </body>
-<% if( pageType === 'share') {%>
+<% if(/share|jike/i.test(pageType)) { %>
 	<script src="<%-prefix%>/cms/diaodiao/assets/adapt.js"></script>
-<% } else {%>
+<% } else { %>
 	<script src="<%-prefix%>/cms/diaodiao/assets/ddios201.js"></script>
 <% } %>
 <script src="<%-prefix%>/cms/diaodiao/assets/wx.js"></script>
-<% if( isRecommendTest ) {%>
-<script src="<%-prefix%>/cms/diaodiao/assets/zktest.js"></script>
+<% if( isRecommendTest ) { %>
+  <script src="<%-prefix%>/cms/diaodiao/assets/zktest.js"></script>
+<% } else if (/jike/i.test(pageType)) {%>
+  <script src="<%-prefix%>/cms/diaodiao/assets/zkjike.js"></script>
 <% } else { %>
   <script src="<%-prefix%>/cms/diaodiao/assets/zk330.js"></script>
-<% } %>
+<%}%>
 </html>

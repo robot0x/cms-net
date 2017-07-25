@@ -23,6 +23,7 @@ class ShowRender extends Render {
     this.parser = new Parser()
     this.showTemplate = this.readTemplate(__dirname + '/show.ejs') // eslint-disable-line
     this.shareTemplate = this.readTemplate(__dirname + '/share.ejs') // eslint-disable-line
+    this.jikeTemplate = this.readTemplate(__dirname + '/jike.ejs') // eslint-disable-line
   }
   /**
    * 在 cms-net.js 中调用，解析url参数之后，调用setId
@@ -139,7 +140,15 @@ class ShowRender extends Render {
       } else if (/w{3}/i.test(authorType)) {
         author.value = `<a href="${author.link}">${(Utils.removeProtocolHead(author.link) || '').replace(/\/$/, '')}</a>`
       }
-      return this.getDoc(isShare ? this.shareTemplate : this.showTemplate, {
+      let template = this.showTemplate
+      let downloadAddr = this.downloadAddr
+      if (isShare) {
+        template = this.shareTemplate
+      } else if (/jike/i.test(pageType)) {
+        template = this.jikeTemplate
+        downloadAddr = this.jikeDownloadAddr
+      }
+      return this.getDoc(template, {
         id,
         body,
         title,
@@ -159,7 +168,7 @@ class ShowRender extends Render {
         buylink: Utils.convertSkuUrl(buylink, id),
         pageType: pageType,
         isRecommendTest,
-        downloadAddr: this.downloadAddr,
+        downloadAddr,
         prefix: this.prefix,
         version: this.version
       })

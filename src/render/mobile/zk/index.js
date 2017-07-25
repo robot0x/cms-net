@@ -115,6 +115,10 @@ class ZKRender extends Render {
       cover = Utils.getFirst(cover) || {}
       let body = parser.getHTML(title, titleex, zkdesc, cover, metas, cids)
       body = await articleHandler(body, metas)
+      let downloadAddr = this.downloadAddr
+      if (/jike/i.test(pageType)) {
+        downloadAddr = this.jikeDownloadAddr
+      }
       return this.getDoc(this.template, {
         id,
         title,
@@ -123,7 +127,7 @@ class ZKRender extends Render {
         cover,
         pageType,
         isRecommendTest,
-        downloadAddr: this.downloadAddr,
+        downloadAddr,
         prefix: this.prefix,
         version: this.version
       })
