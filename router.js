@@ -15,7 +15,6 @@ const Show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，�
 const show = new Show()
 const ids = require(`${SRC}/api/ids`) // 拿出所有在库文章的id
 const content = require(`${SRC}/api/content`) // 根据id拿出文章的content，content去除了所有html标签和markdown标识
-// const getMetas = require(`${SRC}/api/meta`) // meta接口
 const apimode = require(`${SRC}/api/apimode`) // apimode接口
 const MetaTable = require(`${SRC}/db/MetaTable`)
 const metaTable = new MetaTable()

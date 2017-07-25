@@ -1,4 +1,3 @@
-// const DB = require('../db/DB')
 const MetaTable = require('../db/MetaTable')
 const metaTable = new MetaTable()
 const ImageTable = require('../db/ImageTable')
@@ -12,9 +11,6 @@ const Utils = require('../utils/Utils')
 const SKU = require('../utils/SKU')
 const ContentTable = require('../db/ContentTable')
 const contentTable = new ContentTable()
-// const DB = require('../db/DB')
-// const BuyinfoTable = require('../db/BuyinfoTable')
-// const buyinfoTable = new BuyinfoTable()
 const MetaService = require('../service/MetaService')
 const metaService = new MetaService()
 const AuthorService = require('../service/AuthorService')
@@ -22,14 +18,8 @@ const authorService = new AuthorService()
 const TagService = require('../service/TagService')
 const tagService = new TagService()
 const request = require('request')
-// const recommend = require('./recommend')
 const Promise = require('bluebird')
-// const Base = require('../Base')
 class Show {
-  // setType (type) {
-  //   this.type = type
-  //   return this
-  // }
   /**
    * @param {number} id
    * @memberof Show
