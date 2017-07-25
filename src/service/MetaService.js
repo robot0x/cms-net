@@ -395,7 +395,7 @@ class MetaService {
     }
   }
   async getBuylink (ids, getBuylinkFromMetaTable = false) {
-    if (!ids) return
+    if (!ids) return null
     // 如果ids为一个数组，则返回一个数组，否则返回一个对象
     let getOne = true
     if (Array.isArray(ids)) {
@@ -420,10 +420,10 @@ class MetaService {
       let skus = skuData[id]
       let data = Object.create(null)
       let buyinfo = Utils.getFirst(buyinfos.filter(info => info.aid === id))
-      // console.log('skus:', skus.length)
-      // console.log('buyinfos:', buyinfos.length)
-      // console.log('buyinfo:', buyinfo)
-      // console.log('valid SKU:', SKU.isOnlyOneOnlineSKU(skus))
+      console.log('skus.length:', skus.length)
+      console.log('buyinfos.length:', buyinfos.length)
+      console.log('buyinfo:', buyinfo)
+      console.log('valid SKU:', SKU.isOnlyOneOnlineSKU(skus))
       if (SKU.isOnlyOneOnlineSKU(skus)) {
         // console.log('sku ....')
         data.id = id
@@ -445,6 +445,7 @@ class MetaService {
         ret.push(data)
       }
     }
+    console.log('prev ret:', ret)
     if (getOne) {
       [ret] = ret
       if (ret) {
@@ -453,6 +454,7 @@ class MetaService {
         ret = ''
       }
     }
+    console.log('next ret:', ret)
     return ret
   }
   /**
