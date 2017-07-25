@@ -75,8 +75,8 @@ class ShowRender extends Render {
       const isShare = /share/i.test(pageType)
       const isJike = /jike/i.test(pageType)
       let [metaObj, relwords] = await Promise.all([
-        // 如果是share页，则拿buylink，否则不拿
-        metaService.getRenderData(id, isShare),
+        // 如果是share或者即刻页，则拿buylink，否则不拿
+        metaService.getRenderData(id, isShare || isJike),
         this.getRelsearchWords(id)
       ])
       metaObj = metaObj || {author: {}, images: []}
