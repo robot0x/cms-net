@@ -13,7 +13,9 @@ const getSkusBySids = sids => {
   return new Promise((resolve, reject) => {
     request(
       {
-        url: 'http://s5.a.dx2rd.com:3000/v1/getsimplesku/',
+        // url: 'http://s5.a.dx2rd.com:3000/v1/getsimplesku/',
+        // getsimplesku没有brand字段，所以需要改为getfullsku接口
+        url: 'http://s5.a.dx2rd.com:3000/v1/getfullsku/',
         method: 'POST',
         json: true,
         headers: { 'content-type': 'application/json' },
