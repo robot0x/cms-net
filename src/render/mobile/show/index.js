@@ -89,6 +89,8 @@ class ShowRender extends Render {
       } = metaObj
       // console.log('images:', images.length)
       let { title, ctype, timetopublish, price, has_buylink, buylink } = meta || {title: '', price: ''}
+      // 只要是show模板，都需要替换两个空格为<br>
+      title = title.replace(/ {2}/, '<br>')
       // let relwords = await this.getRelsearchWords()
       // 在此处进行ctype判断
       parser.markdown = content || '' // markdown is a setter like method `setMarkdown`
