@@ -200,6 +200,7 @@ class Parser {
                 item.pick_up_part = Utils.skuDataConvert(JSON.parse(skuSales))
               } catch (error) {
                 console.log(error)
+                console.log('[htmlToData]解析type为sku的数据发生错误：', skuSales)
                 Log.exception(error)
                 Log.exception('[htmlToData]解析type为sku的数据发生错误：', skuSales)
               }
