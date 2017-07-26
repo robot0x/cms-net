@@ -16,7 +16,7 @@ class SkuParser {
       html += `
       <div class="articlecard bottomshadow revarticlecard" data-href="//c.diaox2.com/view/app/?m=show&id=${nid}">
         <img class="articleimg" src="${thumb_image_url}">
-        <span class="articletitle">${title}</span>
+        <span class="articletitle">${(title[0] || '').replace(/ {2}/, '')}</span>
         <span class="articleread unknown" data-id="${Utils.toLongId(nid)}">阅读 ...</span>
       </div>
       `
