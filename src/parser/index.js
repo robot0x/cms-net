@@ -186,11 +186,13 @@ class Parser {
               let id = Utils.normalize($child[0].attribs['data-href'])
               // 不能用text()，因为sales字段里可能含有"转运攻略见<a href=/view/app/?m=show&id=2127&ch=experience>这里</a>"
               let skuSales = $child.find('span[data-sku-sales]').html()
+              let brand = $child.find('span[data-sku-brand]').text()
               item.type = name
               item.id = id
               item.title = title
               item.price = price
               item.image = image
+              item.brand = brand || ''
               item.pick_up_part = []
               item.show_part = []
               console.log('skuSales:', skuSales)
