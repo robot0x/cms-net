@@ -91,7 +91,9 @@ class Utils {
         ret.spec = 'other'
       } else {
         ret.spec = 'diaodiao'
-        if (/^\/view\/app\//.test(href)) {
+        // /cms/diaodiao/articles/experience/116_116.html
+        // /view/app/?m=show&id=10361
+        if (/^(\/view\/app\/|\/cms\/diaodiao\/)/.test(href)) {
           href = 'https://c.diaox2.com' + href
         }
       }
