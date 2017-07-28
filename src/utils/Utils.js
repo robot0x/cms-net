@@ -71,8 +71,8 @@ class Utils {
      * 输出为：[
      * "<a href="/view/app/?m=show&id=2127&ch=experience">这里</a>", 
      * "/view/app/?m=show&id=2127&ch=experience"", 
-     * "这里", 
-     * index: 7, 
+     * "这里",
+     * index: 7,
      * input: "日本转运攻略见<a href="/view/app/?m=show&id=2127&ch=experience">这里</a>"
      * ]
      * match[1] 后面有两个双引号

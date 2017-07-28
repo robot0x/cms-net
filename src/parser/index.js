@@ -185,7 +185,7 @@ class Parser {
               let price = entities.decodeHTML($child.find('.brand').text())
               let id = Utils.normalize($child[0].attribs['data-href'])
               // 不能用text()，因为sales字段里可能含有"转运攻略见<a href=/view/app/?m=show&id=2127&ch=experience>这里</a>"
-              let skuSales = $child.find('span[data-sku-sales]').html()
+              let skuSalesDom = $child.find('span[data-sku-sales]')
               let brand = $child.find('span[data-sku-brand]').text()
               item.type = name
               item.id = id
@@ -195,14 +195,24 @@ class Parser {
               item.brand = brand || ''
               item.pick_up_part = []
               item.show_part = []
-              console.log('skuSales:', skuSales)
+              let skuSalesText = skuSalesDom.text()
+              console.log(skuSalesText)
               try {
-                item.pick_up_part = Utils.skuDataConvert(JSON.parse(skuSales))
+                let adom = skuSalesDom.find('a')
+                if (adom[0]) {
+                  // 取出a标签的内容
+                  skuSalesText = skuSalesDom.html()
+                  let match = skuSalesText.match(/<a.*href=(?:['"])?([^\s'"]+)(?:['"])?.*>(.+?)<\/a>/i)
+                  // 把双引号改为单引号
+                  skuSalesText = skuSalesText.replace(match[0], `<a href='${match[1]}'>${match[2]}</a>`)
+                }
+                // 如果没有a标签，则取其innerText
+                item.pick_up_part = Utils.skuDataConvert(JSON.parse(skuSalesText))
               } catch (error) {
                 console.log(error)
-                console.log('[htmlToData]解析type为sku的数据发生错误：', skuSales)
+                console.log('[htmlToData]解析type为sku的数据发生错误：', skuSalesText)
                 Log.exception(error)
-                Log.exception('[htmlToData]解析type为sku的数据发生错误：', skuSales)
+                Log.exception('[htmlToData]解析type为sku的数据发生错误：', skuSalesText)
               }
             } catch (error) {
               Log.exception(error)
