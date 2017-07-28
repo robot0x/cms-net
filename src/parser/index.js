@@ -196,10 +196,13 @@ class Parser {
               item.pick_up_part = []
               item.show_part = []
               let skuSalesText = skuSalesDom.text()
-              console.log(skuSalesText)
               try {
-                let adom = skuSalesDom.find('a')
-                if (adom[0]) {
+                /**
+                 * json字符串如果含有双引号，则parse会出错。
+                 * 例如：[{"mart":"天猫","intro":"不能直邮，需要转运，转运攻略见 <a href="/view/app/?m=show&id=2127">这里</a>"}]
+                 * 这个字符串parse时就会报错。原因是intro的value中出现了双引号，所以需要把双引号替换成单引号或空即可成功parse
+                 */
+                if (skuSalesDom.find('a')[0]) {
                   // 取出a标签的内容
                   skuSalesText = skuSalesDom.html()
                   let match = skuSalesText.match(/<a.*href=(?:['"])?([^\s'"]+)(?:['"])?.*>(.+?)<\/a>/i)
