@@ -360,6 +360,21 @@ router.get('/goods/:id', async (req, res) => {
     pageNotFound(res)
   }
 })
+// 推荐接口静态路由
+router.get('/recommend/:id', async (req, res) => {
+  const id = req.params.id
+  console.log('推荐接口命中，id为：', id)
+  if (numnberReg.test(id)) {
+    /**
+     * 2017-6-29 发现在pc值得买上调用推荐接口不传id，要考虑到这种情况，不传id的话，把id置为-1
+     */
+    recommend(id && numnberReg.test(id) ? id : -1)
+      .then(result => writeJSON(result, res, 'recommend'))
+      .catch(e => happyEnd(e, res))
+  } else {
+    pageNotFound(res)
+  }
+})
 // APP内tag页原生渲染数据接口
 router.get('/show/tag/:tid', async (req, res) => {
   const tid = req.params.tid
