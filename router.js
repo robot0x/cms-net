@@ -351,7 +351,7 @@ router.get('/show/:id', async (req, res) => {
 // APP内正文页、专刊页原生渲染猜你喜欢接口
 router.get('/goods/:id', async (req, res) => {
   const id = req.params.id
-  // const debug = req.__debug__
+  console.log('猜你喜欢接口命中，id为：', id)
   if (numnberReg.test(id)) {
     goods(id)
       .then(result => writeJSON(result, res, 'app_show'))
