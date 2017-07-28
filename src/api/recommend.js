@@ -43,7 +43,7 @@ function genSimpleMeta (meta, usePrice = false) {
 // }]
 /**
  * 2017-6-29 发现在pc值得买上调用推荐接口不传id，要考虑到这种情况
- * @param {number} id 
+ * @param {number} id
  * @param {string} cb
  * @param {boolean} usePrice
  */
