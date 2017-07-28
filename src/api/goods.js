@@ -2,7 +2,7 @@
  * @Author: liyanfeng
  * @Date: 2017-07-28 11:49:40
  * @Last Modified by: liyanfeng
- * @Last Modified time: 2017-07-28 12:03:06
+ * @Last Modified time: 2017-07-28 12:04:05
  * app原生渲染需要用到的下方的“猜你喜欢”喜欢的数据。由recommend接口变形而来
  */
 
@@ -34,7 +34,7 @@ let getStat = aids => {
   })
 }
 
-let goods = async id => {
+let getGoods = async id => {
   let goods = recommend(id, null, true)
   if (goods) {
     let shouldGetStatCids = []
@@ -70,7 +70,7 @@ let goods = async id => {
   }
 }
 
-module.exports = goods
+module.exports = getGoods
 // goods(`8385`).then(data => {
 //   console.log(data)
 // })

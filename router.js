@@ -9,7 +9,7 @@ const genpub = require(`${SRC}/api/genpub`) // pub页数据生成接口
 const relsearch = require(`${SRC}/api/relsearch`) // 相关搜索接口
 const metadump = require(`${SRC}/api/metadump`) // 返回meta表中所有的数据，包含：ctype、title、author三个字段
 const recommend = require(`${SRC}/api/recommend`) // 推荐结果接口
-const goods = require(`${SRC}/api/goods`) // 猜你喜欢接口
+const getGoods = require(`${SRC}/api/getGoods`) // 猜你喜欢接口
 const newrec = require(`${SRC}/api/newrec`) // 推荐结果测试接口
 const search = require(`${SRC}/api/search`) // 文章搜索。按照title搜索，按照date搜索
 const Show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，按照date搜索
@@ -353,7 +353,7 @@ router.get('/goods/:id', async (req, res) => {
   const id = req.params.id
   console.log('猜你喜欢接口命中，id为：', id)
   if (numnberReg.test(id)) {
-    goods(id)
+    getGoods(id)
       .then(result => writeJSON(result, res, 'app_show'))
       .catch(e => happyEnd(e, res))
   } else {
