@@ -60,13 +60,13 @@ class MetaService {
     if (isSwipe) {
       ret = []
       for (let image of images) {
-        if (image.aid == aid && image.type == type) {
+        if (image.aid == aid && (image.type & type) == type) {
           ret.push(image)
         }
       }
     } else {
       for (let image of images) {
-        if (image.aid == aid && image.type == type) {
+        if (image.aid == aid && (image.type & type) == type) {
           ret = image
           break
         }

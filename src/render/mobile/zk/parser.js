@@ -57,7 +57,7 @@ class ZKParser {
     }
     return html
   }
-   findMetaById (metas, id) {
+  findMetaById (metas, id) {
     for (let meta of metas) {
       if (id == meta.nid) {
         return meta
