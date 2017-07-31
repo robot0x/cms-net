@@ -57,7 +57,7 @@ module.exports = async (html, addAliImageArg = true, useSales = false) => {
     $skuDom.find('.articleimg').attr('src', Utils.addProtocolHead(src))
     $skuDom.find('.articletitle').text(sku.title)
     $skuDom.find('.brand').text(sku.price_str)
-    $skuDom.append(`<span style="display:none;" data-sku-brand="sku_brand">${JSON.stringify(sku.brand)}</span>`)
+    $skuDom.append(`<span style="display:none;" data-sku-brand="sku_brand">${sku.brandku.brand}</span>`)
     // app原生数据渲染接口中type = sku的数据片段会用到sku的数据
     if (useSales) {
       $skuDom.append(`<span style="display:none;" data-sku-sales="sku_sales">${JSON.stringify(sku.sales)}</span>`)
