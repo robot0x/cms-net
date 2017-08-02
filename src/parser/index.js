@@ -278,6 +278,12 @@ class Parser {
             // 还当成li标签处理即可，无伤大雅
             item.type = name
             item.value = this.htmlToData($child.find('p'), false)
+          } else if (name === 'h2') {
+            let dataCollapse = $child[0].attribs['data-collapse']
+            item.value = this.htmlToData($child, false)
+            if (dataCollapse) {
+              item.collapse = dataCollapse
+            }
           } else if (notRecursion.indexOf(name) === -1) {
             // 若含有其他节点，则递归调用htmlToData
             item.value = this.htmlToData($child, false)
