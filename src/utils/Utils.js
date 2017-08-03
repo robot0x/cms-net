@@ -271,9 +271,9 @@ class Utils {
    */
   static addAliImageSuffix (url, suffix = '@200w_200h_1e%7C200x200-5rc') {
     // 只有不是png和gif的图片才加后缀
-    let pngAndGif = /\.(png|gif)/i
+    // let pngAndGif = /\.(png|gif)/i
     if (
-       Utils.isAliImage(url) && url.indexOf(suffix) === -1 && !pngAndGif.test(url)
+       Utils.isAliImage(url) && url.indexOf(suffix) === -1
     ) {
       url += suffix
     }
