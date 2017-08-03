@@ -117,6 +117,7 @@ class Parser {
         if (!type) continue
         let $child = this.$(child)
         let name = this.getName(child)
+        // console.log('name:', name)
         const doms = Array.from($child.children())
         // 如果有id属性，则赋予给item的anchor属性，作为锚点
         if (attribs) {
@@ -133,7 +134,11 @@ class Parser {
         if (type === 'tag') {
           item.type = name
           let childNodes = child.childNodes
-          if (name === 'a') {
+          if (name === 'h2') {
+            let dataCollapse = $child[0].attribs['data-collapse']
+            item.value = this.htmlToData($child, false)
+            if (dataCollapse) item.collapse = dataCollapse
+          } else if (name === 'a') {
             /**
              * a标签比较复杂，共有下列几种情况要处理：
              *  1、a标签引用外部链接
@@ -261,29 +266,12 @@ class Parser {
           } else if (name === 'iframe') {
             item.type = child.name
             item.value = child.attribs.src
-          }
-          // else if (doms.length === 1 && doms[0].name === 'img') {
-          //   // 原来假设的是一个p只包含一个img，从线上效果来看，是可以包含多个的
-          //   let [imgDom] = doms
-          //   let imgAttr = imgDom.attribs
-          //   item.type = imgDom.name
-          //   item.value = imgAttr.alt || ''
-          //   item.url = imgAttr.src
-          //   item.width = imgAttr.width || ''
-          //   item.height = imgAttr.height || ''
-          // }
-          else if (name === 'li' && doms.length === 1 && doms[0].name === 'p') {
+          } else if (name === 'li' && doms.length === 1 && doms[0].name === 'p') {
             // http://c.diaox2.com/view/app/?m=show&id=1120
             // 上面这篇文章中，把由于p标签中的内容为"1. xxx" ，故解析成了 ol -> li
             // 还当成li标签处理即可，无伤大雅
             item.type = name
             item.value = this.htmlToData($child.find('p'), false)
-          } else if (name === 'h2') {
-            let dataCollapse = $child[0].attribs['data-collapse']
-            item.value = this.htmlToData($child, false)
-            if (dataCollapse) {
-              item.collapse = dataCollapse
-            }
           } else if (notRecursion.indexOf(name) === -1) {
             // 若含有其他节点，则递归调用htmlToData
             item.value = this.htmlToData($child, false)
