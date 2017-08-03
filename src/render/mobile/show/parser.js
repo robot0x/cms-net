@@ -1,7 +1,5 @@
 const Parser = require('../../../parser')
 const Utils = require('../../../utils/Utils')
-// const request = require('request')
-// const Promise = require('bluebird')
 /**
  * CMS markdown 解析器
  * 读取文章原始markdown文本
@@ -73,13 +71,28 @@ class ShowParser extends Parser {
     //   return ret
     // }
     renderer.heading = (content, level) => {
-      const {isAnchor, anchor, text} = Utils.anchorHandler(content)
+      let { isAnchor, anchor, text } = Utils.anchorHandler(content)
+      // 处理折叠的内容
+      let decollapseReg = / ={3}(\w+)$/
+      let match = text.match(decollapseReg)
+      let collapse = ''
+      if (match) {
+        text = text.replace(decollapseReg, '')
+        collapse = match[1]
+      }
       let ret = ''
       if (isAnchor) {
-        // console.log('ShowParser.anchor:', anchor)
-        ret = `<h${level} id="${anchor}">${text}</h${level}>`
+        if (collapse) {
+          ret = `<h${level} id="${anchor}" data-collapse="${collapse}">${text}</h${level}>`
+        } else {
+          ret = `<h${level} id="${anchor}">${text}</h${level}>`
+        }
       } else {
-        ret = `<h${level}>${text}</h${level}>`
+        if (collapse) {
+          ret = `<h${level} data-collapse="${collapse}">${text}</h${level}>`
+        } else {
+          ret = `<h${level}>${text}</h${level}>`
+        }
       }
       return ret
     }
