@@ -361,25 +361,6 @@ class Parser {
         // }
       } else if (name === 'sku') {
         md += `sku ${Utils.normalize(attribs['data-href'])}\n\n`
-        // console.log($child)
-        // let title = $child.find('.articletitle').text()
-        // let image = $child.find('.articleimg')[0].attribs['src']
-        // let price = $child.find('.brand').text()
-        // console.log()
-        // console.log($child.find('.articletitle').text())
-        // console.log($child.find('.brand').text())
-        //   md += `\`\`\`sku
-        //   id: ${Utils.normalize(attribs['data-href'])}
-        //   title: ${title}
-        //   price: ${price}
-        //   image: ![](${Utils.removeAliImageSuffix(image)})
-        //  \`\`\`\n`
-        // md += `\`\`\`sku\n ${Utils.normalize(attribs['data-href'])}\n\`\`\`\n\n`
-        // if (text !== null) {
-        //   md += `\`\`\`sku\n ${innerText}\n\`\`\`\n\n`
-        // } else {
-        //   md += `\`\`\`sku\n ${this.getShowMarkdown($child, false)}\n\`\`\`\n\n`
-        // }
       } else if (name === 'editorhead') {
         md += `eds ${$child.text()}\n\n`
       } else if (name === 'editorcontent') {

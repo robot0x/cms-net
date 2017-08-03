@@ -24,52 +24,6 @@ class ShowParser extends Parser {
       </div>
       </div>
       `
-    // renderer.heading = (text, level) => {
-    //   return `<h${level}>${text}</h${level}>`
-    // }
-    // function rendeSku (content) {
-    //   const idReg = /id[:：]\s*(\d+)\s*title[:：]/
-    //   const titleReg = /title[:：]\s*(.+)\s*price[:：]/
-    //   const priceReg = /price[:：]\s*(.+)\s*image[:：]/
-    //   const imageReg = /image[:：]\s*!\[.*\]\((?:https?)?(?:\/\/)?(.+)\s*\)\s*/
-    //   let id = content.match(idReg)
-    //   let title = content.match(titleReg)
-    //   let price = content.match(priceReg)
-    //   let image = content.match(imageReg)
-    //   if (Utils.isValidArray(id)) {
-    //     id = id[1]
-    //   }
-    //   if (Utils.isValidArray(title)) {
-    //     title = title[1]
-    //   }
-    //   if (Utils.isValidArray(price)) {
-    //     price = price[1]
-    //   }
-    //   if (Utils.isValidArray(image)) {
-    //     image = image[1]
-    //   }
-    //   // @200w_200h_1e%7C200x200-5rc
-    //   return `<div class="articlecard bottomshadow revarticlecard" data-href="//c.diaox2.com/view/app/sku/${id}.html">
-    //            <img class="articleimg" src="//${Utils.addAliImageSuffix(image)}">
-    //            <span class="articletitle">${title}</span>
-    //            <span class="brand">${price}</span>
-    //            <div class="buy-button-area">
-    //             <button class="buy-button">
-    //               <span>立即购买</span>
-    //             </button>
-    //             </div>
-    //           </div>`
-    // }
-    // renderer.code = (content, type) => {
-    //   let ret = ''
-    //   switch (type) {
-    //     case 'sku':
-    //       ret = rendeSku(content)
-    //       break
-    //   }
-    //   console.log(ret)
-    //   return ret
-    // }
     renderer.heading = (content, level) => {
       let { isAnchor, anchor, text } = Utils.anchorHandler(content)
       // 处理折叠的内容
@@ -207,44 +161,6 @@ class ShowParser extends Parser {
       }
       return `<a target="${openMethod}" href="${href}">${text || href}</a>`
     }
-
-    // renderer.code = (text, type) => {
-    //   if(/sku/i.test(type) && text && (text = text.trim()) && /\d+/.test(text)){
-    //     // console.log('这是一篇sku, sid为:', text)
-    //     // return `这是一篇sku, sid为:${text}`
-    //     return new Promise((resolve, reject) => {
-    //       resolve(`这是一篇sid为${text}的sku`)
-    //     })
-    //   }
-    // }
-    // super.setOptions({ promise: true })
-    // super.setOptions({
-    //   promise: true,
-    //   async highlight (sid, type, callback) {
-    //      if(/sku/i.test(type) && sid && (sid = sid.trim()) && /\d+/.test(sid)){
-    //       //  return callback(null, '<p id="hello">你好</p>')
-    //       const result = await Promise.promisify(request)(`http://s5.a.dx2rd.com:3000/v1/getsimplesku/${sid}`)
-    //       let {state, data} = JSON.parse(result.body)
-    //       if(state !== 'SUCCESS') {
-    //         return ''
-    //         // throw Error('调用getfullsku接口失败')
-    //       }
-    //       console.log('data:', data);
-    //       let {title, price_str, images} = data
-    //       let image = Utils.getFirst(images)
-    //       if(!image) return ''
-    //       return callback(null, `
-    //         <div class="articlecard bottomshadow revarticlecard" data-href="//c.diaox2.com/view/app/sku/${sid}.html">
-    //           <img class="articleimg" src="${Utils.addAliImageSuffix(image.url)}">
-    //           <span class="articletitle">${title}</span>
-    //           <span class="brand">${price_str}</span>
-    //           <div class="buy-button-area">
-    //             <button class="buy-button"><span>立即购买</span></button>
-    //           </div>
-    //         </div>`)
-    //     }
-    //   }
-    // })
     super.setRenderer(renderer)
   }
 }

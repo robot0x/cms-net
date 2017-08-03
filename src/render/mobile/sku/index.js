@@ -42,9 +42,6 @@ class SkuRender extends Render {
       images = images.map((image, index) => {
         image.id = String(index)
         return image
-        // console.log(index)
-        // 如果是阿里云图，则加上后缀，否则不用处理
-        // return Utils.addAliImageSuffix(image.url)
       })
       // sku页显示的图片
       let thumb = Utils.addProtocolHead(Utils.addAliImageSuffix((images[0] || {}).url))

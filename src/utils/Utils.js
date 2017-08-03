@@ -249,33 +249,33 @@ class Utils {
   static isAliImage (url = '') {
     return /content\.image\.alimmdn\.com/i.test(url)
   }
-  static removeAliImageSuffix (url, suffix = '@200w_200h_1e%7C200x200-5rc') {
-    if (
-       Utils.isAliImage(url) && url.indexOf(suffix) !== -1
-    ) {
-      return url.substring(0, url.lastIndexOf('@'))
-    }
+  static removeAliImageSuffix (url) {
+    let index = url.indexOf('@')
+    if (Utils.isAliImage(url) && index !== -1) return url.substring(0, index)
     return url
   }
   /**
    * 如果是阿里云图，则加上后缀，否则不用处理
-   * 注意，如果是gif或者是png后缀的图片，则不能加后缀否则会出现问题
-   * 例如：
-   *  https://content.image.alimmdn.com/sku/15014858951_png.png@200w_200h_1e%7C200x200-5rc
-   *  https://content.image.alimmdn.com/cms/sites/default/files/20170514/firstpage/all.gif@200w_200h_1e%7C200x200-5rc
+   * 对于非  .png，用@200w_200h_1e%7C200x200-5rc
+   * 对于    .png，用@200w_200h_1e.png%7C200x200-5rc.png
+   * 对于    .gif，不需要加后缀
    * @static
    * @param {string} url
    * @param {string} [suffix='@200w_200h_1e%7C200x200-5rc']
    * @returns url
    * @memberof Utils
    */
-  static addAliImageSuffix (url, suffix = '@200w_200h_1e%7C200x200-5rc') {
+  static addAliImageSuffix (url) {
     // 只有不是png和gif的图片才加后缀
     // let pngAndGif = /\.(png|gif)/i
-    if (
-       Utils.isAliImage(url) && url.indexOf(suffix) === -1
-    ) {
-      url += suffix
+    let suffix = '@200w_200h_1e%7C200x200-5rc'
+    if (/\.png/i.test(url)) {
+      suffix = '@200w_200h_1e.png%7C200x200-5rc.png'
+    } else if (/\.gif/i.test(url)) {
+      suffix = ''
+    }
+    if (Utils.isAliImage(url) && url.indexOf(suffix) === -1) {
+      url = Utils.removeAliImageSuffix(url) + suffix
     }
     return url
   }
