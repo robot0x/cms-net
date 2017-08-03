@@ -257,10 +257,23 @@ class Utils {
     }
     return url
   }
-  // 如果是阿里云图，则加上后缀，否则不用处理
+  /**
+   * 如果是阿里云图，则加上后缀，否则不用处理
+   * 注意，如果是gif或者是png后缀的图片，则不能加后缀否则会出现问题
+   * 例如：
+   *  https://content.image.alimmdn.com/sku/15014858951_png.png@200w_200h_1e%7C200x200-5rc
+   *  https://content.image.alimmdn.com/cms/sites/default/files/20170514/firstpage/all.gif@200w_200h_1e%7C200x200-5rc
+   * @static
+   * @param {string} url
+   * @param {string} [suffix='@200w_200h_1e%7C200x200-5rc']
+   * @returns url
+   * @memberof Utils
+   */
   static addAliImageSuffix (url, suffix = '@200w_200h_1e%7C200x200-5rc') {
+    // 只有不是png和gif的图片才加后缀
+    let pngAndGif = /\.(png|gif)/i
     if (
-       Utils.isAliImage(url) && url.indexOf(suffix) === -1
+       Utils.isAliImage(url) && url.indexOf(suffix) === -1 && !pngAndGif.test(url)
     ) {
       url += suffix
     }
