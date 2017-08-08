@@ -182,7 +182,14 @@ const cache = {
   relsearch: {
     maxAge: 14400
   },
-
+  /**
+   * GET /page_adv
+   * 推荐接口
+   * 缓存1个小时
+   */
+  page_adv: {
+    maxAge: 3600
+  },
   /**
    * GET /?m=recommend&id=1234
    * 推荐接口

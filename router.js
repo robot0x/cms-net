@@ -10,6 +10,7 @@ const relsearch = require(`${SRC}/api/relsearch`) // 相关搜索接口
 const metadump = require(`${SRC}/api/metadump`) // 返回meta表中所有的数据，包含：ctype、title、author三个字段
 const recommend = require(`${SRC}/api/recommend`) // 推荐结果接口
 const getGoods = require(`${SRC}/api/goods`) // 猜你喜欢接口
+const adv = require(`${SRC}/api/adv`) // 广告接口
 const newrec = require(`${SRC}/api/newrec`) // 推荐结果测试接口
 const search = require(`${SRC}/api/search`) // 文章搜索。按照title搜索，按照date搜索
 const Show = require(`${SRC}/api/show`) // 文章搜索。按照title搜索，按照date搜索
@@ -321,7 +322,14 @@ router.get('/', async (req, res) => {
     pageNotFound(res)
   }
 })
-
+// 广告接口
+router.get('/page_adv', async (req, res) => {
+  adv().then(result => writeJSON(result, res, 'page_adv')).catch(e => happyEnd(e, res))
+})
+// 广告灰度接口
+router.get('/page_adv_dev', async (req, res) => {
+  adv(true).then(result => writeJSON(result, res)).catch(e => happyEnd(e, res))
+})
 // 返回meta表中所有的数据，包含：ctype、title、author三个字段
 router.get('/metadump', async (req, res) => {
   metadump()
