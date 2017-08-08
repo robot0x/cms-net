@@ -49,7 +49,9 @@ class ShowRender extends Render {
     if (SKU.isOnlyOneOnlineSKU(skus)) {
       let {sales} = skus[0]
       for (let skuSale of sales) {
-        let {mart, intro, price, link_pc_cps, link_m_cps, link_pc_raw, link_m_raw} = skuSale
+        let {mart, intro, price, link_pc_cps, link_m_cps, link_pc_raw, link_m_raw, type} = skuSale
+        // 如果是有调电商，则忽略之
+        if (type === 'youdiao') continue
         let sale = Object.create(null)
         sale.mart = mart
         sale.intro = intro
