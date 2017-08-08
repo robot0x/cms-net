@@ -25,8 +25,30 @@ class SkuParser {
   }
   getHTML (sales = this.sales) {
     let html = ''
+    /**
+     * 策略：
+     *  1. 优先展示精品购链接，有精品购链接不展示其他链接
+     *  2. 没有精品购链接，展示第三方电商链接
+    */
+    let shopGos = []
+    let others = []
     for (let sale of sales) {
-      let { mart, price, intro, link_m_cps, link_pc_cps, link_m_raw, link_pc_raw } = sale
+      let type = sale.type
+      // 如果明确是other，则为第三个链接，如果没有type属性，默认认为是第三方链接
+      // 已经区分sale类型是后面做的，原来老的没有指定type的sale默认认为是other
+      if (type === 'other' || !type) {
+        others.push(sale)
+      } else if (type === 'shop_go') {
+        shopGos.push(sale)
+      }
+    }
+    if (shopGos.length > 0) {
+      sales = shopGos
+    } else if (others.length > 0) {
+      sales = others
+    }
+    for (let sale of sales) {
+      let { mart, price, intro, link_m_cps, link_pc_cps, link_m_raw, link_pc_raw, type } = sale
       let link = link_m_cps || link_pc_cps || link_m_raw || link_pc_raw || ''
       let icon = 'default.png'
       if (/tmall|天猫/.test(mart) || link.indexOf('tmall.com') !== -1) {
