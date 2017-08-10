@@ -193,7 +193,7 @@ class Show {
         let skus = skuData[cid] || []
         card.skus = []
         for (let sku of skus) {
-          card.skus.push({
+          let newSku = {
             sid: sku.sid,
             title: sku.title,
             image: ((sku.images || [])[0] || {}).url || '',
@@ -202,8 +202,19 @@ class Show {
             // TODO: 将来我们电商上线之后，sku会有我们自己的商品（gid）或者我们自己的微店和淘宝链接
             // 这些需要放show_part里
             show_part: [],
-            pick_up_part: Utils.skuDataConvert(sku.sales)
-          })
+            pick_up_part: []
+          }
+          let sales = Utils.skuDataConvert(sku.sales)
+          for (let sale of sales) {
+            let {type} = sale
+            // 有调电商和精品购进入show_part，第三方进入pick_up_part
+            if (/youdiao|shop_go/i.test(type)) {
+              newSku.show_part.push(sale)
+            } else {
+              newSku.pick_up_part.push(sale)
+            }
+          }
+          card.skus.push(newSku)
         }
         /**
          * 20170718李园宁说，现在已经做了多sku的展示，就不需要老的购买页数据了
@@ -365,15 +376,26 @@ class Show {
       // data.sku.show_part = []
       // data.sku.pick_up_part = []
       for (let sku of skus) {
-        data.skus.push({
+        let newSku = {
           sid: sku.sid,
           image: ((sku.images || [])[0] || {}).url || '',
           title: sku.title,
           show_part: [],
           price: sku.price_str || '',
           brand: sku.brand || '',
-          pick_up_part: Utils.skuDataConvert(sku.sales)
-        })
+          pick_up_part: []
+        }
+        let sales = Utils.skuDataConvert(sku.sales)
+        for (let sale of sales) {
+          let {type} = sale
+          // 有调电商和精品购进入show_part，第三方进入pick_up_part
+          if (/youdiao|shop_go/i.test(type)) {
+            newSku.show_part.push(sale)
+          } else {
+            newSku.pick_up_part.push(sale)
+          }
+        }
+        data.skus.push(newSku)
       }
       /**
        * 20170718李园宁说，现在已经做了多sku的展示，就需要老的购买页数据了

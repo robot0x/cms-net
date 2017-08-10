@@ -214,8 +214,17 @@ class Parser {
                   // 把双引号改为单引号
                   skuSalesText = skuSalesText.replace(match[0], `<a href='${match[1]}'>${match[2]}</a>`)
                 }
+                let sales = Utils.skuDataConvert(JSON.parse(skuSalesText))
+                for (let sale of sales) {
+                  let {type} = sale
+                  // 有调电商和精品购进入show_part，第三方进入pick_up_part
+                  if (/youdiao|shop_go/i.test(type)) {
+                    item.show_part.push(sale)
+                  } else {
+                    item.pick_up_part.push(sale)
+                  }
+                }
                 // 如果没有a标签，则取其innerText
-                item.pick_up_part = Utils.skuDataConvert(JSON.parse(skuSalesText))
               } catch (error) {
                 console.log(error)
                 console.log('[htmlToData]解析type为sku的数据发生错误：', skuSalesText)
