@@ -12,7 +12,7 @@ class Render {
     this.version = appConfig.renderVersion
     // ejs 模板
     this.ejs = ejs
-    this.downloadAddr = 'http://a.app.qq.com/o/simple.jsp?pkgname=com.diaox2.android&amp;g_f=991653'
+    this.downloadAddr = 'http://a.app.qq.com/o/simple.jsp?pkgname=com.diaox2.android&g_f=991653'
     // 即刻页内的下载链接
     this.jikeDownloadAddr = 'http://a.app.qq.com/o/simple.jsp?pkgname=com.diaox2.android&ckey=CK1299868957775'
     this.prefix = appConfig.CDIAOX2
