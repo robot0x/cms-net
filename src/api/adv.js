@@ -4,13 +4,13 @@ async function adv (isDev = false) {
   let sql = `SELECT type,can_leave,value,image,aid * 4294967297 AS id, start, end FROM cms_adv `
   // 如果是灰度接口，则选出 now < start的数据，即还未上线的数据
   // 否则的话，选出 start <= now <= end 之间的数据
-  let now = new Date()
-  let escapeNow = DB.escape(now)
-  let where = `where ${escapeNow} >= start AND ${escapeNow} <= end`
-  if (isDev) {
-    where = `where ${escapeNow} < start`
-  }
-  sql += where
+  // let now = new Date()
+  // let escapeNow = DB.escape(now)
+  // let where = `where ${escapeNow} >= start AND ${escapeNow} <= end`
+  // if (isDev) {
+  //   where = `where ${escapeNow} < start`
+  // }
+  // sql += where
   let advs = (await DB.exec(sql)) || []
   return advs.map(a => {
     a.start = Math.floor(new Date(a.start).getTime() / 1000)
